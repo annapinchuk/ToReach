@@ -15,20 +15,16 @@ export const styles = StyleSheet.create({
         height: 200, // Adjust the height as needed
         resizeMode: 'contain', // Options: 'cover', 'contain', 'stretch', 'repeat', 'center'
     },
-    middleBox: {
-        width: "100%",
-        alignItems: "center",
-        flexDirection: "column",
-        justifyContent: "space-evently",
-        alignItems: "center",
-        height: "95%",
-    },
-    inputBox: {
-        backgroundColor: "white",
-        width: "80%",
-        // color: "gray",
-    },
     button: {
-        fontSize: 18
+        backgroundColor: '#2C64C6',
+        width: 200,
+        paddingVertical: 12,
+        borderRadius: 10,
+    },
+    buttonText: {
+        fontWeight: 'bold',
+        fontSize: 14,
+        textAlign: 'center',
+        color: 'white'
     }
 })
