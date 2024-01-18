@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Button, Image } from 'react-native';
+import { View, Text, Button, Image, Pressable } from 'react-native';
 import { styles } from '../styles/HomeScreenStyles';
 
 const HomeScreen = ({ navigation }) => {
@@ -9,21 +9,15 @@ const HomeScreen = ({ navigation }) => {
         style={styles.logo}
         source={require('../../Images/logo.jpg')}
       />
-      <Button
-        style={styles.buttonStyle}
-        title="התחברות למערכת"
-        onPress={() => navigation.navigate('LoginScreen')}
-      />
-      <Button
-        style={styles.buttonStyle}
-        title="הרשמה לבעל עסק"
-        onPress={() => navigation.navigate('RegisterBusinessScreen')}
-      />
-      <Button
-        style={styles.buttonStyle}
-        title="הרשמה ללקוח"
-        onPress={() => navigation.navigate('RegisterClientScreen')}
-      />  
+      <Pressable style={styles.button} onPress={() => navigation.navigate('LoginScreen')}>
+        <Text style={styles.buttonText}>התחברות למערכת</Text>
+      </Pressable>
+      <Pressable style={styles.button} onPress={() => navigation.navigate('RegisterBusinessScreen')}>
+        <Text style={styles.buttonText}>הרשמה לבעל עסק</Text>
+      </Pressable>
+      <Pressable style={styles.button} onPress={() => navigation.navigate('RegisterClientScreen')}>
+        <Text style={styles.buttonText}>הרשמה ללקוח</Text>
+      </Pressable>
     </View>
   );
 };
