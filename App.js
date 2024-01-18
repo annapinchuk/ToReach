@@ -1,25 +1,26 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image } from 'react-native';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import { styles } from "./styles";
+import HomeScreen from './src/pages/HomeScreen';
+import LoginScreen from './src/pages/LoginScreen';
+import RegisterBusinessScreen from './src/pages/RegisterBusinessScreen';
+import RegisterClientScreen from './src/pages/RegisterClientScreen';
 
-export default function App() {
+
+const Stack = createNativeStackNavigator();
+
+const App = () => {
   return (
-    <View style={styles.logInScreen.container}>
-      <Image
-        style={styles.logInScreen.logo}
-        source={require('./Images/logo.jpg')}
-      />
-      {/* <Text style={styles.logInScreen.header}>ToReach</Text> */}
-      <StatusBar style="auto" />
-      <View style={styles.logInScreen.middleBox}>
-        <Text style={styles.logInScreen.inputBox}> Email </Text>
-        <Text style={styles.logInScreen.inputBox}> Password </Text>
-        <Text> Login </Text>
-        <Text> Forgot password? </Text>
-      </View>
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="LoginScreen" component={LoginScreen} />
+        <Stack.Screen name="RegisterBusinessScreen" component={RegisterBusinessScreen} />
+        <Stack.Screen name="RegisterClientScreen" component={RegisterClientScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
-}
-{/* styles = StyleSheet.create(); */ }
+};
 
+export default App;
