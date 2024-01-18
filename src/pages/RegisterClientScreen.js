@@ -5,6 +5,7 @@ const RegisterClientScreen = ({ navigation }) => {
   return (
     <View>
       <Text>RegisterClientScreen</Text>
+      
     </View>
   );
 };
