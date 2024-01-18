@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button , Pressable} from 'react-native';
+import { View, Text, TextInput, Button, Pressable } from 'react-native';
 import { registerStyles } from '../styles/RegisterBusinessScreenStyles'; // Adjust the import path based on your project structure
+import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
 
 const RegisterBusinessScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -35,7 +36,21 @@ const RegisterBusinessScreen = ({ navigation }) => {
         city,
         businessDescription,
       });
-      // Implement your registration logic here
+
+      const auth = getAuth();
+
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          console.log(user);
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log(error, error.message);
+        });
+
+
       navigation.navigate('LoginScreen');
     } else {
       // Handle the case where the form is not valid (show an error message, etc.)
