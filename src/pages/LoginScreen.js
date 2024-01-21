@@ -1,9 +1,10 @@
 // LoginScreen.js
 import React, { useState } from 'react';
 import { View, Text, TextInput, Pressable, Modal } from 'react-native';
-import { styles } from '../styles/LoginScreenStyles';
+import { Loginstyles as styles } from '../styles/LoginScreenStyles';
 import { signInWithEmailAndPassword, getAuth } from 'firebase/auth';
 import { Image } from 'react-native';
+import { sendPasswordResetEmail } from 'firebase/auth';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -13,6 +14,13 @@ const LoginScreen = ({ navigation }) => {
 
   const handleRegister = (type) => {
     // Handle registration logic based on the selected type (client or business)
+    if (type === 'client') {
+      // Handle client registration
+      navigation.navigate('RegisterClientScreen')
+    } else if (type === 'business') {
+      // Handle business registration
+      navigation.navigate('RegisterBusinessScreen')
+    }
     console.log('Register as:', type);
     setShowModal(false);
     setRegistrationType(type);
@@ -22,6 +30,17 @@ const LoginScreen = ({ navigation }) => {
     return email !== '' && password !== '';
   };
 
+  const handleForgotPassword = () => {
+    console.log('Forgot Password');
+    const authInstance = getAuth();
+    sendPasswordResetEmail(authInstance, email)
+      .then(() => {
+        console.log('Password reset email sent');
+      })
+      .catch((error) => {
+        console.log('Error sending password reset email:', error);
+      });
+  };
   const handleLogin = () => {
     if (isFormValid()) {
       console.log('Login Details:', {
@@ -63,17 +82,16 @@ const LoginScreen = ({ navigation }) => {
       />
         <TextInput
           style={styles.input}
-          placeholder="סיסמא"
+          placeholder="סיסמא *"
           onChangeText={(text) => setPassword(text)}
           value={password}
           secureTextEntry
         />
       <View style={styles.inputContainer}>
-        <Pressable onPress={() => setShowModal(true)}>
+        <Pressable onPress={handleForgotPassword}>
           <Text style={styles.ForgotPassword}>שכחתי סיסמא</Text>
         </Pressable>
       </View>
-
       <Pressable style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>התחבר</Text>
       </Pressable>
@@ -81,36 +99,28 @@ const LoginScreen = ({ navigation }) => {
       <View style={styles.View}>
         <Text style={styles.Text}>חדש ב - toreach? </Text>
         <Pressable onPress={() => setShowModal(true)}>
-          <Text style={styles.loginText}>הירשם עכשיו</Text>
+          <Text style={styles.LinkText}>הירשם עכשיו</Text>
         </Pressable>
       </View>
 
+      {/* Model for registration type selection */}
       <Modal visible={showModal} animationType="slide">
         <View style={styles.modalContainer}>
-          <Text style={styles.modalText}>Register as:</Text>
+          <Image
+          style={styles.logo}
+          source={require('../../Images/logow.jpeg')}
+          />
           <Pressable style={styles.modalButton} onPress={() => handleRegister('client')}>
-            <Text style={styles.modalButtonText}>Client</Text>
+            <Text style={styles.modalButtonText}>הרשמה</Text>
           </Pressable>
           <Pressable style={styles.modalButton} onPress={() => handleRegister('business')}>
-            <Text style={styles.modalButtonText}>Business</Text>
+            <Text style={styles.modalButtonText}>הרשמה לעסקים</Text>
           </Pressable>
           <Pressable style={styles.modalButton} onPress={() => setShowModal(false)}>
             <Text style={styles.modalButtonText}>Cancel</Text>
           </Pressable>
         </View>
       </Modal>
-
-      {registrationType === 'client' && (
-        <View>
-          {/* Render client registration form here */}
-        </View>
-      )}
-
-      {registrationType === 'business' && (
-        <View>
-          {/* Render business registration form here */}
-        </View>
-      )}
     </View>
   );
 }
