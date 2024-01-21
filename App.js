@@ -12,6 +12,9 @@ import SearchScreen from './src/pages/SearchScreen';
 const Stack = createNativeStackNavigator();
 
 const App = () => {
+
+
+
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
