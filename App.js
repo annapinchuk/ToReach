@@ -14,10 +14,10 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="LoginScreen" component={LoginScreen} />
-        <Stack.Screen name="RegisterBusinessScreen" component={RegisterBusinessScreen} />
-        <Stack.Screen name="RegisterClientScreen" component={RegisterClientScreen} />
+        <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'מסך בית' }} />
+        <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ title: 'התחברות' }} />
+        <Stack.Screen name="RegisterBusinessScreen" component={RegisterBusinessScreen} options={{ title: 'הרשמה לעסק' }} />
+        <Stack.Screen name="RegisterClientScreen" component={RegisterClientScreen} options={{ title: 'הרשמה' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
