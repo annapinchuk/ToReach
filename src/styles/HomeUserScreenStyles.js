@@ -58,6 +58,12 @@ export const styles = StyleSheet.create({
       inputWithMargin: {
         marginTop: 30, // Adjust the margin based on your design
         // Add other styles for the input with margin if needed
+      },
+      serchText:{
+        textAlign: 'left',
+        fontSize: 18, 
+        fontWeight: 'bold',
+        color: 'white'
       }
      
     
