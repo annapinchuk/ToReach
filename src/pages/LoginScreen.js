@@ -1,11 +1,18 @@
 import React from 'react';
 import { View, Text, Button } from 'react-native';
-
+import { styles } from '../styles/HomeScreenStyles';
 const LoginScreen = ({ navigation }) => {
   return (
-    <View>
+    
+  <View style={styles.container}>
       <Text>Login Screen</Text>
-    </View>
+      <Button
+        style={styles.buttonStyle}
+        title="שחכת סיסמה?"
+        onPress={() => navigation.navigate('RegisterClientScreen')}
+      />  
+  </View>
+    
   );
 };
 
