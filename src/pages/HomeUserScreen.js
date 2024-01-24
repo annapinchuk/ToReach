@@ -21,7 +21,7 @@ const HomeUserScreen = ({ navigation }) => {
         horizontal
         showsHorizontalScrollIndicator={true}
         contentContainerStyle={styles.iconScrollView}
-        contentOffset={{ x: 550, y: -33 }} // Adjust the value based on your needs
+        contentOffset={{ x: 600, y: -33 }} // Adjust the value based on your needs
       >
 
         <Pressable style={[styles.iconTextContainer, styles.pressableWithMargin]} onPress={() => navigation.navigate('LoginScreen')}>
