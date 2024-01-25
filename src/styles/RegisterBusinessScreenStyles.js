@@ -62,8 +62,7 @@ export const registerStyles = StyleSheet.create({
     width: '80%',
     marginBottom: 16,
     textAlign: 'right',
-    
-    
+    zIndex: 2,
   },
   dropdownStyle: {
     backgroundColor: 'white',
