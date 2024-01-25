@@ -16,10 +16,10 @@ const LoginScreen = ({ navigation }) => {
     // Handle registration logic based on the selected type (client or business)
     if (type === 'client') {
       // Handle client registration
-      navigation.navigate('HomeUserScreen')
+      navigation.navigate('RegisterClientScreen')
     } else if (type === 'business') {
       // Handle business registration
-      navigation.navigate('HomeUserScreen')
+      navigation.navigate('RegisterBusinessScreen')
     }
     console.log('Register as:', type);
     setShowModal(false);
@@ -61,7 +61,7 @@ const LoginScreen = ({ navigation }) => {
           console.log(error, errorMessage);
         });
 
-      navigation.navigate('Home');
+      // navigation.navigate('Home');
     } else {
       console.log('Please fill in all required fields');
     }
