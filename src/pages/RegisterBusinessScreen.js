@@ -10,10 +10,10 @@ import {
 } from 'react-native';
 import { registerStyles } from '../styles/RegisterBusinessScreenStyles';
 import { styles } from '../styles/HomeScreenStyles';
-import {
-  createUserWithEmailAndPassword,
-  getAuth,
-} from 'firebase/auth';
+// import {
+//   createUserWithEmailAndPassword,
+//   getAuth,
+// } from 'firebase/auth';
 import {
   getDocs,
   collection,
@@ -64,18 +64,18 @@ const RegisterBusinessScreen = ({ navigation }) => {
         ,
       });
 
-      const auth = getAuth();
+      // const auth = getAuth();
 
-      createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          const user = userCredential.user;
-          console.log(user);
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          console.log(error, error.message);
-        });
+      // createUserWithEmailAndPassword(auth, email, password)
+      //   .then((userCredential) => {
+      //     const user = userCredential.user;
+      //     console.log(user);
+      //   })
+      //   .catch((error) => {
+      //     const errorCode = error.code;
+      //     const errorMessage = error.message;
+      //     console.log(error, error.message);
+      //   });
 
       navigation.navigate('LoginScreen');
     } else {

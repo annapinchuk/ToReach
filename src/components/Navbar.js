@@ -21,6 +21,7 @@ import React from 'react';
 const pageToIconName = {
     'profile': <MaterialCommunityIcons name="account" size={30} color="white" />,
     'calendar': <FontAwesome name="calendar" size={24} color="white" />,
+    'HomeUserScreen': <AntDesign name="search1" size={24} color="white" />,
     'SearchScreen': <AntDesign name="search1" size={24} color="white" />,
     'statistics': <Ionicons name="stats-chart" size={24} color="white" />,
 };
@@ -36,6 +37,7 @@ const clientPages = {
     'calendar': CalendarClientScreen,
     // 'חיפוש': SearchScreen,
     'statistics': StatisticsClientScreen,
+    'HomeUserScreen': HomeUserScreen,
     'SearchScreen': SearchScreen,
 };
 
