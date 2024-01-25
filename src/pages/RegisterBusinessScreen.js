@@ -1,40 +1,67 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Pressable } from 'react-native';
-import { registerStyles } from '../styles/RegisterBusinessScreenStyles'; // Adjust the import path based on your project structure
-import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  ScrollView,
+  Image,
+  LogBox 
+} from 'react-native';
+import { registerStyles } from '../styles/RegisterBusinessScreenStyles';
+import { styles } from '../styles/HomeScreenStyles';
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+} from 'firebase/auth';
+import {
+  getDocs,
+  collection,
+  query,
+  getFirestore,
+} from 'firebase/firestore';
+import { app } from '../firebaseConfig';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const RegisterBusinessScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [businessName, setBusinessName] = useState('');
   const [businessNumber, setBusinessNumber] = useState('');
-  const [domain, setDomain] = useState('');
   const [city, setCity] = useState('');
   const [businessDescription, setBusinessDescription] = useState('');
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isOpen,setIsOpen] = useState(false);
+  const [currentValue,setCurrentValue] = useState([]);
 
-  const isFormValid = () => {
-    // Add your validation logic here
-    // For example, check if all required fields are filled
+  const areRequiredFieldsMissing = () => {
     return (
-      email !== '' &&
-      password !== '' &&
-      businessName !== '' &&
-      businessNumber !== '' &&
-      domain !== '' &&
-      city !== ''
+      email.trim() === '' ||
+      password.trim() === '' ||
+      businessName.trim() === '' ||
+      businessNumber.trim() === '' ||
+      city.trim() === '' ||
+      selectedCategories.length === 0
+      
     );
   };
 
   const handleRegister = () => {
-    if (isFormValid()) {
+    setFormSubmitted(true);
+
+    if (!areRequiredFieldsMissing()) {
       console.log('Registration Details:', {
         email,
         password,
         businessName,
         businessNumber,
-        domain,
         city,
         businessDescription,
+        selectedCategories
+        ,
       });
 
       const auth = getAuth();
@@ -50,92 +77,155 @@ const RegisterBusinessScreen = ({ navigation }) => {
           console.log(error, error.message);
         });
 
-
       navigation.navigate('LoginScreen');
     } else {
-      // Handle the case where the form is not valid (show an error message, etc.)
       console.log('Please fill in all required fields');
     }
   };
+
+  const fetchCategories = async () => {
+    try {
+      const db = getFirestore(app);
+      const categoriesCollection = collection(db, 'Categories');
+      const categoriesSnapshot = await getDocs(categoriesCollection);
+      const categoriesData = categoriesSnapshot.docs.map(
+        (doc) => doc.data().name
+      );
+      setCategories(categoriesData);
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Firebase initialization error:', error);
+    }
+  };
+
+  useEffect(() => {
+    //fetchCategories();
+    LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
+  }, []);
+
+  const handleCategoryPress = (item) => {
+    setSelectedCategories(item);
+  };
+
+  const items = [ 
+    {label: "שיער",value:"שיער"},
+    {label: "טיפול",value:"טיפול"}
+  ]
   
 
   return (
-    <View style={registerStyles.container}>
-      <Text style={registerStyles.title}>יצירת עסק חדש</Text>
+    <ScrollView contentContainerStyle={registerStyles.scrollContainer}
+      keyboardShouldPersistTaps="always">
+      <View style={registerStyles.container}>
+        <Image style={styles.logo} source={require('../../Images/logo.jpg')} />
+        <Text style={registerStyles.title}>יצירת עסק חדש</Text>
 
+        <TextInput
+          style={registerStyles.input}
+          placeholder=" אימייל *"
+          placeholderTextColor={registerStyles.placeHolderStyle.color}
+          value={email}
+          onChangeText={(text) => setEmail(text)}
+        />
 
-      <TextInput
-        style={registerStyles.input}
-        placeholder=" אימייל *"
-        value={email}
-        onChangeText={(text) => setEmail(text)}
-      />
+        <TextInput
+          style={registerStyles.input}
+          placeholder=" סיסמה *"
+          placeholderTextColor={registerStyles.placeHolderStyle.color}
+          secureTextEntry={true}
+          value={password}
+          onChangeText={(text) => setPassword(text)}
+        />
 
+        <TextInput
+          style={registerStyles.input}
+          placeholder=" שם עסק *"
+          placeholderTextColor={registerStyles.placeHolderStyle.color}
+          value={businessName}
+          onChangeText={(text) => setBusinessName(text)}
+        />
 
-      <TextInput
-        style={registerStyles.input}
-        placeholder=" סיסמה *"
-        secureTextEntry={true} // Mask the text for password
-        value={password}
-        onChangeText={(text) => setPassword(text)}
-      />
+        <TextInput
+          style={registerStyles.input}
+          placeholder=" מספר אישור עסק *"
+          placeholderTextColor={registerStyles.placeHolderStyle.color}
+          value={businessNumber}
+          onChangeText={(text) => setBusinessNumber(text)}
+          keyboardType="numeric"
+        />
+        
+          <DropDownPicker
+            items= {items}//{categories.map((category) => ({ label: category, value: category }))}
+            open= {isOpen}
+            setOpen={()=> setIsOpen(!isOpen)}
+            value={currentValue}
+            setValue={(val)=>setCurrentValue(val)}
+            dropDownDirection='DOWN'
+            multiple= {true}
+            min={1}
+            max ={4}
+            showArrowIcon ={false}
+            mode= 'BADGE'
+            badgeColors={'#2C64C6'}
+            badgeDotColors = {['white']}
+            badgeTextStyle = {{color : "white"}}
+            placeholder="תחום עסק *"
+            placeholderStyle = {registerStyles.placeHolderStyle}
+            containerStyle={registerStyles.dropdownContainer}
+            style={registerStyles.dropdownStyle}
+            itemStyle={registerStyles.dropdownItemStyle}
+            dropDownStyle={registerStyles.dropdownListStyle}
+            searchable={true} // Add this line for searchable
+            searchPlaceholder="חיפוש..."
+            onSelectItem={(item) => handleCategoryPress(item)}
+          />
+        
+        <TextInput
+          style={registerStyles.input}
+          placeholder=" עיר *"
+          placeholderTextColor={registerStyles.placeHolderStyle.color}
+          value={city}
+          onChangeText={(text) => setCity(text)}
+        />
 
-      <TextInput
-        style={registerStyles.input}
-        placeholder=" שם עסק *"
-        value={businessName}
-        onChangeText={(text) => setBusinessName(text)}
-      />
+        <TextInput
+          style={registerStyles.input}
+          placeholder=" תיאור עסק"
+          placeholderTextColor={registerStyles.placeHolderStyle.color}
+          multiline={true}
+          numberOfLines={4}
+          value={businessDescription}
+          onChangeText={(text) => setBusinessDescription(text)}
+        />
 
-      <TextInput
-        style={registerStyles.input}
-        placeholder=" מספר אישור עסק *"
-        value={businessNumber}
-        onChangeText={(text) => setBusinessNumber(text)}
-        keyboardType="numeric"
-      />
-
-      <TextInput
-        style={registerStyles.input}
-        placeholder=" תחום עיסוק *"
-        value={domain}
-        onChangeText={(text) => setDomain(text)}
-      />
-
-      <TextInput
-        style={registerStyles.input}
-        placeholder=" עיר *"
-        value={city}
-        onChangeText={(text) => setCity(text)}
-      />
-
-      <TextInput
-        style={registerStyles.input}
-        placeholder=" תיאור עסק"
-        multiline={true} // Allow multiline input for business description
-        numberOfLines={4} // Number of lines to display initially
-        value={businessDescription}
-        onChangeText={(text) => setBusinessDescription(text)}
-      />
-      
-      <Pressable
-        style={[registerStyles.button, isFormValid() ? registerStyles.enabledButton : registerStyles.disabledButton]}
-        onPress={handleRegister}
-        disabled={!isFormValid()}>
-        <Text style={registerStyles.buttonText}>הרשמה</Text>
-      </Pressable>
-
-      {!isFormValid() && (
-        <Text style={{ color: 'red' }}>אנא מלא את כל שדות החובה *</Text>
-      )}
-
-      <View style={registerStyles.loginContainer}>
-        <Pressable style={registerStyles.loginButton} onPress={() => navigation.navigate('HomeUserScreen')}>
-          <Text style={registerStyles.loginText}>התחברות</Text>
+        <Pressable
+          style={[
+            registerStyles.button,
+            formSubmitted && areRequiredFieldsMissing() && { backgroundColor: 'gray' },
+          ]}
+          onPress={handleRegister}
+          disabled={formSubmitted && areRequiredFieldsMissing()}
+        >
+          <Text style={registerStyles.buttonText}>הרשמה</Text>
         </Pressable>
-        <Text style={registerStyles.loginText}>יש לך משתמש? </Text>
+
+        {formSubmitted && areRequiredFieldsMissing() && (
+          <Text style={{ color: 'red', marginTop: 8 }}>
+            אנא מלא את כל שדות החובה *
+          </Text>
+        )}
+
+        <View style={registerStyles.loginContainer}>
+          <Pressable
+            style={registerStyles.loginButton}
+            onPress={() => navigation.navigate('LoginScreen')}
+          >
+            <Text style={registerStyles.loginText}>התחברות</Text>
+          </Pressable>
+          <Text style={registerStyles.loginText}>יש לך משתמש? </Text>
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

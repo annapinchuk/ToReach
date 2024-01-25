@@ -22,7 +22,7 @@ export const registerStyles = StyleSheet.create({
     resizeMode: 'contain',
   },
   input: {
-    height: 40,
+    height: 50,
     width: '80%',
     borderColor: '#2C64C6',
     borderRadius: 10,
@@ -31,6 +31,7 @@ export const registerStyles = StyleSheet.create({
     marginBottom: 16,
     paddingLeft: 8,
     textAlign: 'right',
+    color :"black",
   },
   button: {
     backgroundColor: '#2C64C6',
@@ -54,6 +55,38 @@ export const registerStyles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     marginRight: 8, // Add margin to separate text and button
+     marginBottom: 12,
   },
+  dropdownContainer: {
+    height: 40,
+    width: '80%',
+    marginBottom: 16,
+    textAlign: 'right',
+    
+    
+  },
+  dropdownStyle: {
+    backgroundColor: 'white',
+    borderColor: '#2C64C6',
+    borderWidth: 3,
+    borderRadius: 10,
+    textAlign: 'right',
+    
+    
+  },
+  dropdownItemStyle: {
+    justifyContent: 'flex-start',
+    textAlign: 'right',
+  },
+  dropdownListStyle: {
+    borderColor: '#2C64C6',
+    borderWidth: 3,
+    textAlign: 'right',
+  },
+  placeHolderStyle :{
+    color: "#A9A9A9",
+    textAlign: 'right'
+  },
+
 
 });
