@@ -18,6 +18,8 @@ const App = () => {
         <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ title: 'התחברות' }} />
         <Stack.Screen name="RegisterBusinessScreen" component={RegisterBusinessScreen} options={{ title: 'הרשמה לעסק' }} />
         <Stack.Screen name="RegisterClientScreen" component={RegisterClientScreen} options={{ title: 'הרשמה' }} />
+        <Stack.Screen name="HomeUserScreen" component={HomeUserScreen} options={{ title: 'מסך בית משתמש' }} />
+        <Stack.Screen name="SearchScreen" component={SearchScreen} options={{title: 'חיפוש' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
