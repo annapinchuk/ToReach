@@ -1,6 +1,11 @@
-import React from 'react';
-import { View, Text, Button } from 'react-native';
-import { styles } from '../styles/HomeScreenStyles';
+// LoginScreen.js
+import React, { useState } from 'react';
+import { View, Text, TextInput, Pressable, Modal } from 'react-native';
+import { Loginstyles as styles } from '../styles/LoginScreenStyles';
+import { signInWithEmailAndPassword, getAuth } from 'firebase/auth';
+import { Image } from 'react-native';
+import { sendPasswordResetEmail } from 'firebase/auth';
+
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -64,16 +69,59 @@ const LoginScreen = ({ navigation }) => {
 
   // forgot password clickable link in one line and look like link under line and blue color
   return (
-    
-  <View style={styles.container}>
-      <Text>Login Screen</Text>
-      <Button
-        style={styles.buttonStyle}
-        title="שחכת סיסמה?"
-        onPress={() => navigation.navigate('RegisterClientScreen')}
-      />  
-  </View>
-    
+    <View style={styles.container}>
+      <Image
+        style={styles.logo}
+        source={require('../../Images/logo.jpg')}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder=" אימייל *"
+        value={email}
+        onChangeText={(text) => setEmail(text)}
+      />
+        <TextInput
+          style={styles.input}
+          placeholder="סיסמא *"
+          onChangeText={(text) => setPassword(text)}
+          value={password}
+          secureTextEntry
+        />
+      <View style={styles.inputContainer}>
+        <Pressable onPress={handleForgotPassword}>
+          <Text style={styles.ForgotPassword}>שכחתי סיסמא</Text>
+        </Pressable>
+      </View>
+      <Pressable style={styles.button} onPress={handleLogin}>
+        <Text style={styles.buttonText}>התחבר</Text>
+      </Pressable>
+
+      <View style={styles.View}>
+        <Text style={styles.Text}>חדש ב - toreach? </Text>
+        <Pressable onPress={() => setShowModal(true)}>
+          <Text style={styles.LinkText}>הירשם עכשיו</Text>
+        </Pressable>
+      </View>
+
+      {/* Model for registration type selection */}
+      <Modal visible={showModal} animationType="slide">
+        <View style={styles.modalContainer}>
+          <Image
+          style={styles.logo}
+          source={require('../../Images/logow.jpeg')}
+          />
+          <Pressable style={styles.modalButton} onPress={() => handleRegister('client')}>
+            <Text style={styles.modalButtonText}>הרשמה</Text>
+          </Pressable>
+          <Pressable style={styles.modalButton} onPress={() => handleRegister('business')}>
+            <Text style={styles.modalButtonText}>הרשמה לעסקים</Text>
+          </Pressable>
+          <Pressable style={styles.modalButton} onPress={() => setShowModal(false)}>
+            <Text style={styles.modalButtonText}>Cancel</Text>
+          </Pressable>
+        </View>
+      </Modal>
+    </View>
   );
 }
 

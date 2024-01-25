@@ -51,7 +51,7 @@ const RegisterBusinessScreen = ({ navigation }) => {
         });
 
 
-      navigation.navigate('HomeUserScreen');
+      navigation.navigate('LoginScreen');
     } else {
       // Handle the case where the form is not valid (show an error message, etc.)
       console.log('Please fill in all required fields');
@@ -130,7 +130,7 @@ const RegisterBusinessScreen = ({ navigation }) => {
       )}
 
       <View style={registerStyles.loginContainer}>
-        <Pressable style={registerStyles.loginButton} onPress={() => navigation.navigate('HomeUserScreen')}>
+        <Pressable style={registerStyles.loginButton} onPress={() => navigation.navigate('LoginScreen')}>
           <Text style={registerStyles.loginText}>התחברות</Text>
         </Pressable>
         <Text style={registerStyles.loginText}>יש לך משתמש? </Text>
