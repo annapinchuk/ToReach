@@ -130,7 +130,7 @@ const RegisterBusinessScreen = ({ navigation }) => {
       )}
 
       <View style={registerStyles.loginContainer}>
-        <Pressable style={registerStyles.loginButton} onPress={() => navigation.navigate('LoginScreen')}>
+        <Pressable style={registerStyles.loginButton} onPress={() => navigation.navigate('HomeUserScreen')}>
           <Text style={registerStyles.loginText}>התחברות</Text>
         </Pressable>
         <Text style={registerStyles.loginText}>יש לך משתמש? </Text>
