@@ -16,10 +16,10 @@ const LoginScreen = ({ navigation }) => {
     // Handle registration logic based on the selected type (client or business)
     if (type === 'client') {
       // Handle client registration
-      navigation.navigate('RegisterClientScreen')
+      navigation.navigate('HomeUserScreen')
     } else if (type === 'business') {
       // Handle business registration
-      navigation.navigate('RegisterBusinessScreen')
+      navigation.navigate('HomeUserScreen')
     }
     console.log('Register as:', type);
     setShowModal(false);

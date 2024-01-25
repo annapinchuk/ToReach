@@ -6,7 +6,8 @@ import HomeScreen from './src/pages/HomeScreen';
 import LoginScreen from './src/pages/LoginScreen';
 import RegisterBusinessScreen from './src/pages/RegisterBusinessScreen';
 import RegisterClientScreen from './src/pages/RegisterClientScreen';
-
+import HomeUserScreen from './src/pages/HomeUserScreen';
+import SearchScreen from './src/pages/SearchScreen';
 
 const Stack = createNativeStackNavigator();
 
