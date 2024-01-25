@@ -3,7 +3,7 @@ import { View, TextInput, Text,Modal,FlatList, Image, Pressable, ImageBackground
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { styles } from '../styles/HomeUserScreenStyles';
 import { EvilIcons, FontAwesome } from '@expo/vector-icons';
-import { app } from '../firebaseConfig';
+// import { app } from '../firebaseConfig';
 
 
 const SearchScreen = ({ navigation }) => {
@@ -17,15 +17,14 @@ const SearchScreen = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const fetchCategories = async () => {
-    const categoriesRef = app.firestore().collection('categories');
-
-    try {
-      const snapshot = await categoriesRef.get();
-      const categoriesData = snapshot.docs.map((doc) => doc.data().name);
-      setCategories(categoriesData);
-    } catch (error) {
-      console.error('Error fetching categories', error);
-    }
+    // const categoriesRef = app.firestore().collection('categories');
+  //   try {
+  //     const snapshot = await categoriesRef.get();
+  //     const categoriesData = snapshot.docs.map((doc) => doc.data().name);
+  //     setCategories(categoriesData);
+  //   } catch (error) {
+  //     console.error('Error fetching categories', error);
+  //   }
   };
 
   useEffect(() => {

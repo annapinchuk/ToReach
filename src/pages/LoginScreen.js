@@ -2,9 +2,9 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Pressable, Modal } from 'react-native';
 import { Loginstyles as styles } from '../styles/LoginScreenStyles';
-import { signInWithEmailAndPassword, getAuth } from 'firebase/auth';
+// import { signInWithEmailAndPassword, getAuth } from 'firebase/auth';
 import { Image } from 'react-native';
-import { sendPasswordResetEmail } from 'firebase/auth';
+// import { sendPasswordResetEmail } from 'firebase/auth';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -16,10 +16,10 @@ const LoginScreen = ({ navigation }) => {
     // Handle registration logic based on the selected type (client or business)
     if (type === 'client') {
       // Handle client registration
-      navigation.navigate('HomeUserScreen')
+      navigation.navigate('RegisterClientScreen')
     } else if (type === 'business') {
       // Handle business registration
-      navigation.navigate('HomeUserScreen')
+      navigation.navigate('RegisterBusinessScreen')
     }
     console.log('Register as:', type);
     setShowModal(false);
@@ -31,15 +31,15 @@ const LoginScreen = ({ navigation }) => {
   };
 
   const handleForgotPassword = () => {
-    console.log('Forgot Password');
-    const authInstance = getAuth();
-    sendPasswordResetEmail(authInstance, email)
-      .then(() => {
-        console.log('Password reset email sent');
-      })
-      .catch((error) => {
-        console.log('Error sending password reset email:', error);
-      });
+  //   console.log('Forgot Password');
+  //   const authInstance = getAuth();
+  //   sendPasswordResetEmail(authInstance, email)
+  //     .then(() => {
+  //       console.log('Password reset email sent');
+  //     })
+  //     .catch((error) => {
+  //       console.log('Error sending password reset email:', error);
+  //     });
   };
   const handleLogin = () => {
     if (isFormValid()) {
@@ -48,20 +48,20 @@ const LoginScreen = ({ navigation }) => {
         password,
       });
 
-      const authInstance = getAuth();
+      // const authInstance = getAuth();
 
-      signInWithEmailAndPassword(authInstance, email, password)
-        .then((userCredential) => {
-          const user = userCredential.user;
-          console.log(user);
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          console.log(error, errorMessage);
-        });
+      // signInWithEmailAndPassword(authInstance, email, password)
+      //   .then((userCredential) => {
+      //     const user = userCredential.user;
+      //     console.log(user);
+      //   })
+      //   .catch((error) => {
+      //     const errorCode = error.code;
+      //     const errorMessage = error.message;
+      //     console.log(error, errorMessage);
+      //   });
 
-      navigation.navigate('Home');
+      // navigation.navigate('Home');
     } else {
       console.log('Please fill in all required fields');
     }
