@@ -128,7 +128,7 @@ const SearchScreen = ({ navigation }) => {
         onConfirm={handleDateConfirm1}
         onCancel={hideDatePicker1}
       />
-
+  
       <DateTimePickerModal
         isVisible={isDatePickerVisible2}
         mode="date"
