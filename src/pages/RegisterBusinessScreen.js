@@ -99,13 +99,18 @@ const RegisterBusinessScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    fetchCategories();
+    //fetchCategories();
     LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
   }, []);
 
   const handleCategoryPress = (item) => {
     setSelectedCategories(item);
   };
+
+  const items = [ 
+    {label: "שיער",value:"שיער"},
+    {label: "טיפול",value:"טיפול"}
+  ]
   
 
   return (
@@ -150,7 +155,7 @@ const RegisterBusinessScreen = ({ navigation }) => {
         />
         
           <DropDownPicker
-            items={categories.map((category) => ({ label: category, value: category }))}
+            items= {items}//{categories.map((category) => ({ label: category, value: category }))}
             open= {isOpen}
             setOpen={()=> setIsOpen(!isOpen)}
             value={currentValue}
