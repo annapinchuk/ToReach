@@ -24,16 +24,16 @@ const pageToIconName = {
 };
 
 const businessPages = {
-    'פרופיל': ProfileBusinessScreen,
     'יומן': CalendarBusinessScreen,
     'סטטיסטיקות': StatisticsBusinessScreen,
+    'פרופיל': ProfileBusinessScreen,
 };
 
 const clientPages = {
-    'פרופיל': ProfileClientScreen,
+    'חיפוש': HomeUserScreen,
     'יומן': CalendarClientScreen,
     'סטטיסטיקות': StatisticsClientScreen,
-    'חיפוש': HomeUserScreen,
+    'פרופיל': ProfileClientScreen,
 };
 
 
@@ -52,6 +52,14 @@ const Navbar = ({ route, navigation }) => {
 
             // Clone the icon element and set the color
             return React.cloneElement(iconElement, { color: iconColor });
+        },
+        headerStyle: {
+            backgroundColor: '#5B8BDF',
+            elevation: 0, // remove shadow on Android
+            shadowOpacity: 0, // remove shadow on iOS
+        },
+        headerTitleStyle: {
+            color: 'white'
         },
         tabBarStyle: {
             backgroundColor: '#81A5E7',
@@ -72,7 +80,7 @@ const Navbar = ({ route, navigation }) => {
     };
 
     return (
-        <Tab.Navigator initialRouteName='a' screenOptions={screenOptions}>
+        <Tab.Navigator initialRouteName='חיפוש' screenOptions={screenOptions}>
             {renderPages()}
         </Tab.Navigator>
     );
