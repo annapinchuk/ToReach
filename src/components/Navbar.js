@@ -1,5 +1,4 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { NavigationContainer } from '@react-navigation/native';
 
 // import icons
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -15,43 +14,36 @@ import ProfileClientScreen from '../pages/ProfileClientScreen';
 import CalendarClientScreen from '../pages/CalendarClientScreen';
 import StatisticsClientScreen from '../pages/StatisticsClientScreen';
 import HomeUserScreen from '../pages/HomeUserScreen';
-import SearchScreen from '../pages/SearchScreen'
 import React from 'react';
 
 const pageToIconName = {
-    'profile': <MaterialCommunityIcons name="account" size={30} color="white" />,
-    'calendar': <FontAwesome name="calendar" size={24} color="white" />,
-    'HomeUserScreen': <AntDesign name="search1" size={24} color="white" />,
-    'SearchScreen': <AntDesign name="search1" size={24} color="white" />,
-    'statistics': <Ionicons name="stats-chart" size={24} color="white" />,
+    'פרופיל': <MaterialCommunityIcons name="account" size={30} color="white" />,
+    'יומן': <FontAwesome name="calendar" size={24} color="white" />,
+    'חיפוש': <AntDesign name="search1" size={24} color="white" />,
+    'סטטיסטיקות': <Ionicons name="stats-chart" size={24} color="white" />,
 };
 
 const businessPages = {
-    'profile': ProfileBusinessScreen,
-    'calendar': CalendarBusinessScreen,
-    'statistics': StatisticsBusinessScreen,
+    'פרופיל': ProfileBusinessScreen,
+    'יומן': CalendarBusinessScreen,
+    'סטטיסטיקות': StatisticsBusinessScreen,
 };
 
 const clientPages = {
-    'profile': ProfileClientScreen,
-    'calendar': CalendarClientScreen,
-    // 'חיפוש': SearchScreen,
-    'statistics': StatisticsClientScreen,
-    'HomeUserScreen': HomeUserScreen,
-    'SearchScreen': SearchScreen,
+    'פרופיל': ProfileClientScreen,
+    'יומן': CalendarClientScreen,
+    'סטטיסטיקות': StatisticsClientScreen,
+    'חיפוש': HomeUserScreen,
 };
 
 
-const Navbar = ({ isClient }) => {
+const Navbar = ({ route, navigation }) => {
 
+    const isClient = route.params.isClient;
     const Tab = createBottomTabNavigator();
 
     const screenOptions = ({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
-
-            // return iconName = `${pageToIconName[route.name]}${focused ? '-out' : ''}`;
-            // return <Ionicons name={iconName} size={size} color={color} />;
-            // return pageToIconName[route.name];
 
             const iconElement = pageToIconName[route.name];
 
@@ -59,7 +51,7 @@ const Navbar = ({ isClient }) => {
             const iconColor = focused ? '#2C64C6' : 'white';
 
             // Clone the icon element and set the color
-            return React.cloneElement(iconElement, { color: iconColor});
+            return React.cloneElement(iconElement, { color: iconColor });
         },
         tabBarStyle: {
             backgroundColor: '#81A5E7',
@@ -75,18 +67,14 @@ const Navbar = ({ isClient }) => {
     const renderPages = () => {
         const pages = isClient ? clientPages : businessPages;
         return Object.keys(pages).map(page => {
-            // return <Tab.Screen key={page} name={page} component={pages[page]} options={{ tabBarIcon: ({ }) => pageToIconName[page] }} />
             return <Tab.Screen key={page} name={page} component={pages[page]} />
-        }
-        )
+        })
     };
 
     return (
-        <NavigationContainer>
-            <Tab.Navigator initialRouteName='a' screenOptions={screenOptions}>
-                {renderPages()}
-            </Tab.Navigator>
-        </NavigationContainer>
+        <Tab.Navigator initialRouteName='a' screenOptions={screenOptions}>
+            {renderPages()}
+        </Tab.Navigator>
     );
 }
 
