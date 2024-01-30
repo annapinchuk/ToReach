@@ -88,7 +88,7 @@ const NavigationButton = ({ destination }) => {
         <TouchableOpacity onPress={openAppChooser}>
             {/* Button to open the app chooser */}
             <View style={NavigationButtonStyles.button}>
-                <Text style={{ color: 'white' }}>ניווט</Text>
+                <Text style={NavigationButton.buttonText}>ניווט</Text>
                 <MaterialCommunityIcons name="map-marker-outline" size={24} color="white" />
             </View>
             {/* Render the app chooser modal for Android */}

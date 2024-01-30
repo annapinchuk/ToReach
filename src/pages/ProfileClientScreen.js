@@ -43,6 +43,7 @@ const ProfilePage = ({navigation}) => {
                     style={styles.input}
                     value={email}
                     onChangeText={(text) => setEmail(text)}
+                    keyboardType="email-address"
                 />
             ) : (
                 <Text style={styles.text}>{email}</Text>
