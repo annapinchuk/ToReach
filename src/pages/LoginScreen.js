@@ -31,15 +31,15 @@ const LoginScreen = ({ navigation }) => {
   };
 
   const handleForgotPassword = () => {
-  //   console.log('Forgot Password');
-  //   const authInstance = getAuth();
-  //   sendPasswordResetEmail(authInstance, email)
-  //     .then(() => {
-  //       console.log('Password reset email sent');
-  //     })
-  //     .catch((error) => {
-  //       console.log('Error sending password reset email:', error);
-  //     });
+    //   console.log('Forgot Password');
+    //   const authInstance = getAuth();
+    //   sendPasswordResetEmail(authInstance, email)
+    //     .then(() => {
+    //       console.log('Password reset email sent');
+    //     })
+    //     .catch((error) => {
+    //       console.log('Error sending password reset email:', error);
+    //     });
   };
   const handleLogin = () => {
     if (isFormValid()) {
@@ -61,7 +61,7 @@ const LoginScreen = ({ navigation }) => {
       //     console.log(error, errorMessage);
       //   });
 
-      // navigation.navigate('Home');
+      navigation.navigate('Navbar', ({ isClient: true }));
     } else {
       console.log('Please fill in all required fields');
     }
@@ -80,13 +80,13 @@ const LoginScreen = ({ navigation }) => {
         value={email}
         onChangeText={(text) => setEmail(text)}
       />
-        <TextInput
-          style={styles.input}
-          placeholder="סיסמא *"
-          onChangeText={(text) => setPassword(text)}
-          value={password}
-          secureTextEntry
-        />
+      <TextInput
+        style={styles.input}
+        placeholder="סיסמא *"
+        onChangeText={(text) => setPassword(text)}
+        value={password}
+        secureTextEntry
+      />
       <View style={styles.inputContainer}>
         <Pressable onPress={handleForgotPassword}>
           <Text style={styles.ForgotPassword}>שכחתי סיסמא</Text>
@@ -107,8 +107,8 @@ const LoginScreen = ({ navigation }) => {
       <Modal visible={showModal} animationType="slide">
         <View style={styles.modalContainer}>
           <Image
-          style={styles.logo}
-          source={require('../../Images/logow.jpeg')}
+            style={styles.logo}
+            source={require('../../Images/logow.jpeg')}
           />
           <Pressable style={styles.modalButton} onPress={() => handleRegister('client')}>
             <Text style={styles.modalButtonText}>הרשמה</Text>
