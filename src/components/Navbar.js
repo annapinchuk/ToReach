@@ -15,6 +15,7 @@ import CalendarClientScreen from '../pages/CalendarClientScreen';
 import StatisticsClientScreen from '../pages/StatisticsClientScreen';
 import HomeUserScreen from '../pages/HomeUserScreen';
 import React from 'react';
+import { Image } from 'react-native';
 
 const pageToIconName = {
     'פרופיל': <MaterialCommunityIcons name="account" size={30} color="white" />,
@@ -57,6 +58,7 @@ const Navbar = ({ route, navigation }) => {
             backgroundColor: '#5B8BDF',
             elevation: 0, // remove shadow on Android
             shadowOpacity: 0, // remove shadow on iOS
+            height: 125 ,
         },
         headerTitleStyle: {
             color: 'white'
@@ -69,6 +71,14 @@ const Navbar = ({ route, navigation }) => {
         tabBarActiveTintColor: '#2C64C6',
         tabBarInactiveTintColor: 'white',
         labelStyle: { paddingBottom: 10, fontSize: 10 },
+        headerRight: () => <Image
+            style={{
+                width: 75, // Adjust the width as needed
+                height: 75, // Adjust the height as needed
+                resizeMode: 'contain', // Options: 'cover', 'contain', 'stretch', 'repeat', 'center'
+            }}
+            source={require('../../Images/logo.jpg')}
+        />
 
     });
 

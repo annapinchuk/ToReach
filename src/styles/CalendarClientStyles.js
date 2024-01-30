@@ -4,7 +4,8 @@ export const styles = StyleSheet.create({
     container: {
         backgroundColor: '#5B8BDF',
         alignItems: 'center',
-        paddingVertical: 40,
+        paddingBottom: 40,
+        paddingTop: 20,
         gap: 15,
     },
     card: {
