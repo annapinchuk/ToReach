@@ -1,84 +1,144 @@
 import React from 'react';
 import { View, Text, Pressable, Image, ScrollView ,TextInput } from 'react-native';
-import { styles } from '../styles/HomeUserScreenStyles';
-import { MaterialCommunityIcons, FontAwesome, FontAwesome5  } from '@expo/vector-icons';
+import { styles as styles } from '../styles/HomeUserScreenStyles';
+import { styles as ResultScreenStyles } from '../styles/ResultScreenStyles.js';
+import ResultCard from '../components/ResultCard';
+import { MaterialCommunityIcons, FontAwesome, FontAwesome5,Feather  } from '@expo/vector-icons';
+const data = [
+  {
+      id: 124,
+      appointmentName: 'תספורת',
+      businessName: "Daniel's hair",
 
+  },
+  {
+      id: 125,
+      appointmentName: 'תזונאית',
+      businessName: "Shlomo's gym",
+
+  },
+  {
+      id: 126,
+      appointmentName: 'תספורת',
+      businessName: "Daniel's hair",
+  
+  },
+  {
+      id: 127,
+      appointmentName: 'תספורת',
+      businessName: "Daniel's hair",
+
+  },
+  {
+      id: 128,
+      appointmentName: 'תספורת',
+      businessName: "Daniel's hair",
+  },
+];
 const HomeUserScreen = ({ navigation }) => {
   return (
 
     <View style={styles.container}>
-      <Image style={styles.logo} source={require('../../Images/logo.jpg')} />
 
       <Pressable style={[styles.button, styles.pressableWithMargin]} onPress={() => navigation.navigate('SearchScreen')}>
         <View style={styles.buttonContent}>
+
           <Text style={styles.buttonText}><FontAwesome name="search" size={24} color="white" />                                      חיפוש תור</Text>
         </View>
       </Pressable>
 
       
+  <View style={{ height: 150 }}>
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={true}
+      contentContainerStyle={styles.iconScrollView}
+      contentOffset={{ x: 5, y: -15 }} // Adjust the value based on your needs
+    >
 
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={true}
-        contentContainerStyle={styles.iconScrollView}
-        contentOffset={{ x: 600, y: -33 }} // Adjust the value based on your needs
-      >
+      <Pressable onPress={() => navigation.navigate('ResultScreen')} style={styles.container_icon}>
+        <View style={[styles.iconContainer_icon, { alignItems: 'center' }]}>
+          <FontAwesome name="circle-thin" size={100} color="white" />
+          <FontAwesome5 name="hands" size={40} color="white" style={styles.icon_icon} />
+        </View>
+        <Text style={[styles.iconText, { textAlign: 'center' }]}>טיפול</Text>
+      </Pressable>
 
-        <Pressable style={[styles.iconTextContainer, styles.pressableWithMargin]} onPress={() => navigation.navigate('LoginScreen')}>
-          <FontAwesome5 name="hands" size={60} color="white" />
-          <Text style={styles.iconText}>טיפול</Text>
-        </Pressable>
+      <Pressable onPress={() => navigation.navigate('ResultScreen')} style={styles.container_icon}>
+        <View style={[styles.iconContainer_icon, { alignItems: 'center' }]}>
+          <FontAwesome name="circle-thin" size={100} color="white" />
+          <FontAwesome5 name="dog" size={40} color="white" style={styles.icon_icon} />
+        </View>
+        <Text style={[styles.iconText, { textAlign: 'center' }]}>חיות</Text>
+      </Pressable>
 
         
-        <Pressable style={[styles.iconTextContainer, styles.pressableWithMargin]} onPress={() => navigation.navigate('LoginScreen')}>
-        <FontAwesome5 name="dog" size={60} color="white" />
-          <Text style={styles.iconText}>חיות</Text>
-        </Pressable>
+      <Pressable onPress={() => navigation.navigate('ResultScreen')} style={styles.container_icon}>
+        <View style={[styles.iconContainer_icon, { alignItems: 'center' }]}>
+          <FontAwesome name="circle-thin" size={100} color="white" />
+          <MaterialCommunityIcons name="hammer-wrench" size={50} color="white" style={styles.icon_icon} />
+        </View>
+        <Text style={[styles.iconText, { textAlign: 'center' }]}>טכנאים</Text>
+      </Pressable>
 
-        
+      <Pressable onPress={() => navigation.navigate('ResultScreen')} style={styles.container_icon}>
+        <View style={[styles.iconContainer_icon, { alignItems: 'center' }]}>
+          <FontAwesome name="circle-thin" size={100} color="white" />
+          <MaterialCommunityIcons name="hair-dryer-outline" size={50} color="white" style={styles.icon_icon} />
+        </View>
+        <Text style={[styles.iconText, { textAlign: 'center' }]}>מספרה</Text>
+      </Pressable>
 
-        <Pressable style={[styles.iconTextContainer, styles.pressableWithMargin]} onPress={() => navigation.navigate('LoginScreen')}>
-        <MaterialCommunityIcons name="hammer-wrench" size={60} color="white" />
-          <Text style={styles.iconText}>טכנאים</Text>
-        </Pressable>
+      <Pressable onPress={() => navigation.navigate('ResultScreen')} style={styles.container_icon}>
+        <View style={[styles.iconContainer_icon, { alignItems: 'center' }]}>
+          <FontAwesome name="circle-thin" size={100} color="white" />
+          <MaterialCommunityIcons name="broom" size={50} color="white" style={styles.icon_icon} />
+        </View>
+        <Text style={[styles.iconText, { textAlign: 'center' }]}>נקיון</Text>
+      </Pressable>
 
-        <Pressable style={[styles.iconTextContainer, styles.pressableWithMargin]} onPress={() => navigation.navigate('LoginScreen')}>
-          <MaterialCommunityIcons name="hair-dryer-outline" size={60} color="white" />
-          <Text style={styles.iconText}>מספרה</Text>
-        </Pressable>
+      <Pressable onPress={() => navigation.navigate('ResultScreen')} style={styles.container_icon}>
+        <View style={[styles.iconContainer_icon, { alignItems: 'center' }]}>
+          <FontAwesome name="circle-thin" size={100} color="white" />
+          <FontAwesome name="birthday-cake" size={40} color="white" style={styles.icon_icon}/>
+        </View>
+        <Text style={[styles.iconText, { textAlign: 'center' }]}>ימי הולדת</Text>
+      </Pressable>
 
-        <Pressable style={[styles.iconTextContainer, styles.pressableWithMargin]} onPress={() => navigation.navigate('LoginScreen')}>
-        <FontAwesome name="magic" size={60} color="white" />
-          <Text style={styles.iconText}>הפעלות</Text>
-        </Pressable>
+      <Pressable onPress={() => navigation.navigate('ResultScreen')} style={styles.container_icon}>
+        <View style={[styles.iconContainer_icon, { alignItems: 'center' }]}>
+          <FontAwesome name="circle-thin" size={100} color="white" />
+          <MaterialCommunityIcons name="weight-lifter" size={50} color="white" style={styles.icon_icon}/>
+        </View>
+        <Text style={[styles.iconText, { textAlign: 'center' }]}>כושר</Text>
+      </Pressable>
 
-        <Pressable style={[styles.iconTextContainer, styles.pressableWithMargin]} onPress={() => navigation.navigate('LoginScreen')}>
-        <MaterialCommunityIcons name="broom" size={60} color="white" />
-          <Text style={styles.iconText}>נקיון</Text>
-        </Pressable>
+      <Pressable onPress={() => navigation.navigate('ResultScreen')} style={styles.container_icon}>
+        <View style={[styles.iconContainer_icon, { alignItems: 'center' }]}>
+          <FontAwesome name="circle-thin" size={100} color="white" />
+          <MaterialCommunityIcons name="silverware-fork-knife" size={50} color="white" style={styles.icon_icon}/>
+        </View>
+        <Text style={[styles.iconText, { textAlign: 'center' }]}>אוכל</Text>
+      </Pressable>
 
-        <Pressable style={[styles.iconTextContainer, styles.pressableWithMargin]} onPress={() => navigation.navigate('LoginScreen')}>
-          <FontAwesome name="birthday-cake" size={60} color="white" />
-          <Text style={styles.iconText}>ימי הולדת</Text>
-        </Pressable>
+      <Pressable onPress={() => navigation.navigate('ResultScreen')} style={styles.container_icon}>
+        <View style={[styles.iconContainer_icon, { alignItems: 'center' }]}>
+          <FontAwesome name="circle-thin" size={100} color="white" />
+          <MaterialCommunityIcons name="face-woman-shimmer" size={50} color="white" style={styles.icon_icon}/>
+        </View>
+        <Text style={[styles.iconText, { textAlign: 'center' }]}>קוסמטיקה</Text>
+      </Pressable>
 
-        <Pressable style={[styles.iconTextContainer, styles.pressableWithMargin]} onPress={() => navigation.navigate('LoginScreen')}>
-          <MaterialCommunityIcons name="weight-lifter" size={60} color="white" />
-          <Text style={styles.iconText}>כושר</Text>
-        </Pressable>
-
-        <Pressable style={[styles.iconTextContainer, styles.pressableWithMargin]} onPress={() => navigation.navigate('LoginScreen')}>
-          <MaterialCommunityIcons name="silverware-fork-knife" size={60} color="white" />
-          <Text style={styles.iconText}>אוכל</Text>
-        </Pressable>
-
-        <Pressable style={[styles.iconTextContainer, styles.pressableWithMargin]} onPress={() => navigation.navigate('LoginScreen')}>
-          <MaterialCommunityIcons name="face-woman-shimmer" size={60} color="white" />
-          <Text style={styles.iconText}>קוסמטיקה</Text>
-        </Pressable>
-        
         
       </ScrollView>
+
+      </View>
+      <Text style={[styles.iconText, {color:'black'}]}>אולי זה יכול לעניין אותך</Text>
+     <ScrollView contentOffset={{ x: 0, y: 10 }} >
+            <View style={ResultScreenStyles.container}>
+                {data.map(appointment => <ResultCard key={appointment.id} appointment={appointment} />)}
+            </View>
+        </ScrollView>
     </View>
   );
 };
