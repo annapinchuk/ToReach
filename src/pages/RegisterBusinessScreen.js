@@ -28,14 +28,19 @@ const RegisterBusinessScreen = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [businessName, setBusinessName] = useState('');
   const [businessNumber, setBusinessNumber] = useState('');
-  const [city, setCity] = useState('');
   const [businessDescription, setBusinessDescription] = useState('');
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isOpen,setIsOpen] = useState(false);
-  const [currentValue,setCurrentValue] = useState([]);
+  const [isLoadingCategories, setIsLoadingCategories] = useState(true);
+  const [isOpenCategories,setIsOpenCategories] = useState(false);
+  const [currentValueCategories,setCurrentValueCategories] = useState([]);
+  
+  const [selectedCities, setSelectedCities] = useState([]);
+  const [Cities, setCities] = useState([]);
+  const [isLoadingCities, setIsLoadingCities] = useState(true);
+  const [isOpenCities,setIsOpenCities] = useState(false);
+  const [currentValueCities,setCurrentValueCities] = useState([]);
 
   const areRequiredFieldsMissing = () => {
     return (
@@ -43,7 +48,7 @@ const RegisterBusinessScreen = ({ navigation }) => {
       password.trim() === '' ||
       businessName.trim() === '' ||
       businessNumber.trim() === '' ||
-      city.trim() === '' ||
+      selectedCities.length === 0 ||
       selectedCategories.length === 0
       
     );
@@ -106,12 +111,17 @@ const RegisterBusinessScreen = ({ navigation }) => {
   const handleCategoryPress = (item) => {
     setSelectedCategories(item);
   };
-
+  const handleCityPress = (item) => {
+    setSelectedCities(item);
+  };
   const items = [ 
     {label: "שיער",value:"שיער"},
     {label: "טיפול",value:"טיפול"}
   ]
-  
+  const cities = [ 
+    {label: "אריאל",value:"אריאל"},
+    {label: "חיפה",value:"חיפה"}
+  ]
 
   return (
     <ScrollView contentContainerStyle={registerStyles.scrollContainer}
@@ -154,12 +164,12 @@ const RegisterBusinessScreen = ({ navigation }) => {
           keyboardType="numeric"
         />
         
-          <DropDownPicker
+        <DropDownPicker
             items= {items}//{categories.map((category) => ({ label: category, value: category }))}
-            open= {isOpen}
-            setOpen={()=> setIsOpen(!isOpen)}
-            value={currentValue}
-            setValue={(val)=>setCurrentValue(val)}
+            open= {isOpenCategories}
+            setOpen={()=> setIsOpenCategories(!isOpenCategories)}
+            value={currentValueCategories}
+            setValue={(val)=>setCurrentValueCategories(val)}
             dropDownDirection='DOWN'
             multiple= {true}
             min={1}
@@ -171,7 +181,7 @@ const RegisterBusinessScreen = ({ navigation }) => {
             badgeTextStyle = {{color : "white"}}
             placeholder="תחום עסק *"
             placeholderStyle = {registerStyles.placeHolderStyle}
-            containerStyle={registerStyles.dropdownContainer}
+            containerStyle={[registerStyles.dropdownContainer,{zIndex:3}]}
             style={registerStyles.dropdownStyle}
             itemStyle={registerStyles.dropdownItemStyle}
             dropDownStyle={registerStyles.dropdownListStyle}
@@ -180,13 +190,32 @@ const RegisterBusinessScreen = ({ navigation }) => {
             onSelectItem={(item) => handleCategoryPress(item)}
           />
         
-        <TextInput
-          style={registerStyles.input}
-          placeholder=" עיר *"
-          placeholderTextColor={registerStyles.placeHolderStyle.color}
-          value={city}
-          onChangeText={(text) => setCity(text)}
-        />
+        <DropDownPicker
+            items= {cities}//{categories.map((category) => ({ label: category, value: category }))}
+            open= {isOpenCities}
+            setOpen={()=> setIsOpenCities(!isOpenCities)}
+            value={currentValueCities}
+            setValue={(val)=>setCurrentValueCities(val)}
+            dropDownDirection='DOWN'
+            multiple= {true}
+            min={1}
+            max ={4} //how mant do we allow?
+            showArrowIcon ={false}
+            mode= 'BADGE'
+            badgeColors={'#2C64C6'}
+            badgeDotColors = {['white']}
+            badgeTextStyle = {{color : "white"}}
+            placeholder=" עיר *"
+            placeholderStyle = {registerStyles.placeHolderStyle}
+            containerStyle={registerStyles.dropdownContainer}
+            style={registerStyles.dropdownStyle}
+            itemStyle={registerStyles.dropdownItemStyle}
+            dropDownStyle={registerStyles.dropdownListStyle}
+            searchable={true} // Add this line for searchable
+            searchPlaceholder="חיפוש..."
+            onSelectItem={(item) => handleCityPress(item)}
+          />
+        
 
         <TextInput
           style={registerStyles.input}
@@ -218,7 +247,7 @@ const RegisterBusinessScreen = ({ navigation }) => {
         <View style={registerStyles.loginContainer}>
           <Pressable
             style={registerStyles.loginButton}
-            onPress={() => navigation.navigate('LoginScreen')}
+            onPress={() => navigation.navigate('BusinessPage')}
           >
             <Text style={registerStyles.loginText}>התחברות</Text>
           </Pressable>

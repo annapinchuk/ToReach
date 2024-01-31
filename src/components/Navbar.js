@@ -14,6 +14,7 @@ import ProfileClientScreen from '../pages/ProfileClientScreen';
 import CalendarClientScreen from '../pages/CalendarClientScreen';
 import StatisticsClientScreen from '../pages/StatisticsClientScreen';
 import HomeUserScreen from '../pages/HomeUserScreen';
+import SearchScreen from '../pages/SearchScreen'
 import React from 'react';
 import { Image } from 'react-native';
 
@@ -25,16 +26,18 @@ const pageToIconName = {
 };
 
 const businessPages = {
-    'יומן': CalendarBusinessScreen,
-    'סטטיסטיקות': StatisticsBusinessScreen,
-    'פרופיל': ProfileBusinessScreen,
+    'profile': ProfileBusinessScreen,
+    'calendar': CalendarBusinessScreen,
+    'statistics': StatisticsBusinessScreen,
 };
 
 const clientPages = {
-    'חיפוש': HomeUserScreen,
-    'יומן': CalendarClientScreen,
-    'סטטיסטיקות': StatisticsClientScreen,
-    'פרופיל': ProfileClientScreen,
+    'profile': ProfileClientScreen,
+    'calendar': CalendarClientScreen,
+    // 'חיפוש': SearchScreen,
+    'statistics': StatisticsClientScreen,
+    'HomeUserScreen': HomeUserScreen,
+    'SearchScreen': SearchScreen,
 };
 
 
