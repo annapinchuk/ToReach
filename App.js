@@ -6,6 +6,7 @@ import LoginScreen from './src/pages/LoginScreen';
 import RegisterBusinessScreen from './src/pages/RegisterBusinessScreen';
 import RegisterClientScreen from './src/pages/RegisterClientScreen';
 import SearchScreen from './src/pages/SearchScreen';
+import ResultScreen from './src/pages/ResultScreen';
 import { NavigationContainer } from '@react-navigation/native';
 
 // always RTL
@@ -24,6 +25,7 @@ const App = () => {
         <Stack.Screen name="RegisterBusinessScreen" component={RegisterBusinessScreen} options={{ title: 'הרשמה לעסק' }} />
         <Stack.Screen name="RegisterClientScreen" component={RegisterClientScreen} options={{ title: 'הרשמה' }} />
         <Stack.Screen name="SearchScreen" component={SearchScreen} options={{ title: 'חיפוש' }} />
+        <Stack.Screen name="ResultScreen" component={ResultScreen} options={{ title: 'תוצאות' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

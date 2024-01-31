@@ -8,7 +8,17 @@ export const styles = StyleSheet.create({
         alignItems: 'center',
         paddingTop: 40, // Add padding to give some space at the top
         flexDirection: 'column',
-        gap: 20
+        gap: 17
+        
+    },
+    container_text: {
+      flex: 1,
+      justifyContent: 'flex-start', // Align items at the top
+      backgroundColor: '#5B8BDF',
+      alignItems: 'right',
+      paddingTop: 40, // Add padding to give some space at the top
+      flexDirection: 'column',
+      gap: 20
     },
     logo: {
         width: 100, // Adjust the width as needed
@@ -97,10 +107,10 @@ export const styles = StyleSheet.create({
         marginBottom: 16,
         width: '80%',
         borderColor: '#2C64C6',
-        borderRadius: 10,
+        borderRadius: 20,
         backgroundColor: 'white',
         borderWidth: 3,
-        paddingLeft: 8,
+        paddingLeft: 10,
         paddingRight: 8,
         justifyContent: 'center',
         alignItems: 'flex-end',
@@ -138,9 +148,9 @@ export const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: '#2C64C6',
-        borderRadius: 10,
-        marginRight: 8,
-        marginBottom: 8,
+        borderRadius: 20,
+        marginRight: 15,
+        marginBottom: 15,
       },
     
       selectedCategoryText: {
@@ -151,15 +161,90 @@ export const styles = StyleSheet.create({
     
       removeCategoryButton: {
         color: 'white',
-        marginLeft: 5,
-        marginRight: 5,
+        marginLeft: 50,
+        marginRight: 50,
         fontWeight: 'bold',
       },
     
       chooseButton: {
         color: 'blue',
-      }
-     
-     
+      },
+      container_icon: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 20
+      },
+      iconContainer_icon: {
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
+      icon_icon: {
+        position: 'absolute',
+        alignItems: 'center',
+        justifyContent: 'center',
+      },
+      iconScrollView: {
+        flexGrow: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingHorizontal: 50, // Adjust padding as needed
+        height: 120,
+        paddingVertical: -100
+      },
+      searchtext:{
+        fontWeight: 'bold',
+        fontSize: 20,
+        textAlign: 'center',
+        color: 'white'
+      },
+      
+  loginContainer: {
+    flexDirection: 'row', // Ensure items are in the same row
+    alignItems: 'center', // Align items vertically in the center
+    marginTop: 16,
+  },
+
+  loginText: {
+    color: 'white',
+    fontSize: 16,
+    marginRight: 8, // Add margin to separate text and button
+     marginBottom: 12,
+  },
+  dropdownContainer: {
+    height: 40,
+    width: '80%',
+    marginBottom: 16,
+    textAlign: 'right',
+    zIndex: 2,
+  },
+  dropdownStyle: {
+    backgroundColor: 'white',
+    borderColor: '#2C64C6',
+    borderWidth: 3,
+    borderRadius: 10,
+    textAlign: 'right',
     
-})
+    
+  },
+  dropdownItemStyle: {
+    justifyContent: 'flex-start',
+    textAlign: 'right',
+  },
+  dropdownListStyle: {
+    borderColor: '#2C64C6',
+    borderWidth: 3,
+    textAlign: 'right',
+  },
+  placeHolderStyle :{
+    color: "#A9A9A9",
+    textAlign: 'right'
+  },
+  datePickerContainer: {
+    marginup: 30, // Adjust this value as needed for the desired spacing
+  },
+  
+
+
+});
+
+     
