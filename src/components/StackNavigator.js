@@ -6,6 +6,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from '../pages/LoginScreen';
 import RegisterBusinessScreen from '../pages/RegisterBusinessScreen';
 import RegisterClientScreen from '../pages/RegisterClientScreen';
+// import BusinessPage from '../pages/BusinessPage';
 // import HomeUserScreen from '../pages/HomeUserScreen';
 // import SearchScreen from '../pages/SearchScreen';
 
@@ -20,6 +21,7 @@ const StackNavigator = () => {
                 <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ title: 'התחברות' }} />
                 <Stack.Screen name="RegisterBusinessScreen" component={RegisterBusinessScreen} options={{ title: 'הרשמה לעסק' }} />
                 <Stack.Screen name="RegisterClientScreen" component={RegisterClientScreen} options={{ title: 'הרשמה' }} />
+                
                 {/* <Stack.Screen name="HomeUserScreen" component={HomeUserScreen} options={{ title: 'מסך בית משתמש' }} /> */}
                 {/* <Stack.Screen name="SearchScreen" component={SearchScreen} options={{title: 'חיפוש' }} /> */}
             </Stack.Navigator>

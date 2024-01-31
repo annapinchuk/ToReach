@@ -15,7 +15,8 @@ import ProfileClientScreen from '../pages/ProfileClientScreen';
 import CalendarClientScreen from '../pages/CalendarClientScreen';
 import StatisticsClientScreen from '../pages/StatisticsClientScreen';
 import HomeUserScreen from '../pages/HomeUserScreen';
-import SearchScreen from '../pages/SearchScreen'
+import SearchScreen from '../pages/SearchScreen';
+import BusinessPage from '../pages/BusinessPage';
 import React from 'react';
 
 const pageToIconName = {
@@ -28,13 +29,13 @@ const pageToIconName = {
 
 const businessPages = {
     'profile': ProfileBusinessScreen,
-    'calendar': CalendarBusinessScreen,
+    'calendar': BusinessPage,
     'statistics': StatisticsBusinessScreen,
 };
 
 const clientPages = {
     'profile': ProfileClientScreen,
-    'calendar': CalendarClientScreen,
+    'calendar': BusinessPage,
     // 'חיפוש': SearchScreen,
     'statistics': StatisticsClientScreen,
     'HomeUserScreen': HomeUserScreen,
