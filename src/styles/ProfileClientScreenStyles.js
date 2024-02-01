@@ -11,12 +11,14 @@ export const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
         marginTop: 8,
-        color: 'white'
+        color: 'white',
+        textAlign: 'left',
     },
     text: {
         color: 'white',
         fontSize: 16,
         marginTop: 8,
+        textAlign: 'right',
     },
     input: {
         fontSize: 16,

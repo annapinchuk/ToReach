@@ -27,6 +27,7 @@ const NavigationButton = ({ destination }) => {
     // Function to open the selected navigation app
     const openNavigationApp = (app) => {
         const url = NameToURL[app]
+        console.log(url)
 
         // Open the URL using the Linking module
         Linking.openURL(url)
@@ -45,11 +46,11 @@ const NavigationButton = ({ destination }) => {
                 (buttonIndex) => {
                     // Handle the selected app based on the button index
                     if (buttonIndex === 1) {
-                        openNavigationApp('waze');
+                        openNavigationApp('Waze');
                     } else if (buttonIndex === 2) {
-                        openNavigationApp('google-maps');
+                        openNavigationApp('Google Maps');
                     } else if (buttonIndex === 3) {
-                        openNavigationApp('moovit');
+                        openNavigationApp('Moovit');
                     }
                 }
             );
@@ -88,7 +89,7 @@ const NavigationButton = ({ destination }) => {
         <TouchableOpacity onPress={openAppChooser}>
             {/* Button to open the app chooser */}
             <View style={NavigationButtonStyles.button}>
-                <Text style={NavigationButton.buttonText}>ניווט</Text>
+                <Text style={NavigationButtonStyles.buttonText}>ניווט</Text>
                 <MaterialCommunityIcons name="map-marker-outline" size={24} color="white" />
             </View>
             {/* Render the app chooser modal for Android */}

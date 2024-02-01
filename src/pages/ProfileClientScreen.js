@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Pressable } from 'react-native';
 import { styles } from '../styles/ProfileClientScreenStyles';
 
-const ProfilePage = ({navigation}) => {
+const ProfilePage = ({ navigation, businessID}) => {
     // State to manage user information
     const [username, setUsername] = useState('JohnDoe');
     const [email, setEmail] = useState('john.doe@example.com');
@@ -20,7 +20,7 @@ const ProfilePage = ({navigation}) => {
 
     const handleLogout = () => {
         // FIREBASE CONNECTION
-        // navigation.navigate('LoginScreen')
+        navigation.navigate('LoginScreen')
     };
 
     return (
