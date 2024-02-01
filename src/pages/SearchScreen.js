@@ -3,7 +3,7 @@ import { View, TextInput, Text, Modal, FlatList, Image, LogBox, Pressable, Touch
 import { styles } from '../styles/HomeUserScreenStyles';
 import { EvilIcons, FontAwesome } from '@expo/vector-icons';
 import DropDownPicker from 'react-native-dropdown-picker';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DatePicker from '../components/DatePicker';
 
 const categories_data = [
   { label: "שיער", value: "שיער" },
@@ -49,7 +49,7 @@ const SearchScreen = ({ navigation }) => {
     <TouchableWithoutFeedback onPress={() => { setIsOpenCity(false); setIsOpenCategories(false) }}>
       <View style={styles.container}>
         <Image style={styles.logo} source={require('../../Images/logo.jpg')} />
-        
+
         <Text style={[styles.searchtext, { textAlign: 'right' }]}>תחום עסק:</Text>
 
         <DropDownPicker
@@ -96,7 +96,7 @@ const SearchScreen = ({ navigation }) => {
           badgeTextStyle={{ color: "white" }}
           placeholder="בחר"
           placeholderStyle={styles.placeHolderStyle}
-          containerStyle={[styles.dropdownContainer,{ zIndex: isOpenCity ? 1 : 0 }]}
+          containerStyle={[styles.dropdownContainer, { zIndex: isOpenCity ? 1 : 0 }]}
           style={[styles.dropdownStyle, { zIndex: isOpenCity ? 1 : 0 }]}
           itemStyle={styles.dropdownItemStyle}
           dropDownStyle={styles.dropdownListStyle}
@@ -108,27 +108,17 @@ const SearchScreen = ({ navigation }) => {
         <View style={styles.rowContainer}>
           <View>
             <Text style={styles.searchtext}>מתאריך:</Text>
-            <DateTimePicker
-              value={selectedDate2}
-              mode="date"
-              display="default"
-            //   onChange={(event, selectedDate) => setSelectedDate2(selectedDate)}
-            />
+            <DatePicker date={selectedDate1} setDate={setSelectedDate1} />
           </View>
-        
+
           <View>
             <Text style={styles.searchtext}>ועד תאריך:</Text>
-            <DateTimePicker
-              value={selectedDate1}
-              mode="date"
-              display="default"
-            //   onChange={(event, selectedDate) => setSelectedDate1(selectedDate)}
-            />
+            <DatePicker date={selectedDate2} setDate={setSelectedDate2} />
           </View>
         </View>
-    
+
         <Pressable
-        
+
           style={[styles.button, styles.pressableWithMargin]}
           onPress={() => navigation.navigate('ResultScreen')}
         >
