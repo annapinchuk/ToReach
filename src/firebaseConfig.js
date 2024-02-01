@@ -11,6 +11,7 @@ import { getFirestore } from '@firebase/firestore';
 // import {...} from "firebase/storage";
 
 // Initialize Firebase
+window.navigator.userAgent = "ReactNative";
 const firebaseConfig = {
     apiKey: "AIzaSyDGGIS4Pky6s69yJTm6KnotLZkQvnskmgE",
     authDomain: "toreach-32a88.firebaseapp.com",
