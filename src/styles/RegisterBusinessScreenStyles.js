@@ -62,7 +62,7 @@ export const registerStyles = StyleSheet.create({
     width: '80%',
     marginBottom: 16,
     textAlign: 'right',
-    zIndex: 2,
+    zIndex: 2,    
   },
   dropdownStyle: {
     backgroundColor: 'white',
@@ -70,21 +70,23 @@ export const registerStyles = StyleSheet.create({
     borderWidth: 3,
     borderRadius: 10,
     textAlign: 'right',
-    
-    
+    alignSelf: 'flex-end' 
   },
   dropdownItemStyle: {
     justifyContent: 'flex-start',
     textAlign: 'right',
+    
   },
   dropdownListStyle: {
     borderColor: '#2C64C6',
     borderWidth: 3,
     textAlign: 'right',
+    
   },
   placeHolderStyle :{
     color: "#A9A9A9",
-    textAlign: 'right'
+    textAlign: 'right',
+    alignSelf: 'flex-end'
   },
 
 

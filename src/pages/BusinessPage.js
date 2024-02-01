@@ -1,8 +1,9 @@
 import React from 'react';
 import { View, Text, Image, ScrollView,Pressable } from 'react-native';
 import { businessPageStyles } from '../styles/BusinessPageStyles';
+import { styles as ResultScreenStyles } from '../styles/ResultScreenStyles.js';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
-
+import TorType from '../components/TorType';
 const businessData = {
   name: "Mispara",
   description: "המספרה של דניאל היא מספרת גברים הממוקמת בשדרות יצחק רבין 8, באר שבע. ניתן למצוא במספרה של דניאל מגוון שירותי גילוח וספריית מוצרים לטיפוח השיער.",
@@ -20,13 +21,18 @@ const businessData = {
     },
     // Additional ratings can be added
   ],
-  torTypes: [
-    {
+  torTypes: 
+    [{
       duration: 90,
-      name: "לק",
+      name: " לק ידיים",
       price: 150,
     },
-  ],
+    {
+        duration: 90,
+        name: "לק",
+        price: 150,
+      },]
+  
 };
 
 const BusinessPage = ({navigation}) => {
@@ -70,6 +76,17 @@ const BusinessPage = ({navigation}) => {
         <Text style={businessPageStyles.label}>תיאור העסק: </Text>
         <Text style={businessPageStyles.description}>{businessData.description}</Text>
         
+        <ScrollView contentOffset={{ x: 0, y: 10 }} >
+            <View style={ResultScreenStyles.container}>
+                {businessData.torTypes && businessData.torTypes.length > 0 ? (
+                    businessData.torTypes.map(appointment => (
+                    <TorType key={appointment.name} appointment={appointment} />
+                    ))
+                ) : (
+                    <Text>No tor types available</Text>
+                )}
+            </View>
+        </ScrollView>
         <View style={businessPageStyles.torButtonContainer}>  
             <Pressable
             style={businessPageStyles.torButton}
@@ -78,6 +95,7 @@ const BusinessPage = ({navigation}) => {
             <Text style={businessPageStyles.buttonText}>תאם תור</Text>
             </Pressable>
         </View>
+
     </ScrollView>
   );
 };
