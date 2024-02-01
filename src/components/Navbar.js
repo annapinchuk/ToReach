@@ -35,6 +35,7 @@ const clientPages = {
     'יומן': CalendarClientScreen,
     'סטטיסטיקות': StatisticsClientScreen,
     'פרופיל': ProfileClientScreen,
+    
 };
 
 

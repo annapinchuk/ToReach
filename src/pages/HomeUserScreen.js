@@ -136,7 +136,7 @@ const HomeUserScreen = ({ navigation }) => {
       <Text style={[styles.iconText, {color:'black'}]}>אולי זה יכול לעניין אותך</Text>
      <ScrollView contentOffset={{ x: 0, y: 10 }} >
             <View style={ResultScreenStyles.container}>
-                {data.map(appointment => <ResultCard key={appointment.id} appointment={appointment} />)}
+                {data.map(appointment => <ResultCard  navigation= {navigation} key={appointment.id} appointment={appointment} />)}
             </View>
         </ScrollView>
     </View>

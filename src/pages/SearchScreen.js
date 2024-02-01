@@ -112,7 +112,7 @@ const SearchScreen = ({ navigation }) => {
               value={selectedDate2}
               mode="date"
               display="default"
-              onChange={(event, selectedDate) => setSelectedDate2(selectedDate)}
+            //   onChange={(event, selectedDate) => setSelectedDate2(selectedDate)}
             />
           </View>
         
@@ -122,7 +122,7 @@ const SearchScreen = ({ navigation }) => {
               value={selectedDate1}
               mode="date"
               display="default"
-              onChange={(event, selectedDate) => setSelectedDate1(selectedDate)}
+            //   onChange={(event, selectedDate) => setSelectedDate1(selectedDate)}
             />
           </View>
         </View>
