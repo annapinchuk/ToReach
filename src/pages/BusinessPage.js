@@ -91,7 +91,7 @@ const BusinessPage = ({ navigation }) => {
         <View style={businessPageStyles.torButtonContainer}>  
             <Pressable
             style={businessPageStyles.torButton}
-            onPress={() => navigation.navigate('BusinessPage')}
+            onPress={() => navigation.navigate('BookAppointmentScreen')}
           >
             <Text style={businessPageStyles.buttonText}>תאם תור</Text>
           </Pressable>
