@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Pressable } from 'react-native';
 import { styles } from '../styles/ProfileClientScreenStyles';
+import { auth } from '../firebaseConfig';
 
 const ProfilePage = ({ navigation, businessID}) => {
     // State to manage user information
@@ -19,7 +20,7 @@ const ProfilePage = ({ navigation, businessID}) => {
     };
 
     const handleLogout = () => {
-        // FIREBASE CONNECTION
+        auth.signOut();
         navigation.navigate('LoginScreen')
     };
 

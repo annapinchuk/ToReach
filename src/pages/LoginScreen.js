@@ -2,9 +2,12 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Pressable, Modal } from 'react-native';
 import { Loginstyles as styles } from '../styles/LoginScreenStyles';
-// import { signInWithEmailAndPassword, getAuth } from 'firebase/auth';
+import { signInWithEmailAndPassword, getAuth } from 'firebase/auth';
 import { Image } from 'react-native';
-// import { sendPasswordResetEmail } from 'firebase/auth';
+import { sendPasswordResetEmail } from 'firebase/auth';
+import { auth, db } from '../firebaseConfig';
+import Toast from 'react-native-toast-message';
+import { collection, getDocs, query, where } from '@firebase/firestore';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -31,16 +34,47 @@ const LoginScreen = ({ navigation }) => {
   };
 
   const handleForgotPassword = () => {
-    //   console.log('Forgot Password');
-    //   const authInstance = getAuth();
-    //   sendPasswordResetEmail(authInstance, email)
-    //     .then(() => {
-    //       console.log('Password reset email sent');
-    //     })
-    //     .catch((error) => {
-    //       console.log('Error sending password reset email:', error);
-    //     });
+      console.log('Forgot Password');
+      sendPasswordResetEmail(auth, email)
+        .then(() => {
+          console.log('Password reset email sent');
+        })
+        .catch((error) => {
+          console.log('Error sending password reset email:', error);
+        });
   };
+
+  const checkUserPermission = async (uid) => {
+
+    let isClient = undefined;
+
+    const clientsCollection = collection(db, "Clients");
+    const businessCollection = collection(db, "Businesses");
+
+    const clientsQuery = query(clientsCollection, where('uid', '==', uid));
+    const businessQuery = query(businessCollection, where('uid', '==', uid));
+
+    try {
+      const clientQuerySnapshot = await getDocs(clientsQuery);
+      const businessQuerySnapshot = await getDocs(businessQuery);
+      if (!clientQuerySnapshot.empty) isClient = true;
+      if (!businessQuerySnapshot.empty) isClient = false;
+      console.log(isClient);
+      if (isClient === undefined) throw new Error('user not found');
+      Toast.show({
+        type: 'success',
+        text1: 'התחברת בהצלחה'
+      })
+      navigation.navigate('Navbar', ({ isClient }));
+    } catch (err) {
+      console.log(err);
+      Toast.show({
+        type: 'error',
+        text1: 'שם משתמש או סיסמה שגויים'
+      })
+    }
+  }
+
   const handleLogin = () => {
     if (isFormValid()) {
       console.log('Login Details:', {
@@ -48,20 +82,22 @@ const LoginScreen = ({ navigation }) => {
         password,
       });
 
-      // const authInstance = getAuth();
 
-      // signInWithEmailAndPassword(authInstance, email, password)
-      //   .then((userCredential) => {
-      //     const user = userCredential.user;
-      //     console.log(user);
-      //   })
-      //   .catch((error) => {
-      //     const errorCode = error.code;
-      //     const errorMessage = error.message;
-      //     console.log(error, errorMessage);
-      //   });
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          checkUserPermission(user.uid);
+        })
+        .catch((error) => {
+          Toast.show({
+            type: 'error',
+            text1: 'שם משתמש או סיסמה שגויים'
+          })
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log(error, errorMessage);
+        });
 
-      navigation.navigate('Navbar', ({ isClient: true }));
     } else {
       console.log('Please fill in all required fields');
     }
