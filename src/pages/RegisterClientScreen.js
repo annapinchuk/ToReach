@@ -1,9 +1,12 @@
 import { View, Text, Button } from 'react-native';
 import { useState, useEffect } from 'react';
-import { TextInput, Pressable, ScrollView, Image} from 'react-native';
+import { TextInput, Pressable, ScrollView, Image } from 'react-native';
 import { registerStyles } from '../styles/RegisterBusinessScreenStyles';
 import { styles } from '../styles/HomeScreenStyles';
-import { createUserWithEmailAndPassword, getAuth} from 'firebase/auth';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth, db } from '../firebaseConfig';
+import { addDoc, collection } from '@firebase/firestore';
+import Toast from 'react-native-toast-message';
 
 
 const RegisterClientScreen = ({ navigation }) => {
@@ -17,42 +20,42 @@ const RegisterClientScreen = ({ navigation }) => {
     return (
       email.trim() === '' ||
       password.trim() === '' ||
-      name.trim() === '' 
+      name.trim() === ''
     );
   };
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     setFormSubmitted(true);
 
-    if (!areRequiredFieldsMissing()) {
-      console.log('Registration Details:', {
-        email,
-        password,
-        Name,
-        businessNumber,
-      });
-
-      const auth = getAuth();
-
-      createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          const user = userCredential.user;
-          console.log(user);
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          console.log(error, error.message);
-        });
-
-      navigation.navigate('LoginScreen');
-    } else {
+    if (areRequiredFieldsMissing()) {
       console.log('Please fill in all required fields');
+      return;
     }
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      const clientsRef = collection(db, 'Clients');
+      await addDoc(clientsRef, { uid: user.uid, name });
+      Toast.show({
+        type: 'success',
+        text1: 'ההרשמה בוצעה בהצלחה'
+      });
+      navigation.navigate('LoginScreen');
+    }
+    catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'חלה שגיאה במהלך ההרשמה'
+      })
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log(error, error.message);
+    };
   };
 
   return (
-    
+    <ScrollView contentContainerStyle={registerStyles.scrollContainer}
+      keyboardShouldPersistTaps="always">
       <View style={registerStyles.container}>
         <Image style={styles.logo} source={require('../../Images/logo.jpg')} />
         <Text style={registerStyles.title}>יצירת משתמש חדש</Text>
@@ -108,10 +111,11 @@ const RegisterClientScreen = ({ navigation }) => {
           </Pressable>
           <Text style={registerStyles.loginText}>יש לך משתמש? </Text>
         </View>
-        
+
       </View>
-     
-    
+    </ScrollView>
+
+
   );
 };
 

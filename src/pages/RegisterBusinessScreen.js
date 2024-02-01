@@ -6,22 +6,22 @@ import {
   Pressable,
   ScrollView,
   Image,
-  LogBox 
+  LogBox
 } from 'react-native';
 import { registerStyles } from '../styles/RegisterBusinessScreenStyles';
 import { styles } from '../styles/HomeScreenStyles';
-// import {
-//   createUserWithEmailAndPassword,
-//   getAuth,
-// } from 'firebase/auth';
+
 import {
   getDocs,
   collection,
   query,
   getFirestore,
+  addDoc,
 } from 'firebase/firestore';
-import { app } from '../firebaseConfig';
+import { app, auth, db } from '../firebaseConfig';
 import DropDownPicker from 'react-native-dropdown-picker';
+import Toast from 'react-native-toast-message';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 const RegisterBusinessScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -33,14 +33,14 @@ const RegisterBusinessScreen = ({ navigation }) => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [categories, setCategories] = useState([]);
   const [isLoadingCategories, setIsLoadingCategories] = useState(true);
-  const [isOpenCategories,setIsOpenCategories] = useState(false);
-  const [currentValueCategories,setCurrentValueCategories] = useState([]);
-  
+  const [isOpenCategories, setIsOpenCategories] = useState(false);
+  const [currentValueCategories, setCurrentValueCategories] = useState([]);
+
   const [selectedCities, setSelectedCities] = useState([]);
   const [Cities, setCities] = useState([]);
   const [isLoadingCities, setIsLoadingCities] = useState(true);
-  const [isOpenCities,setIsOpenCities] = useState(false);
-  const [currentValueCities,setCurrentValueCities] = useState([]);
+  const [isOpenCities, setIsOpenCities] = useState(false);
+  const [currentValueCities, setCurrentValueCities] = useState([]);
 
   const areRequiredFieldsMissing = () => {
     return (
@@ -50,42 +50,55 @@ const RegisterBusinessScreen = ({ navigation }) => {
       businessNumber.trim() === '' ||
       selectedCities.length === 0 ||
       selectedCategories.length === 0
-      
+
     );
   };
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     setFormSubmitted(true);
 
-    if (!areRequiredFieldsMissing()) {
-      console.log('Registration Details:', {
+    if (areRequiredFieldsMissing()) {
+      console.log('Please fill in all required fields');
+      return;
+    };
+    console.log('Registration Details:', {
+      email,
+      password,
+      businessName,
+      businessNumber,
+      Cities,
+      businessDescription,
+      selectedCategories,
+    });
+
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      const businessesRef = collection(db, 'Businesses');
+      await addDoc(businessesRef, {
+        uid: user.uid,
         email,
-        password,
         businessName,
         businessNumber,
         selectedCities,
         businessDescription,
-        selectedCategories
-        ,
+        Categories: selectedCategories,
       });
-
-      // const auth = getAuth();
-
-      // createUserWithEmailAndPassword(auth, email, password)
-      //   .then((userCredential) => {
-      //     const user = userCredential.user;
-      //     console.log(user);
-      //   })
-      //   .catch((error) => {
-      //     const errorCode = error.code;
-      //     const errorMessage = error.message;
-      //     console.log(error, error.message);
-      //   });
-
+      Toast.show({
+        type: 'success',
+        text1: 'ההרשמה בוצעה בהצלחה'
+      });
       navigation.navigate('LoginScreen');
-    } else {
-      console.log('Please fill in all required fields');
     }
+    catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'חלה שגיאה במהלך ההרשמה'
+      })
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log(error, error.message);
+    };
   };
 
   const fetchCategories = async () => {
@@ -170,7 +183,7 @@ const RegisterBusinessScreen = ({ navigation }) => {
           onChangeText={(text) => setBusinessNumber(text)}
           keyboardType="numeric"
         />
-        
+
         <DropDownPicker
             items= {categories.map((category) => ({ label: category, value: category }))}
             open= {isOpenCategories}

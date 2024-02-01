@@ -22,7 +22,7 @@ const AppointmentCard = ({ appointment ,navigation}) => {
             <View style={styles.cardMiddleRow}>
                 
                 <Pressable style={styles.button} onPress={() => navigation.navigate('BusinessPage')}> 
-                    <Text style={styles.buttonText}>עןד על העסק</Text>
+                    <Text style={styles.buttonText}>עוד על העסק</Text>
                 </Pressable>
                
             </View>
