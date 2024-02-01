@@ -2,9 +2,9 @@
 import React, { useState } from 'react';
 import { View, Text, Image, Pressable } from 'react-native';
 import DatePicker from '../components/DatePicker';
-import { styles } from '../styles/RegisterBusinessScreenStyles';
+import { styles } from '../styles/BookAppointmentScreenStyles';
 
-const BookApointmentScreen = () => {
+const BookAppointmentScreen = ({ navigation }) => {
     // State variables to store user selections
     const [speciality, setSpeciality] = useState('');
     const [selectedDate, setSelectedDate] = useState(new Date());
@@ -76,4 +76,4 @@ const BookApointmentScreen = () => {
     );
 };
 
-export default BookApointmentScreen;
+export default BookAppointmentScreen;
