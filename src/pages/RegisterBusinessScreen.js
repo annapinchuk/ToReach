@@ -63,7 +63,7 @@ const RegisterBusinessScreen = ({ navigation }) => {
         password,
         businessName,
         businessNumber,
-        city,
+        selectedCities,
         businessDescription,
         selectedCategories
         ,
@@ -97,14 +97,29 @@ const RegisterBusinessScreen = ({ navigation }) => {
         (doc) => doc.data().name
       );
       setCategories(categoriesData);
-      setIsLoading(false);
+      setIsLoadingCategories(false);
+    } catch (error) {
+      console.error('Firebase initialization error:', error);
+    }
+  };
+  const fetchCities = async () => {
+    try {
+      const db = getFirestore(app);
+      const citiessCollection = collection(db, 'cities');
+      const citiesSnapshot = await getDocs(citiessCollection);
+      const citiesData = citiesSnapshot.docs.map(
+        (doc) => doc.data().name
+      );
+      setCities(citiesData);
+      setIsLoadingCities(false);
     } catch (error) {
       console.error('Firebase initialization error:', error);
     }
   };
 
   useEffect(() => {
-    //fetchCategories();
+    fetchCategories();
+    fetchCities();
     LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
   }, []);
 
@@ -114,14 +129,6 @@ const RegisterBusinessScreen = ({ navigation }) => {
   const handleCityPress = (item) => {
     setSelectedCities(item);
   };
-  const items = [ 
-    {label: "שיער",value:"שיער"},
-    {label: "טיפול",value:"טיפול"}
-  ]
-  const cities = [ 
-    {label: "אריאל",value:"אריאל"},
-    {label: "חיפה",value:"חיפה"}
-  ]
 
   return (
     <ScrollView contentContainerStyle={registerStyles.scrollContainer}
@@ -165,7 +172,7 @@ const RegisterBusinessScreen = ({ navigation }) => {
         />
         
         <DropDownPicker
-            items= {items}//{categories.map((category) => ({ label: category, value: category }))}
+            items= {categories.map((category) => ({ label: category, value: category }))}
             open= {isOpenCategories}
             setOpen={()=> setIsOpenCategories(!isOpenCategories)}
             value={currentValueCategories}
@@ -191,7 +198,7 @@ const RegisterBusinessScreen = ({ navigation }) => {
           />
         
         <DropDownPicker
-            items= {cities}//{categories.map((category) => ({ label: category, value: category }))}
+            items= {Cities.map((city) => ({ label: city, value: city }))}
             open= {isOpenCities}
             setOpen={()=> setIsOpenCities(!isOpenCities)}
             value={currentValueCities}
