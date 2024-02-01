@@ -8,5 +8,5 @@ const StatisticsClientScreen = () => {
         </View>
      );
 }
- 
+
 export default StatisticsClientScreen;

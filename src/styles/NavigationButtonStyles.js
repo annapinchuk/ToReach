@@ -24,12 +24,15 @@ export const NavigationButtonStyles = StyleSheet.create({
     },
     button: {
         backgroundColor: '#3B82F6',
-        padding: 10,
-        borderRadius: 5,
-        marginVertical: 10,
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 10,
+        width: 120,
+        paddingVertical: 10,
+        borderRadius: 10,
         justifyContent: 'center'
-    }
+    },
+    buttonText: {
+        color: 'white',
+        paddingRight: 10,
+    },
 })
