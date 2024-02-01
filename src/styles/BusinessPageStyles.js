@@ -1,11 +1,13 @@
 import { StyleSheet } from 'react-native';
 
 export const businessPageStyles = StyleSheet.create({
-  container: {
+  viewContainer: {
     flex: 1,
     backgroundColor: '#5B8BDF',
-    padding: 16,
-    
+  },
+  container: {
+    flex: 1,
+    margin: 16
   },
   logoContainer: {
     alignItems: 'center',
@@ -33,7 +35,7 @@ export const businessPageStyles = StyleSheet.create({
     flexDirection: 'row',
     marginTop: 8,
     marginBottom: 8,
-    alignSelf: 'flex-end'
+    alignSelf: 'flex-start'
   },
   category: {
     fontSize: 18,
@@ -49,8 +51,8 @@ export const businessPageStyles = StyleSheet.create({
     color: 'white',
     textDecorationLine: 'underline',
     marginRight: 8,
-    textAlign: 'right',
-    
+    textAlign: 'left',
+
   },
   rating: {
     fontSize: 20,
@@ -58,7 +60,7 @@ export const businessPageStyles = StyleSheet.create({
     textAlign: 'right',
   },
   photosContainer: {
-    marginTop: 16,
+    marginVertical: 16,
   },
   photo: {
     width: 150,
@@ -70,7 +72,7 @@ export const businessPageStyles = StyleSheet.create({
     marginTop: 8,
     fontSize: 16,
     color: 'white',
-    textAlign: 'right',
+    textAlign: 'left',
   },
   star: {
     fontSize: 20,
