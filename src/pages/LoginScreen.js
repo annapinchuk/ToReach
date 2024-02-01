@@ -61,7 +61,7 @@ const LoginScreen = ({ navigation }) => {
       //     console.log(error, errorMessage);
       //   });
 
-      navigation.navigate('Navbar', ({ isClient: true }));
+      navigation.navigate('Navbar', ({ isClient: false }));
     } else {
       console.log('Please fill in all required fields');
     }
