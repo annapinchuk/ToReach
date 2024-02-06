@@ -4,10 +4,6 @@ import { styles } from '../styles/HomeUserScreenStyles';
 import { EvilIcons, FontAwesome } from '@expo/vector-icons';
 import DropDownPicker from 'react-native-dropdown-picker';
 import DatePicker from '../components/DatePicker';
-import { collection, getDocs } from '@firebase/firestore';
-import { db } from '../firebaseConfig';
-
-
 
 const categories_data = [
   { label: "שיער", value: "שיער" },
@@ -15,18 +11,12 @@ const categories_data = [
   { label: "אוכל", value: "אוכל" },
   { label: "קוסמטיקה", value: "קוסמטיקה" },
 ];
-const city_data = collection(db,'cities');
-getDocs(city_data)
-    .then((snapshot)=>{
-        let cities = [];
-        snapshot.docs.forEach((doc)=>{
-            cities.push({...doc.data(), id: doc.id })
-        })
-        console.log(cities)
-    })
-    .catch(err=>{
-        console.log(err.message)
-    })
+const city_data = [
+  { label: "אלקנה", value: "אלקנה" },
+  { label: "תל אביב", value: "תל אביב" },
+  { label: "רמת גן", value: "רמת גן" },
+  { label: "ירושלים", value: "ירושלים" }
+];
 
 const SearchScreen = ({ navigation }) => {
   const [city, setCity] = useState('');
@@ -90,7 +80,7 @@ const SearchScreen = ({ navigation }) => {
         <Text style={styles.searchtext}>עיר:</Text>
 
         <DropDownPicker
-          items={cities}
+          items={city_data}
           open={isOpenCity}
           setOpen={setIsOpenCity}
           value={currentValueCity}
