@@ -94,7 +94,7 @@ const HomeUserScreen = ({ navigation }) => {
           <FontAwesome name="circle-thin" size={100} color="white" />
           <MaterialCommunityIcons name="broom" size={50} color="white" style={styles.icon_icon} />
         </View>
-        <Text style={[styles.iconText, { textAlign: 'center' }]}>נקיון</Text>
+        <Text style={[styles.iconText, { textAlign: 'center' }]}>ניקיון</Text>
       </Pressable>
 
       <Pressable onPress={() => navigation.navigate('ResultScreen')} style={styles.container_icon}>
