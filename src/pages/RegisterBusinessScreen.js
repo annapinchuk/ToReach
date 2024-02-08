@@ -6,7 +6,8 @@ import {
   Pressable,
   ScrollView,
   Image,
-  LogBox
+  LogBox,
+  Platform
 } from 'react-native';
 import { registerStyles } from '../styles/RegisterBusinessScreenStyles';
 import { styles } from '../styles/HomeScreenStyles';
@@ -200,6 +201,7 @@ const RegisterBusinessScreen = ({ navigation }) => {
             badgeDotColors = {['white']}
             badgeTextStyle = {{color : "white"}}
             placeholder="תחום עסק *"
+            listMode={Platform.OS === 'ios' ? 'DEFAULT' : 'MODAL'}
             placeholderStyle = {registerStyles.placeHolderStyle}
             containerStyle={[registerStyles.dropdownContainer,{zIndex:3}]}
             style={registerStyles.dropdownStyle}
@@ -225,6 +227,7 @@ const RegisterBusinessScreen = ({ navigation }) => {
             badgeColors={'#2C64C6'}
             badgeDotColors = {['white']}
             badgeTextStyle = {{color : "white"}}
+            listMode={Platform.OS === 'ios' ? 'DEFAULT' : 'MODAL'}
             placeholder=" עיר *"
             placeholderStyle = {registerStyles.placeHolderStyle}
             containerStyle={registerStyles.dropdownContainer}
