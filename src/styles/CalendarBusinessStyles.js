@@ -24,7 +24,6 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   itemContainer: {
-    position: 'absolute',
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
