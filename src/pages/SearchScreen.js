@@ -4,56 +4,88 @@ import { styles } from '../styles/HomeUserScreenStyles';
 import { EvilIcons, FontAwesome } from '@expo/vector-icons';
 import DropDownPicker from 'react-native-dropdown-picker';
 import DatePicker from '../components/DatePicker';
+import {getDocs, collection, query, getFirestore, addDoc,} from 'firebase/firestore';
+import { app, auth, db } from '../firebaseConfig';
 
-const categories_data = [
-  { label: "שיער", value: "שיער" },
-  { label: "טיפול", value: "טיפול" },
-  { label: "אוכל", value: "אוכל" },
-  { label: "קוסמטיקה", value: "קוסמטיקה" },
-];
-const city_data = [
-  { label: "אלקנה", value: "אלקנה" },
-  { label: "תל אביב", value: "תל אביב" },
-  { label: "רמת גן", value: "רמת גן" },
-  { label: "ירושלים", value: "ירושלים" }
-];
 
 const SearchScreen = ({ navigation }) => {
-  const [city, setCity] = useState('');
-  const [category, setCategory] = useState('');
-  const [isOpenCity, setIsOpenCity] = useState(false);
-  const [currentValueCity, setCurrentValueCity] = useState([]);
-  const [isOpenCategories, setIsOpenCategories] = useState(false);
-  const [currentValueCategories, setCurrentValueCategories] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [isLoadingCategories, setIsLoadingCategories] = useState(true);
+    const [isOpenCategories, setIsOpenCategories] = useState(false);
+    const [currentValueCategories, setCurrentValueCategories] = useState([]);
+    const [selectedCities, setSelectedCities] = useState([]);
+    const [Cities, setCities] = useState([]);
+    const [isLoadingCities, setIsLoadingCities] = useState(true);
+    const [isOpenCities, setIsOpenCities] = useState(false);
+    const [currentValueCities, setCurrentValueCities] = useState([]);
+    const [selectedDate1, setSelectedDate1] = useState(new Date());
+    const [selectedDate2, setSelectedDate2] = useState(new Date());
 
-  const [selectedDate1, setSelectedDate1] = useState(new Date());
-  const [selectedDate2, setSelectedDate2] = useState(new Date());
-
-  const handleCategoryPress = (item) => {
-    setIsOpenCity(false);
-    setCategory(item);
-    setIsOpenCategories(true);
+const fetchCategories = async () => {
+    try {
+      const db = getFirestore(app);
+      const categoriesCollection = collection(db, 'Categories');
+      const categoriesSnapshot = await getDocs(categoriesCollection);
+      const categoriesData = categoriesSnapshot.docs.map(
+        (doc) => doc.data().name
+      );
+      setCategories(categoriesData);
+      setIsLoadingCategories(false);
+    } catch (error) {
+      console.error('Firebase initialization error:', error);
+    }
   };
 
-  const handleCityPress = (item) => {
-    setIsOpenCategories(false);
-    setCity(item);
-    setIsOpenCity(true);
+  const fetchCities = async () => {
+    try {
+      const db = getFirestore(app);
+      const citiessCollection = collection(db, 'Cities');
+      const citiesSnapshot = await getDocs(citiessCollection);
+      const citiesData = citiesSnapshot.docs.map(
+        (doc) => doc.data().name
+      );
+      setCities(citiesData);
+      setIsLoadingCities(false);
+    } catch (error) {
+      console.error('Firebase initialization error:', error);
+    }
   };
+
+  useEffect(() => {
+    fetchCategories();
+    fetchCities();
+    LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
+  }, []);
+
 
   useEffect(() => {
     LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
   }, []);
 
+  
+  const handleCategoryPress = (item) => {
+    setIsOpenCities(false);
+    setSelectedCities(item);
+    setIsOpenCategories(true);
+  };
+
+  const handleCityPress = (item) => {
+    setIsOpenCategories(false);
+    setSelectedCities(item);
+    setIsOpenCities(true);
+  };
+
+ 
+
   return (
-    <TouchableWithoutFeedback onPress={() => { setIsOpenCity(false); setIsOpenCategories(false) }}>
+    <TouchableWithoutFeedback onPress={() => { setIsOpenCities(false); setIsOpenCategories(false) }}>
       <View style={styles.container}>
         <Image style={styles.logo} source={require('../../Images/logo.jpg')} />
 
         <Text style={[styles.searchtext, { textAlign: 'right' }]}>תחום עסק:</Text>
 
         <DropDownPicker
-          items={categories_data}
+          items= {categories.map((category) => ({ label: category, value: category }))}
           open={isOpenCategories}
           setOpen={setIsOpenCategories}
           value={currentValueCategories}
@@ -67,6 +99,7 @@ const SearchScreen = ({ navigation }) => {
           badgeColors={'#2C64C6'}
           badgeDotColors={['white']}
           badgeTextStyle={{ color: "white" }}
+          listMode={Platform.OS === 'ios' ? 'FLATLIST' : 'MODAL'}
           placeholder="בחר"
           placeholderStyle={styles.placeHolderStyle}
           containerStyle={styles.dropdownContainer}
@@ -80,11 +113,11 @@ const SearchScreen = ({ navigation }) => {
         <Text style={styles.searchtext}>עיר:</Text>
 
         <DropDownPicker
-          items={city_data}
-          open={isOpenCity}
-          setOpen={setIsOpenCity}
-          value={currentValueCity}
-          setValue={setCurrentValueCity}
+           items= {Cities.map((city) => ({ label: city, value: city }))}
+          open={isOpenCities}
+          setOpen={setIsOpenCities}
+          value={currentValueCities}
+          setValue={setCurrentValueCities}
           dropDownDirection='DOWN'
           multiple={true}
           min={1}
@@ -92,12 +125,13 @@ const SearchScreen = ({ navigation }) => {
           showArrowIcon={false}
           mode='BADGE'
           badgeColors={'#2C64C6'}
+          listMode={Platform.OS === 'ios' ? 'FLATLIST' : 'MODAL'}
           badgeDotColors={['white']}
           badgeTextStyle={{ color: "white" }}
           placeholder="בחר"
           placeholderStyle={styles.placeHolderStyle}
-          containerStyle={[styles.dropdownContainer, { zIndex: isOpenCity ? 1 : 0 }]}
-          style={[styles.dropdownStyle, { zIndex: isOpenCity ? 1 : 0 }]}
+          containerStyle={[styles.dropdownContainer, { zIndex: isOpenCities ? 1 : 0 }]}
+          style={[styles.dropdownStyle, { zIndex: isOpenCities ? 1 : 0 }]}
           itemStyle={styles.dropdownItemStyle}
           dropDownStyle={styles.dropdownListStyle}
           searchable={true}
