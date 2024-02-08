@@ -1,58 +1,62 @@
 import { View, Text, Button } from 'react-native';
 import { useState, useEffect } from 'react';
-import { TextInput, Pressable, ScrollView, Image} from 'react-native';
+import { TextInput, Pressable, ScrollView, Image } from 'react-native';
 import { registerStyles } from '../styles/RegisterBusinessScreenStyles';
 import { styles } from '../styles/HomeScreenStyles';
-import { createUserWithEmailAndPassword, getAuth} from 'firebase/auth';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth, db } from '../firebaseConfig';
+import { addDoc, collection } from '@firebase/firestore';
+import Toast from 'react-native-toast-message';
 
 
 const RegisterClientScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [formSubmitted, setFormSubmitted] = useState(false);
-
 
   const areRequiredFieldsMissing = () => {
     return (
       email.trim() === '' ||
       password.trim() === '' ||
-      name.trim() === '' 
+      name.trim() === '' ||
+      phoneNumber.trim() === ''
     );
   };
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     setFormSubmitted(true);
 
-    if (!areRequiredFieldsMissing()) {
-      console.log('Registration Details:', {
-        email,
-        password,
-        Name,
-        businessNumber,
-      });
-
-      const auth = getAuth();
-
-      createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          const user = userCredential.user;
-          console.log(user);
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          console.log(error, error.message);
-        });
-
-      navigation.navigate('LoginScreen');
-    } else {
+    if (areRequiredFieldsMissing()) {
       console.log('Please fill in all required fields');
+      return;
     }
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      const clientsRef = collection(db, 'Clients');
+      await addDoc(clientsRef, { uid: user.uid, name, phoneNumber, email });
+      Toast.show({
+        type: 'success',
+        text1: 'ההרשמה בוצעה בהצלחה'
+      });
+      navigation.navigate('LoginScreen');
+    }
+    catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'חלה שגיאה במהלך ההרשמה'
+      })
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log(error, error.message);
+    };
   };
 
   return (
-    
+    <ScrollView contentContainerStyle={registerStyles.scrollContainer}
+      keyboardShouldPersistTaps="always">
       <View style={registerStyles.container}>
         <Image style={styles.logo} source={require('../../Images/logo.jpg')} />
         <Text style={registerStyles.title}>יצירת משתמש חדש</Text>
@@ -63,6 +67,7 @@ const RegisterClientScreen = ({ navigation }) => {
           placeholderTextColor={registerStyles.placeHolderStyle.color}
           value={email}
           onChangeText={(text) => setEmail(text)}
+          keyboardType="email-address"
         />
 
         <TextInput
@@ -80,6 +85,15 @@ const RegisterClientScreen = ({ navigation }) => {
           placeholderTextColor={registerStyles.placeHolderStyle.color}
           value={name}
           onChangeText={(text) => setName(text)}
+          />
+
+        <TextInput
+          style={registerStyles.input}
+          placeholder=" מספר טלפון *"
+          placeholderTextColor={registerStyles.placeHolderStyle.color}
+          value={phoneNumber}
+          onChangeText={(text) => setPhoneNumber(text)}
+          keyboardType="numeric"
         />
 
         <Pressable
@@ -100,18 +114,19 @@ const RegisterClientScreen = ({ navigation }) => {
         )}
 
         <View style={registerStyles.loginContainer}>
+          <Text style={registerStyles.loginText}>יש לך משתמש? </Text>
           <Pressable
             style={registerStyles.loginButton}
             onPress={() => navigation.navigate('LoginScreen')}
           >
-            <Text style={registerStyles.loginText}>התחברות</Text>
+            <Text style={registerStyles.linkText}>התחברות</Text>
           </Pressable>
-          <Text style={registerStyles.loginText}>יש לך משתמש? </Text>
         </View>
-        
+
       </View>
-     
-    
+    </ScrollView>
+
+
   );
 };
 

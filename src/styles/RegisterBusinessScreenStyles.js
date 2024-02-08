@@ -31,7 +31,7 @@ export const registerStyles = StyleSheet.create({
     marginBottom: 16,
     paddingLeft: 8,
     textAlign: 'right',
-    color :"black",
+    color: "black",
   },
   button: {
     backgroundColor: '#2C64C6',
@@ -50,19 +50,25 @@ export const registerStyles = StyleSheet.create({
     alignItems: 'center', // Align items vertically in the center
     marginTop: 16,
   },
-
+  linkText: {
+    color: 'blue',
+    textDecorationLine: 'underline',
+    fontSize: 16,
+    marginRight: 8, // Add margin to separate text and button
+    marginBottom: 12,
+  },
   loginText: {
     color: 'white',
     fontSize: 16,
     marginRight: 8, // Add margin to separate text and button
-     marginBottom: 12,
+    marginBottom: 12,
   },
   dropdownContainer: {
     height: 40,
     width: '80%',
     marginBottom: 16,
     textAlign: 'left',
-    zIndex: 2,    
+    zIndex: 2,
   },
   dropdownStyle: {
     backgroundColor: 'white',
@@ -70,23 +76,23 @@ export const registerStyles = StyleSheet.create({
     borderWidth: 3,
     borderRadius: 10,
     textAlign: 'left',
-    alignSelf: 'flex-end' 
+    alignSelf: 'flex-end'
   },
   dropdownItemStyle: {
     justifyContent: 'flex-start',
     textAlign: 'left',
-    
+
   },
   dropdownListStyle: {
     borderColor: '#2C64C6',
     borderWidth: 3,
     textAlign: 'left',
-    
+
   },
-  placeHolderStyle :{
+  placeHolderStyle: {
     color: "#A9A9A9",
     textAlign: 'left',
-    
+
   },
 
 

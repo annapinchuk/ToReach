@@ -1,7 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Alert } from 'react-native';
-import { styles } from '../styles/CalendarBusinessStyles';
-import { Agenda } from 'react-native-calendars';
+import React from 'react';
+import { View, Text } from 'react-native';
 
 const CalendarBusinessScreen = () => {
     const [selectedDay, setSelectedDay] = useState(null);

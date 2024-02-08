@@ -10,6 +10,7 @@ import ResultScreen from './src/pages/ResultScreen';
 import { NavigationContainer } from '@react-navigation/native';
 import BusinessPage from "./src/pages/BusinessPage";
 import BookAppointmentScreen from "./src/pages/BookAppointmentScreen";
+import Toast from 'react-native-toast-message';
 
 // always RTL
 I18nManager.forceRTL(true);
@@ -31,6 +32,7 @@ const App = () => {
         <Stack.Screen name="BusinessPage" component={BusinessPage} options={{ title: 'מסך עסק' }} />
         <Stack.Screen name="BookAppointmentScreen" component={BookAppointmentScreen} options={{ title: 'קביעת תור' }} />
       </Stack.Navigator>
+      <Toast position='bottom' />
     </NavigationContainer>
   );
 };

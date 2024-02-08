@@ -238,7 +238,7 @@ export const styles = StyleSheet.create({
   },
   placeHolderStyle :{
     color: "#A9A9A9",
-    textAlign: 'right'
+    textAlign: 'left'
   },
   datePickerContainer: {
     marginup: 30, // Adjust this value as needed for the desired spacing
