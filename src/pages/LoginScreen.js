@@ -115,6 +115,7 @@ const LoginScreen = ({ navigation }) => {
         placeholder=" אימייל *"
         value={email}
         onChangeText={(text) => setEmail(text)}
+        keyboardType="email-address"
       />
       <TextInput
         style={styles.input}
@@ -153,7 +154,7 @@ const LoginScreen = ({ navigation }) => {
             <Text style={styles.modalButtonText}>הרשמה לעסקים</Text>
           </Pressable>
           <Pressable style={styles.modalButton} onPress={() => setShowModal(false)}>
-            <Text style={styles.modalButtonText}>Cancel</Text>
+            <Text style={styles.modalButtonText}>חזור</Text>
           </Pressable>
         </View>
       </Modal>

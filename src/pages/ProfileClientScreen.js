@@ -1,21 +1,86 @@
 // Import necessary React and React Native components
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Pressable } from 'react-native';
 import { styles } from '../styles/ProfileClientScreenStyles';
-import { auth } from '../firebaseConfig';
+import { auth, db } from '../firebaseConfig';
+import { collection, getDocs, getDoc, query, where, setDoc, doc } from '@firebase/firestore';
 
-const ProfilePage = ({ navigation, businessID}) => {
+
+const ProfilePage = ({ navigation }) => {
     // State to manage user information
-    const [username, setUsername] = useState('JohnDoe');
-    const [email, setEmail] = useState('john.doe@example.com');
-    const [phoneNumber, setPhoneNumber] = useState('123-456-7890');
+    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
 
     // State to track whether the fields are in edit mode
     const [editMode, setEditMode] = useState(false);
 
+    const [docRef, setDocRef] = useState(undefined);
+    const user = auth.currentUser;
+
+    const getDocRef = async () => {
+        try {
+            const clientsCollection = collection(db, "Clients");
+            const clientsQuery = query(clientsCollection, where('uid', '==', user.uid));
+            const clientQuerySnapshot = await getDocs(clientsQuery);
+            const docID = clientQuerySnapshot.docs[0].id
+            const docRef = doc(clientsCollection, docID)
+            setDocRef(docRef)
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        getDocRef();
+    }, []);
+
+    useEffect(() => {
+        if (docRef === undefined)
+            return;
+        // Load user information from Firestore
+        const getData = async () => {
+            try {
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    console.log("Document data:", docSnap.data());
+                    const {name,phoneNumber,email} = docSnap.data();
+                    setUsername(name);
+                    setPhoneNumber(phoneNumber); 
+                    setEmail(email);                  
+                } else {
+                    // docSnap.data() will be undefined in this case
+                    console.log("No such document!");
+                }
+            }
+            catch (error) {
+                console.log(error);
+            }
+            
+        }
+        getData()
+
+    }, [docRef]);
+
+
     // Function to handle save button press
     const handleSave = () => {
-        // FIREBASE CONNECTION
+        // Update user information in Firestore
+        const data = {
+            name: username,
+            phoneNumber: phoneNumber,
+            email: email,
+            uid: user.uid
+        };
+
+        setDoc(docRef, data).then(() => {
+            console.log("Document has been changed successfully");
+        })
+            .catch(error => {
+                console.log(error);
+            })
+
         setEditMode(false);
     };
 
@@ -39,7 +104,8 @@ const ProfilePage = ({ navigation, businessID}) => {
             )}
 
             <Text style={styles.label}>אימייל:</Text>
-            {editMode ? (
+            <Text style={styles.text}> {email} </Text>
+            {/* {editMode ? (
                 <TextInput
                     style={styles.input}
                     value={email}
@@ -48,7 +114,7 @@ const ProfilePage = ({ navigation, businessID}) => {
                 />
             ) : (
                 <Text style={styles.text}>{email}</Text>
-            )}
+            )} */}
 
             <Text style={styles.label}>מספר טלפון:</Text>
             {editMode ? (
