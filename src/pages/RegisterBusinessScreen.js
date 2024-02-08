@@ -118,7 +118,7 @@ const RegisterBusinessScreen = ({ navigation }) => {
   const fetchCities = async () => {
     try {
       const db = getFirestore(app);
-      const citiessCollection = collection(db, 'cities');
+      const citiessCollection = collection(db, 'Cities');
       const citiesSnapshot = await getDocs(citiessCollection);
       const citiesData = citiesSnapshot.docs.map(
         (doc) => doc.data().name
