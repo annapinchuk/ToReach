@@ -31,6 +31,7 @@ const RegisterBusinessScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [businessName, setBusinessName] = useState('');
+  const [businessPhoneNumber, setBusinessPhoneNumber] = useState('');
   const [businessNumber, setBusinessNumber] = useState('');
   const [businessDescription, setBusinessDescription] = useState('');
   const [formSubmitted, setFormSubmitted] = useState(false);
@@ -51,6 +52,7 @@ const RegisterBusinessScreen = ({ navigation }) => {
       email.trim() === '' ||
       password.trim() === '' ||
       businessName.trim() === '' ||
+      businessPhoneNumber.trim() === '' ||
       businessNumber.trim() === '' ||
       selectedCities.length === 0 ||
       selectedCategories.length === 0
@@ -69,6 +71,7 @@ const RegisterBusinessScreen = ({ navigation }) => {
       email,
       password,
       businessName,
+      businessPhoneNumber,
       businessNumber,
       Cities,
       businessDescription,
@@ -83,8 +86,9 @@ const RegisterBusinessScreen = ({ navigation }) => {
         uid: user.uid,
         email,
         businessName,
+        businessPhoneNumber,
         businessNumber,
-        selectedCities,
+        Cities: selectedCities,
         businessDescription,
         Categories: selectedCategories,
       });
@@ -140,14 +144,16 @@ const RegisterBusinessScreen = ({ navigation }) => {
     LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
   }, []);
 
-  const handleCategoryPress = (item) => {
+  const handleCategoryPress = (items) => {
     setIsOpenCities(false);
-    setSelectedCategories(item);
+    setSelectedCategories(items.map(item => item.value));
+    console.log(items.map(item => item.value))
     setIsOpenCategories(true);
   };
-  const handleCityPress = (item) => {
+  const handleCityPress = (items) => {
     setIsOpenCategories(false);
-    setSelectedCities(item);
+    setSelectedCities(items.map(item => item.value));
+    console.log(items.map(item => item.value))
     setIsOpenCities(true);
   };
 
@@ -171,6 +177,7 @@ const RegisterBusinessScreen = ({ navigation }) => {
               placeholderTextColor={registerStyles.placeHolderStyle.color}
               value={email}
               onChangeText={(text) => setEmail(text)}
+              keyboardType="email-address"
             />
 
             <TextInput
@@ -188,6 +195,15 @@ const RegisterBusinessScreen = ({ navigation }) => {
               placeholderTextColor={registerStyles.placeHolderStyle.color}
               value={businessName}
               onChangeText={(text) => setBusinessName(text)}
+            />
+
+            <TextInput
+              style={registerStyles.input}
+              placeholder=" מספר טלפון *"
+              placeholderTextColor={registerStyles.placeHolderStyle.color}
+              value={businessPhoneNumber}
+              onChangeText={(text) => setBusinessPhoneNumber(text)}
+              keyboardType="numeric"
             />
 
             <TextInput
@@ -281,13 +297,13 @@ const RegisterBusinessScreen = ({ navigation }) => {
             )}
 
             <View style={registerStyles.loginContainer}>
+              <Text style={registerStyles.loginText}>יש לך משתמש? </Text>
               <Pressable
                 style={registerStyles.loginButton}
                 onPress={() => navigation.navigate('BusinessPage')}
               >
-                <Text style={registerStyles.loginText}>התחברות</Text>
+                <Text style={registerStyles.linkText}>התחברות</Text>
               </Pressable>
-              <Text style={registerStyles.loginText}>יש לך משתמש? </Text>
             </View>
           </View>
         </ScrollView>

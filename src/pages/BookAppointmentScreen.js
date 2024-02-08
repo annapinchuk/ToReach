@@ -4,7 +4,7 @@ import { View, Text, Image, Pressable } from 'react-native';
 import DatePicker from '../components/DatePicker';
 import { styles } from '../styles/BookAppointmentScreenStyles';
 
-const BookAppointmentScreen = ({ navigation }) => {
+const BookAppointmentScreen = ({ navigation, bussinesID }) => {
     // State variables to store user selections
     const [speciality, setSpeciality] = useState('');
     const [selectedDate, setSelectedDate] = useState(new Date());
