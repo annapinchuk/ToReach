@@ -99,6 +99,7 @@ const fetchCategories = async () => {
           badgeColors={'#2C64C6'}
           badgeDotColors={['white']}
           badgeTextStyle={{ color: "white" }}
+          listMode={Platform.OS === 'ios' ? 'FLATLIST' : 'MODAL'}
           placeholder="בחר"
           placeholderStyle={styles.placeHolderStyle}
           containerStyle={styles.dropdownContainer}
@@ -124,6 +125,7 @@ const fetchCategories = async () => {
           showArrowIcon={false}
           mode='BADGE'
           badgeColors={'#2C64C6'}
+          listMode={Platform.OS === 'ios' ? 'FLATLIST' : 'MODAL'}
           badgeDotColors={['white']}
           badgeTextStyle={{ color: "white" }}
           placeholder="בחר"

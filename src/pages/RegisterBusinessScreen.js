@@ -213,7 +213,7 @@ const RegisterBusinessScreen = ({ navigation }) => {
               mode='BADGE'
               badgeColors={'#2C64C6'}
               badgeDotColors={['white']}
-              listMode={Platform.OS === 'ios' ? 'DEFAULT' : 'MODAL'}
+              listMode={Platform.OS === 'ios' ? 'FLATLIST' : 'MODAL'}
               badgeTextStyle={{ color: "white" }}
               placeholder="תחום עסק *"
               placeholderStyle={registerStyles.placeHolderStyle}
@@ -240,7 +240,7 @@ const RegisterBusinessScreen = ({ navigation }) => {
               mode='BADGE'
               badgeColors={'#2C64C6'}
               badgeDotColors={['white']}
-              listMode={Platform.OS === 'ios' ? 'DEFAULT' : 'MODAL'}
+              listMode={Platform.OS === 'ios' ? 'FLATLIST' : 'MODAL'}
               badgeTextStyle={{ color: "white" }}
               placeholder=" עיר *"
               placeholderStyle={registerStyles.placeHolderStyle}
