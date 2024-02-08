@@ -6,8 +6,11 @@ import {
   Pressable,
   ScrollView,
   Image,
-  LogBox,
-  Platform
+  Platform,
+  Keyboard,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  LogBox
 } from 'react-native';
 import { registerStyles } from '../styles/RegisterBusinessScreenStyles';
 import { styles } from '../styles/HomeScreenStyles';
@@ -138,146 +141,158 @@ const RegisterBusinessScreen = ({ navigation }) => {
   }, []);
 
   const handleCategoryPress = (item) => {
+    setIsOpenCities(false);
     setSelectedCategories(item);
+    setIsOpenCategories(true);
   };
   const handleCityPress = (item) => {
+    setIsOpenCategories(false);
     setSelectedCities(item);
+    setIsOpenCities(true);
   };
 
   return (
-    <ScrollView contentContainerStyle={registerStyles.scrollContainer}
-      keyboardShouldPersistTaps="always">
-      <View style={registerStyles.container}>
-        <Image style={styles.logo} source={require('../../Images/logo.jpg')} />
-        <Text style={registerStyles.title}>יצירת עסק חדש</Text>
-
-        <TextInput
-          style={registerStyles.input}
-          placeholder=" אימייל *"
-          placeholderTextColor={registerStyles.placeHolderStyle.color}
-          value={email}
-          onChangeText={(text) => setEmail(text)}
-        />
-
-        <TextInput
-          style={registerStyles.input}
-          placeholder=" סיסמה *"
-          placeholderTextColor={registerStyles.placeHolderStyle.color}
-          secureTextEntry={true}
-          value={password}
-          onChangeText={(text) => setPassword(text)}
-        />
-
-        <TextInput
-          style={registerStyles.input}
-          placeholder=" שם עסק *"
-          placeholderTextColor={registerStyles.placeHolderStyle.color}
-          value={businessName}
-          onChangeText={(text) => setBusinessName(text)}
-        />
-
-        <TextInput
-          style={registerStyles.input}
-          placeholder=" מספר אישור עסק *"
-          placeholderTextColor={registerStyles.placeHolderStyle.color}
-          value={businessNumber}
-          onChangeText={(text) => setBusinessNumber(text)}
-          keyboardType="numeric"
-        />
-
-        <DropDownPicker
-            items= {categories.map((category) => ({ label: category, value: category }))}
-            open= {isOpenCategories}
-            setOpen={()=> setIsOpenCategories(!isOpenCategories)}
-            value={currentValueCategories}
-            setValue={(val)=>setCurrentValueCategories(val)}
-            dropDownDirection='DOWN'
-            multiple= {true}
-            min={1}
-            max ={4}
-            showArrowIcon ={false}
-            mode= 'BADGE'
-            badgeColors={'#2C64C6'}
-            badgeDotColors = {['white']}
-            badgeTextStyle = {{color : "white"}}
-            placeholder="תחום עסק *"
-            listMode={Platform.OS === 'ios' ? 'DEFAULT' : 'MODAL'}
-            placeholderStyle = {registerStyles.placeHolderStyle}
-            containerStyle={[registerStyles.dropdownContainer,{zIndex:3}]}
-            style={registerStyles.dropdownStyle}
-            itemStyle={registerStyles.dropdownItemStyle}
-            dropDownStyle={registerStyles.dropdownListStyle}
-            searchable={true} // Add this line for searchable
-            searchPlaceholder="חיפוש..."
-            onSelectItem={(item) => handleCategoryPress(item)}
-          />
-        
-        <DropDownPicker
-            items= {Cities.map((city) => ({ label: city, value: city }))}
-            open= {isOpenCities}
-            setOpen={()=> setIsOpenCities(!isOpenCities)}
-            value={currentValueCities}
-            setValue={(val)=>setCurrentValueCities(val)}
-            dropDownDirection='DOWN'
-            multiple= {true}
-            min={1}
-            max ={4} //how mant do we allow?
-            showArrowIcon ={false}
-            mode= 'BADGE'
-            badgeColors={'#2C64C6'}
-            badgeDotColors = {['white']}
-            badgeTextStyle = {{color : "white"}}
-            listMode={Platform.OS === 'ios' ? 'DEFAULT' : 'MODAL'}
-            placeholder=" עיר *"
-            placeholderStyle = {registerStyles.placeHolderStyle}
-            containerStyle={registerStyles.dropdownContainer}
-            style={registerStyles.dropdownStyle}
-            itemStyle={registerStyles.dropdownItemStyle}
-            dropDownStyle={registerStyles.dropdownListStyle}
-            searchable={true} // Add this line for searchable
-            searchPlaceholder="חיפוש..."
-            onSelectItem={(item) => handleCityPress(item)}
-          />
-        
-
-        <TextInput
-          style={registerStyles.input}
-          placeholder=" תיאור עסק"
-          placeholderTextColor={registerStyles.placeHolderStyle.color}
-          multiline={true}
-          numberOfLines={4}
-          value={businessDescription}
-          onChangeText={(text) => setBusinessDescription(text)}
-        />
-
-        <Pressable
-          style={[
-            registerStyles.button,
-            formSubmitted && areRequiredFieldsMissing() && { backgroundColor: 'gray' },
-          ]}
-          onPress={handleRegister}
-          disabled={formSubmitted && areRequiredFieldsMissing()}
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView
+          contentContainerStyle={registerStyles.scrollContainer}
+          keyboardShouldPersistTaps="handled"
         >
-          <Text style={registerStyles.buttonText}>הרשמה</Text>
-        </Pressable>
+          <View style={registerStyles.container}>
+            <Image style={styles.logo} source={require('../../Images/logo.jpg')} />
+            <Text style={registerStyles.title}>יצירת עסק חדש</Text>
 
-        {formSubmitted && areRequiredFieldsMissing() && (
-          <Text style={{ color: 'red', marginTop: 8 }}>
-            אנא מלא את כל שדות החובה *
-          </Text>
-        )}
+            <TextInput
+              style={registerStyles.input}
+              placeholder=" אימייל *"
+              placeholderTextColor={registerStyles.placeHolderStyle.color}
+              value={email}
+              onChangeText={(text) => setEmail(text)}
+            />
 
-        <View style={registerStyles.loginContainer}>
-          <Pressable
-            style={registerStyles.loginButton}
-            onPress={() => navigation.navigate('BusinessPage')}
-          >
-            <Text style={registerStyles.loginText}>התחברות</Text>
-          </Pressable>
-          <Text style={registerStyles.loginText}>יש לך משתמש? </Text>
-        </View>
-      </View>
-    </ScrollView>
+            <TextInput
+              style={registerStyles.input}
+              placeholder=" סיסמה *"
+              placeholderTextColor={registerStyles.placeHolderStyle.color}
+              secureTextEntry={true}
+              value={password}
+              onChangeText={(text) => setPassword(text)}
+            />
+
+            <TextInput
+              style={registerStyles.input}
+              placeholder=" שם עסק *"
+              placeholderTextColor={registerStyles.placeHolderStyle.color}
+              value={businessName}
+              onChangeText={(text) => setBusinessName(text)}
+            />
+
+            <TextInput
+              style={registerStyles.input}
+              placeholder=" מספר אישור עסק *"
+              placeholderTextColor={registerStyles.placeHolderStyle.color}
+              value={businessNumber}
+              onChangeText={(text) => setBusinessNumber(text)}
+              keyboardType="numeric"
+            />
+
+            <DropDownPicker
+              items={categories.map((category) => ({ label: category, value: category }))}
+              open={isOpenCategories}
+              setOpen={() => setIsOpenCategories(!isOpenCategories)}
+              value={currentValueCategories}
+              setValue={(val) => setCurrentValueCategories(val)}
+              dropDownDirection='DOWN'
+              multiple={true}
+              min={1}
+              max={4}
+              showArrowIcon={false}
+              mode='BADGE'
+              badgeColors={'#2C64C6'}
+              badgeDotColors={['white']}
+              listMode={Platform.OS === 'ios' ? 'FLATLIST' : 'MODAL'}
+              badgeTextStyle={{ color: "white" }}
+              placeholder="תחום עסק *"
+              placeholderStyle={registerStyles.placeHolderStyle}
+              containerStyle={[registerStyles.dropdownContainer, { zIndex: 3 }]}
+              style={registerStyles.dropdownStyle}
+              itemStyle={registerStyles.dropdownItemStyle}
+              dropDownStyle={registerStyles.dropdownListStyle}
+              searchable={true}
+              searchPlaceholder="חיפוש..."
+              onSelectItem={(item) => handleCategoryPress(item)}
+            />
+
+            <DropDownPicker
+              items={Cities.map((city) => ({ label: city, value: city }))}
+              open={isOpenCities}
+              setOpen={() => setIsOpenCities(!isOpenCities)}
+              value={currentValueCities}
+              setValue={(val) => setCurrentValueCities(val)}
+              dropDownDirection='DOWN'
+              multiple={true}
+              min={1}
+              max={4}
+              showArrowIcon={false}
+              mode='BADGE'
+              badgeColors={'#2C64C6'}
+              badgeDotColors={['white']}
+              listMode={Platform.OS === 'ios' ? 'FLATLIST' : 'MODAL'}
+              badgeTextStyle={{ color: "white" }}
+              placeholder=" עיר *"
+              placeholderStyle={registerStyles.placeHolderStyle}
+              containerStyle={registerStyles.dropdownContainer}
+              style={registerStyles.dropdownStyle}
+              itemStyle={registerStyles.dropdownItemStyle}
+              dropDownStyle={registerStyles.dropdownListStyle}
+              searchable={true}
+              searchPlaceholder="חיפוש..."
+              onSelectItem={(item) => handleCityPress(item)}
+            />
+
+            <TextInput
+              style={registerStyles.input}
+              placeholder=" תיאור עסק"
+              placeholderTextColor={registerStyles.placeHolderStyle.color}
+              multiline={true}
+              numberOfLines={4}
+              value={businessDescription}
+              onChangeText={(text) => setBusinessDescription(text)}
+            />
+
+            <Pressable
+              style={[
+                registerStyles.button,
+                formSubmitted && areRequiredFieldsMissing() && { backgroundColor: 'gray' },
+              ]}
+              onPress={handleRegister}
+              disabled={formSubmitted && areRequiredFieldsMissing()}
+            >
+              <Text style={registerStyles.buttonText}>הרשמה</Text>
+            </Pressable>
+
+            {formSubmitted && areRequiredFieldsMissing() && (
+              <Text style={{ color: 'red', marginTop: 8 }}>
+                אנא מלא את כל שדות החובה *
+              </Text>
+            )}
+
+            <View style={registerStyles.loginContainer}>
+              <Pressable
+                style={registerStyles.loginButton}
+                onPress={() => navigation.navigate('BusinessPage')}
+              >
+                <Text style={registerStyles.loginText}>התחברות</Text>
+              </Pressable>
+              <Text style={registerStyles.loginText}>יש לך משתמש? </Text>
+            </View>
+          </View>
+        </ScrollView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 
