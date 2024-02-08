@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, Text, Image, ScrollView,Pressable } from 'react-native';
+import { View, Text, Image, ScrollView, Pressable } from 'react-native';
 import { businessPageStyles } from '../styles/BusinessPageStyles';
+import { styles as ResultScreenStyles } from '../styles/ResultScreenStyles.js';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
-
+import TorType from '../components/TorType';
 const businessData = {
   name: "Mispara",
   description: "המספרה של דניאל היא מספרת גברים הממוקמת בשדרות יצחק רבין 8, באר שבע. ניתן למצוא במספרה של דניאל מגוון שירותי גילוח וספריית מוצרים לטיפוח השיער.",
@@ -20,65 +21,83 @@ const businessData = {
     },
     // Additional ratings can be added
   ],
-  torTypes: [
-    {
+  torTypes: 
+    [{
       duration: 90,
-      name: "לק",
+      name: " לק ידיים",
       price: 150,
     },
-  ],
+    {
+        duration: 90,
+        name: "לק",
+        price: 150,
+      },]
+  
 };
 
-const BusinessPage = ({navigation}) => {
+const BusinessPage = ({ navigation }) => {
   return (
-    <ScrollView style={businessPageStyles.container}>
+    <View style={{ flex: 1, backgroundColor: '#5B8BDF', }}>
+      <ScrollView style={businessPageStyles.container}>
         {/* Logo and Business Name */}
-        
+
         <View style={businessPageStyles.logoContainer}>
-            <Image source={{ uri: businessData.logo }} style={businessPageStyles.logo} />
-            <Text style={businessPageStyles.businessName}>{businessData.name}</Text>
+          <Image source={{ uri: businessData.logo }} style={businessPageStyles.logo} />
+          <Text style={businessPageStyles.businessName}>{businessData.name}</Text>
         </View>
 
 
         {/* Categories */}
         <View style={businessPageStyles.categoryContainer}>
-        <Text style={businessPageStyles.category}>
+          <Text style={businessPageStyles.label}>תחום: </Text>
+          <Text style={businessPageStyles.category}>
             {businessData.categories.map((category, index) => (
-            <Text key={index}>{category.category}{index !== businessData.categories.length - 1 ? ', ' : ''}</Text>
+              <Text key={index}>{category.category}{index !== businessData.categories.length - 1 ? ', ' : ''}</Text>
             ))}
-        </Text>
-        <Text style={businessPageStyles.label}>תחום: </Text>
+          </Text>
         </View>
 
         {/* Category and Rating */}
         <View style={businessPageStyles.categoryContainer}>
-        {/* Assuming there's a function to render stars based on the rating */}
-        <Text style={businessPageStyles.rating}>{renderStars(businessData.ratings[0].rating)}</Text>
-        <Text style={businessPageStyles.label}>דירוג העסק: </Text>
+          {/* Assuming there's a function to render stars based on the rating */}
+          <Text style={businessPageStyles.label}>דירוג העסק: </Text>
+          <Text style={businessPageStyles.rating}>{renderStars(businessData.ratings[0].rating)}</Text>
         </View>
 
         <Text style={businessPageStyles.label}>תמונות של העסק: </Text>
         {/* Business Photos */}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={businessPageStyles.photosContainer}>
-        {businessData.pictures.map((picture, index) => (
+          {businessData.pictures.map((picture, index) => (
             <Image key={index} source={{ uri: picture.url }} style={businessPageStyles.photo} />
-        ))}
+          ))}
         </ScrollView>
 
         {/* Business Description */}
-        
+
         <Text style={businessPageStyles.label}>תיאור העסק: </Text>
         <Text style={businessPageStyles.description}>{businessData.description}</Text>
         
+        <ScrollView contentOffset={{ x: 0, y: 10 }} >
+            <View style={ResultScreenStyles.container}>
+                {businessData.torTypes && businessData.torTypes.length > 0 ? (
+                    businessData.torTypes.map(appointment => (
+                    <TorType key={appointment.name} appointment={appointment} />
+                    ))
+                ) : (
+                    <Text>No tor types available</Text>
+                )}
+            </View>
+        </ScrollView>
         <View style={businessPageStyles.torButtonContainer}>  
             <Pressable
             style={businessPageStyles.torButton}
-            onPress={() => navigation.navigate('BusinessPage')}
-            >
+            onPress={() => navigation.navigate('BookAppointmentScreen')}
+          >
             <Text style={businessPageStyles.buttonText}>תאם תור</Text>
-            </Pressable>
+          </Pressable>
         </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 };
 

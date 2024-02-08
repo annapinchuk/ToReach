@@ -1,5 +1,6 @@
 import { Pressable, Text, View } from "react-native";
 import { styles } from "../styles/CalendarClientStyles";
+import NavigationButton from "./NavigationButton";
 import { FontAwesome } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -32,9 +33,7 @@ const AppointmentCard = ({ appointment }) => {
                 <Pressable style={styles.button}>
                     <Text style={styles.buttonText}>עריכה</Text>
                 </Pressable>
-                <Pressable style={styles.button}>
-                    <Text style={styles.buttonText}>ניווט</Text>
-                </Pressable>
+                <NavigationButton destination='הבושם 63 תל אביב יפו'/>
             </View>
         </View>
     );

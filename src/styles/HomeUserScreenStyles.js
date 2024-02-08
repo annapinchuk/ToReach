@@ -71,6 +71,7 @@ export const styles = StyleSheet.create({
       },
       rowContainer: {
         flexDirection: 'row',
+        width: '90%',
         justifyContent: 'space-evenly', // or 'space-around'
         alignItems: 'center',
         marginVertical: 20, // Adjust as needed
