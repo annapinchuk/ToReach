@@ -5,8 +5,8 @@ import { styles as ResultScreenStyles } from '../styles/ResultScreenStyles.js';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import TorType from '../components/TorType';
 import firebase from 'firebase/app';
-import 'firebase/firestore'; 
 import { app, auth, db } from '../firebaseConfig';
+import { getDoc,getDocs,collection,query,getFirestore,addDoc,where,doc} from 'firebase/firestore';
 
 const ProfileBusinessScreen = ({ navigation }) => {
   const [businessData, setBusinessData] = useState(null);
@@ -14,53 +14,60 @@ const ProfileBusinessScreen = ({ navigation }) => {
   const [editedPictures, setEditedPictures] = useState([]);
   const [editedLogo, setEditedLogo] = useState('');
   const [editedTorTypes, setEditedTorTypes] = useState([]);
-  const getDocRef = async () => {
-    try {
-      const user = auth.currentUser;
-      const clientsCollection = collection(db, "Businesses");
-      const clientsQuery = query(clientsCollection, where('uid', '==', user.uid));
-      const clientQuerySnapshot = await getDocs(clientsQuery);
-      const docID = clientQuerySnapshot.docs[0].id;
-      const docRef = doc(clientsCollection, docID);
-      return docRef;
-    } catch (error) {
-      console.log(error);
-      return null;
-    }
-  };
+    // State to track whether the fields are in edit mode
+    const [editMode, setEditMode] = useState(false);
 
-  useEffect(() => {
-    // Fetch business data from Firebase
-    const fetchBusinessData = async () => {
-      const businessRef = await getDocRef();
+    const [docRef, setDocRef] = useState(undefined);
+    const user = auth.currentUser;
 
-      if (businessRef) {
+    const getDocRef = async () => {
         try {
-          const businessSnapshot = await getDoc(businessRef);
-
-          if (businessSnapshot.exists()) {
-            const businessDoc = businessSnapshot.data();
-            setBusinessData(businessDoc);
-
-            // Set initial state for editing
-            setEditedDescription(businessDoc.description);
-            setEditedPictures([...businessDoc.pictures]);
-            setEditedLogo(businessDoc.logo);
-            setEditedTorTypes([...businessDoc.torTypes]);
-          } else {
-            console.error('Business document does not exist.');
-          }
-        } catch (error) {
-          console.error('Error fetching business data:', error);
+            const clientsCollection = collection(db, "Businesses");
+            const clientsQuery = query(clientsCollection, where('uid', '==', user.uid));
+            const clientQuerySnapshot = await getDocs(clientsQuery);
+            const docID = clientQuerySnapshot.docs[0].id
+            const docRef = doc(clientsCollection, docID)
+            setDocRef(docRef)
         }
-      }
-    };// Empty dependency array means this effect runs once after the initial render
-    fetchBusinessData();
-  }, []);
+        catch (error) {
+            console.log(error);
+        }
+    }
 
-  if (!businessData) {
-    return <Text>Loading...</Text>;
-  }
+    useEffect(() => {
+        getDocRef();
+    }, []);
+
+    useEffect(() => {
+        if (docRef === undefined)
+            return;
+        // Load user information from Firestore
+        const getData = async () => {
+            try {
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    console.log("Document data:", docSnap.data());
+                    const businessDoc = docSnap.data();
+                    setBusinessData(businessDoc);
+                    setEditedDescription(businessDoc.description);
+                    setEditedPictures([...businessDoc.pictures]);
+                    setEditedLogo(businessDoc.logo);
+                    setEditedTorTypes([...businessDoc.torTypes]);
+                    console.log(businessData);                 
+                } else {
+                    // docSnap.data() will be undefined in this case
+                    console.log("No such document!");
+                }
+            }
+            catch (error) {
+                console.log(error);
+            }
+            
+        }
+        getData()
+
+    }, [docRef]);
+
   const handleEditDescription = () => {
     // Implement your logic to edit the description
     console.log("Edit Description");
@@ -94,6 +101,23 @@ const ProfileBusinessScreen = ({ navigation }) => {
   return (
     <View style={{ flex: 1, backgroundColor: '#5B8BDF' }}>
       <ScrollView style={businessPageStyles.container}>
+      <View style={styles.buttonsRow}>
+                {/* Display edit or save button based on edit mode */}
+                {editMode ? (
+                    <Pressable style={styles.button} onPress={handleSave}>
+                        <Text style={styles.buttonText}>
+                            שמירה
+                        </Text>
+                    </Pressable>
+
+                ) : (
+                    <Pressable style={styles.button} onPress={() => setEditMode(true)}>
+                        <Text style={styles.buttonText}>
+                            עריכה
+                        </Text>
+                    </Pressable>
+                )}
+        </View>
         {/* Logo and Business Name */}
         <View style={businessPageStyles.logoContainer}>
           <Image source={{ uri: editedLogo }} style={businessPageStyles.logo} />
@@ -108,8 +132,8 @@ const ProfileBusinessScreen = ({ navigation }) => {
         <View style={businessPageStyles.categoryContainer}>
           <Text style={businessPageStyles.label}>תחום: </Text>
           <Text style={businessPageStyles.category}>
-            {businessData.categories.map((category, index) => (
-              <Text key={index}>{category.category}{index !== businessData.categories.length - 1 ? ', ' : ''}</Text>
+            {businessData.Categories.map((category, index) => (
+              <Text key={index}>{category.category}{index !== businessData.Categories.length - 1 ? ', ' : ''}</Text>
             ))}
           </Text>
         </View>
@@ -118,7 +142,8 @@ const ProfileBusinessScreen = ({ navigation }) => {
         <View style={businessPageStyles.categoryContainer}>
           {/* Assuming there's a function to render stars based on the rating */}
           <Text style={businessPageStyles.label}>דירוג העסק: </Text>
-          <Text style={businessPageStyles.rating}>{renderStars(businessData.ratings[0].rating)}</Text>
+          {businessData.ratings && businessData.ratings.length > 0 &&(
+          <Text style={businessPageStyles.rating}>{renderStars(businessData.ratings[0].rating)}</Text>)}
         </View>
 
         <Text style={businessPageStyles.label}>תמונות של העסק: </Text>
@@ -171,5 +196,12 @@ const ProfileBusinessScreen = ({ navigation }) => {
     </View>
   );
 };
+// A function to render stars based on the rating (Assuming a 5-star scale)
+const renderStars = (rating) => {
+    const stars = Array.from({ length: 5 }, (_, index) => (
+      <Text key={index} style={businessPageStyles.star}>{index < rating ? '★' : '☆'}</Text>
+    ));
+    return <>{stars}</>;
+  };
 
 export default ProfileBusinessScreen;
