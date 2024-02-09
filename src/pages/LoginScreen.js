@@ -7,7 +7,7 @@ import { Image } from 'react-native';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { auth, db } from '../firebaseConfig';
 import Toast from 'react-native-toast-message';
-import { collection, getDocs, query, where } from '@firebase/firestore';
+import { collection, doc, getDoc, getDocs, query, where } from '@firebase/firestore';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -51,14 +51,15 @@ const LoginScreen = ({ navigation }) => {
     const clientsCollection = collection(db, "Clients");
     const businessCollection = collection(db, "Businesses");
 
-    const clientsQuery = query(clientsCollection, where('uid', '==', uid));
-    const businessQuery = query(businessCollection, where('uid', '==', uid));
+    const clientDocRef = doc(clientsCollection, uid);
+    const businessDocRef = doc(businessCollection, uid);
 
     try {
-      const clientQuerySnapshot = await getDocs(clientsQuery);
-      const businessQuerySnapshot = await getDocs(businessQuery);
-      if (!clientQuerySnapshot.empty) isClient = true;
-      if (!businessQuerySnapshot.empty) isClient = false;
+      const clientSnapshot = await getDoc(clientDocRef);
+      const businessSnapshot = await getDoc(businessDocRef);
+      
+      if (clientSnapshot.exists()) isClient = true;
+      if (businessSnapshot.exists()) isClient = false;
       console.log(isClient);
       if (isClient === undefined) throw new Error('user not found');
       Toast.show({
@@ -68,6 +69,7 @@ const LoginScreen = ({ navigation }) => {
       navigation.navigate('Navbar', ({ isClient }));
     } catch (err) {
       console.log(err);
+      console.log(err.message);
       Toast.show({
         type: 'error',
         text1: 'שם משתמש או סיסמה שגויים'
@@ -96,6 +98,7 @@ const LoginScreen = ({ navigation }) => {
           const errorCode = error.code;
           const errorMessage = error.message;
           console.log(error, errorMessage);
+          console.log(error.message());
         });
 
     } else {
