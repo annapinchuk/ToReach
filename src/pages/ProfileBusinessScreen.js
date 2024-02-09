@@ -6,14 +6,16 @@ import { Colors } from 'react-native/Libraries/NewAppScreen';
 import TorType from '../components/TorType';
 import firebase from 'firebase/app';
 import { app, auth, db } from '../firebaseConfig';
-import { getDoc, getDocs, collection, query, getFirestore, addDoc, where, doc } from 'firebase/firestore';
+import { collection,getDoc, setDoc, doc } from 'firebase/firestore';
 import { styles } from '../styles/ProfileClientScreenStyles';
+import TorTypeInput from '../components/TorTypeInput';
 
 const ProfileBusinessScreen = ({ navigation }) => {
     const [businessData, setBusinessData] = useState(null);
     const [editedDescription, setEditedDescription] = useState('');
     const [editedPictures, setEditedPictures] = useState([]);
     const [editedLogo, setEditedLogo] = useState('');
+    const [editedName, setEditedName] = useState('');
     const [editedTorTypes, setEditedTorTypes] = useState([]);
     // State to track whether the fields are in edit mode
     const [editMode, setEditMode] = useState(false);
@@ -32,7 +34,13 @@ const ProfileBusinessScreen = ({ navigation }) => {
                 if (docSnap.exists()) {
                     console.log("Document data:", docSnap.data());
                     const data = docSnap.data();
+
                     setBusinessData(data);
+                    setEditedName(data.businessName);
+                    setEditedDescription(data.businessDescription);
+                    setEditedPictures(data.pictures);
+                    setEditedTorTypes(data.torTypes);
+                    setEditedLogo(data.logo);
                     console.log("busniess data:", businessData);
                 } else {
                     // docSnap.data() will be undefined in this case
@@ -46,11 +54,23 @@ const ProfileBusinessScreen = ({ navigation }) => {
         }
         getData();
     }, []);
-    const handleEditDescription = () => {
-        console.log("busniess data:", businessData);
-        console.log("Edit Description");
-    };
+    const handleSave = () => {
+        const newData = {...businessData, 
+            businessName: editedName,
+            businessDescription: editedDescription,
+            pictures: editedPictures,
+            torTypes: editedTorTypes,
+            logo: editedLogo,
+        }
+        setDoc(docRef, newData).then(() => {
+            console.log("Document has been changed successfully");
+        })
+            .catch(error => {
+                console.log(error);
+            })
 
+        setEditMode(false);
+    };
     const handleAddPicture = () => {
         // Implement your logic to add more pictures
         const newPicture = { url: "https://picsum.photos/204" }; // Replace with actual logic
@@ -60,15 +80,8 @@ const ProfileBusinessScreen = ({ navigation }) => {
     const handleEditLogo = () => {
         // Implement your logic to edit the logo
         console.log("Edit Logo");
-    };
-
-    const handleAddTorType = () => {
-        // Implement your logic to add more torTypes
-        const newTorType = {
-            duration: 60,
-            name: "מסכת פנים",
-            price: 120,
-        }; // Replace with actual logic
+    };    
+    const handleAddTorType = newTorType => {
         setEditedTorTypes([...editedTorTypes, newTorType]);
     };
 
@@ -98,12 +111,24 @@ const ProfileBusinessScreen = ({ navigation }) => {
                 </View>
                 {/* Logo and Business Name */}
                 <View style={businessPageStyles.logoContainer}>
-                    <Image source={{ uri: editedLogo }} style={businessPageStyles.logo} />
+                    <Image source={{ uri: businessData.logo }} style={businessPageStyles.logo} />
                     {/* Button to edit logo */}
-                    <Pressable style={businessPageStyles.editLogoButton} onPress={handleEditLogo}>
-                        <Text style={businessPageStyles.buttonText}>ערוך לוגו</Text>
-                    </Pressable>
-                    <Text style={businessPageStyles.businessName}>{businessData.name}</Text>
+                    {editMode ? (
+                        <View>
+                        <Pressable style={businessPageStyles.editLogoButton} onPress={handleEditLogo}>
+                            <Text style={businessPageStyles.buttonText}>ערוך לוגו</Text>
+                        </Pressable>
+                        <TextInput
+                            style={businessPageStyles.businessName}
+                            value={editedName}
+                            onChangeText={(text) => setEditedName(text)}
+                        />
+                        </View>
+                       
+
+                    ) : (
+                        <Text style={businessPageStyles.businessName}>{businessData.businessName}</Text>
+                    )}
                 </View>
 
                 {/* Categories */}
@@ -131,9 +156,13 @@ const ProfileBusinessScreen = ({ navigation }) => {
                         <Image key={index} source={{ uri: picture.url }} style={businessPageStyles.photo} />
                     ))}
                     {/* Button to add more pictures */}
-                    <Pressable style={businessPageStyles.addPictureButton} onPress={handleAddPicture}>
-                        <Text style={businessPageStyles.buttonText}>הוסף תמונה</Text>
-                    </Pressable>
+                    {editMode? (
+                        <Pressable style={businessPageStyles.addPictureButton} onPress={handleAddPicture}>
+                            <Text style={businessPageStyles.buttonText}>הוסף תמונה</Text>
+                        </Pressable>
+                    ):(
+                        <View></View>
+                    )}
                 </ScrollView>
 
                 {/* Business Description */}
@@ -141,36 +170,35 @@ const ProfileBusinessScreen = ({ navigation }) => {
                 {editMode ? (
                     <View style={businessPageStyles.editDescriptionContainer}>
                         <TextInput
-                            style={businessPageStyles.editDescriptionInput}
+                            style={{...businessPageStyles.editDescriptionInput, textAlign: 'right'}}
                             value={editedDescription}
-                            onChangeText={(text) => handleEditDescription(text)}
+                            onChangeText={(text) => setEditedDescription(text)}
                             multiline
                         />
                     </View>
-                        ) : (
-                        <Text style={businessPageStyles.description}>{businessData.businessDescription}</Text>
+                ) : (
+                    <Text style={businessPageStyles.description}>{editedDescription}</Text>
                 )}
 
 
-                        {/* Tor Types */}
-                        <ScrollView contentOffset={{ x: 0, y: 10 }}>
-                            <View style={ResultScreenStyles.container}>
-                                {editedTorTypes && editedTorTypes.length > 0 ? (
-                                    editedTorTypes.map(appointment => (
-                                        <TorType key={appointment.name} appointment={appointment} />
-                                    ))
-                                ) : (
-                                    <Text>No tor types available</Text>
-                                )}
-                            </View>
-                            {/* Button to add more torTypes */}
-                            <Pressable style={businessPageStyles.addTorTypeButton} onPress={handleAddTorType}>
-                                <Text style={businessPageStyles.buttonText}>הוסף סוג טיפול</Text>
-                            </Pressable>
-                        </ScrollView>
+                {/* Tor Types */}
+                <ScrollView contentOffset={{ x: 0, y: 10 }}>
+                    <View style={ResultScreenStyles.container}>
+                        {editedTorTypes && editedTorTypes.length > 0 ? (
+                            editedTorTypes.map(appointment => (
+                                <TorType key={appointment.name} appointment={appointment} />
+                            ))
+                        ) : (
+                            <Text>No tor types available</Text>
+                        )}
+                    </View>
+                    {/* Button to add more torTypes */}
+                    {editMode && <TorTypeInput onAddTorType={handleAddTorType} />}
 
-                    </ScrollView>
-    </View>
+                </ScrollView>
+
+            </ScrollView>
+        </View>
     );
 };
 // A function to render stars based on the rating (Assuming a 5-star scale)
