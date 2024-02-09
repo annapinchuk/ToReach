@@ -20,7 +20,8 @@ import {
   collection,
   query,
   getFirestore,
-  addDoc,
+  setDoc,
+  doc,
 } from 'firebase/firestore';
 import { app, auth, db } from '../firebaseConfig';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -73,7 +74,7 @@ const RegisterBusinessScreen = ({ navigation }) => {
       businessName,
       businessPhoneNumber,
       businessNumber,
-      Cities,
+      selectedCities,
       businessDescription,
       selectedCategories,
     });
@@ -82,8 +83,9 @@ const RegisterBusinessScreen = ({ navigation }) => {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       const businessesRef = collection(db, 'Businesses');
-      await addDoc(businessesRef, {
-        uid: user.uid,
+      const docRef = doc(businessesRef, user.uid)
+      await setDoc(docRef, {
+        // uid: user.uid,
         email,
         businessName,
         businessPhoneNumber,
@@ -111,8 +113,7 @@ const RegisterBusinessScreen = ({ navigation }) => {
 
   const fetchCategories = async () => {
     try {
-      const db = getFirestore(app);
-      const categoriesCollection = collection(db, 'Categories');
+      const categoriesCollection   = collection(db, 'Categories');
       const categoriesSnapshot = await getDocs(categoriesCollection);
       const categoriesData = categoriesSnapshot.docs.map(
         (doc) => doc.data().name
@@ -125,7 +126,6 @@ const RegisterBusinessScreen = ({ navigation }) => {
   };
   const fetchCities = async () => {
     try {
-      const db = getFirestore(app);
       const citiessCollection = collection(db, 'Cities');
       const citiesSnapshot = await getDocs(citiessCollection);
       const citiesData = citiesSnapshot.docs.map(

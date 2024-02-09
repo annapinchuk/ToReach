@@ -5,7 +5,7 @@ import { registerStyles } from '../styles/RegisterBusinessScreenStyles';
 import { styles } from '../styles/HomeScreenStyles';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth, db } from '../firebaseConfig';
-import { addDoc, collection } from '@firebase/firestore';
+import { setDoc, collection, doc } from '@firebase/firestore';
 import Toast from 'react-native-toast-message';
 
 
@@ -36,7 +36,8 @@ const RegisterClientScreen = ({ navigation }) => {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       const clientsRef = collection(db, 'Clients');
-      await addDoc(clientsRef, { uid: user.uid, name, phoneNumber, email });
+      const docRef = doc(clientsRef, user.uid)
+      await setDoc(docRef, { name, phoneNumber, email });
       Toast.show({
         type: 'success',
         text1: 'ההרשמה בוצעה בהצלחה'
