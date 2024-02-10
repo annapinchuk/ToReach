@@ -1,8 +1,11 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-    container: {
+    scrollView: {
         backgroundColor: '#5B8BDF',
+        height: '100%',
+    },
+    container: {
         alignItems: 'center',
         paddingBottom: 40,
         paddingTop: 20,

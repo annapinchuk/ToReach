@@ -1,77 +1,241 @@
 // Import necessary React Native components
-import React, { useState } from 'react';
-import { View, Text, Image, Pressable } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Image, Pressable, ScrollView } from 'react-native';
 import DatePicker from '../components/DatePicker';
 import { styles } from '../styles/BookAppointmentScreenStyles';
+import { addDoc, collection, doc, getDoc, getDocs, query, setDoc, where } from '@firebase/firestore';
+import { auth, db } from '../firebaseConfig';
+import Toast from 'react-native-toast-message';
+import { getHour } from '../shared/dateMethods';
+import { businessPageStyles } from '../styles/BusinessPageStyles';
+import Spinner from '../components/Spinner';
 
-const BookAppointmentScreen = ({ navigation, bussinesID }) => {
+const BookAppointmentScreen = ({ route, navigation }) => {
+
+    // CHANGE !!!
+    // const businessID = route.params.businessID;
+    const businessID = "hH9jVyyFtvf6FrtRWiCp";
+    const appointment = route.params?.appointment;
+    const [isLoading, setIsLoading] = useState(false);
+
     // State variables to store user selections
-    const [speciality, setSpeciality] = useState('');
-    const [selectedDate, setSelectedDate] = useState(new Date());
-    const [selectedTime, setSelectedTime] = useState('');
+    const [selectedDate, setSelectedDate] = useState(appointment ? new Date(appointment.date) : new Date());
+    const [selectedTime, setSelectedTime] = useState(appointment ? appointment.startTime : '');
+    const [selectedTorType, setSelectedTorType] = useState(appointment ? appointment.torType : undefined);
 
-    // Mock data for specialities, dates, and times
-    const specialities = ['בלט', 'גאז', 'טיסו', 'לירי', 'מודרני', 'היפהופ', 'בר', 'מתיחות'];
-    const times = ['10:00', '11:30', '12:00', '14:00', '16:30', '19:00', '19:30'];
+    // State variables to store business data
+    const [torTypes, setTorTypes] = useState([]);
+    const [businessName, setBusinessName] = useState('');
+
+    // State variables to store free time according date + torType
+    const [freeTimes, setFreeTimes] = useState([]);
+
+    // Get business data
+    useEffect(() => {
+        const businessCollection = collection(db, "Businesses");
+        const businessDocRef = doc(businessCollection, businessID)
+        // Load user information from Firestore
+        const getData = async () => {
+            try {
+                const docSnap = await getDoc(businessDocRef);
+                if (docSnap.exists()) {
+                    const { torTypes, businessName } = docSnap.data();
+                    setTorTypes(torTypes);
+                    setBusinessName(businessName);
+                }
+            }
+            catch (error) {
+                console.log(error);
+            }
+        }
+        getData()
+
+    }, []);
+
+    // Check free time according date + torType
+    const checkFreeTimes = async () => {
+
+        const times = {};
+
+        const startTime = new Date(selectedDate);
+        startTime.setHours(9, 0, 0, 0); // Set start time to 09:00
+
+        const endTime = new Date(selectedDate);
+        endTime.setHours(18, 0, 0, 0); // Set end time to 18:00 less the duration
+        endTime.setMinutes(endTime.getMinutes() - selectedTorType.duration);
+
+        let currentTime = new Date(startTime);
+
+        while (currentTime <= endTime) {
+            times[getHour(new Date(currentTime))] = currentTime >= new Date();
+            currentTime.setMinutes(currentTime.getMinutes() + 5);
+        }
+
+        try {
+            const startDay = selectedDate.setHours(0, 0, 0);
+            const endDay = selectedDate.setHours(23, 59, 59);
+
+            const findTakenTimes = query(
+                collection(db, "Appointments"),
+                where("businessID", "==", businessID),
+                where("startTime", ">=", new Date(startDay)),
+                where("startTime", "<=", new Date(endDay))
+            );
+            const querySnapshot = await getDocs(findTakenTimes);
+            const appointmentID = appointment?.id;
+            querySnapshot.forEach((doc) => {
+                if (appointmentID === doc.id) return;
+                const appointment = doc.data();
+                const start = appointment.startTime.toDate();
+                start.setMinutes(start.getMinutes() - selectedTorType.duration);
+
+                const end = appointment.endTime.toDate();
+
+                let currentTime = new Date(start);
+                while (currentTime <= end) {
+                    times[getHour(new Date(currentTime))] = false;
+                    currentTime.setMinutes(currentTime.getMinutes() + 5);
+                }
+            });
+        }
+        catch (error) {
+            console.log(error);
+        }
+
+        setFreeTimes(Object.keys(times).filter(time => times[time]));
+    };
+
+    // Update the freeTimes after selecting date + torType
+    useEffect(() => {
+        if (!selectedTorType || !selectedDate) return;
+        checkFreeTimes();
+    }, [selectedDate, selectedTorType]);
+
+    // Convert startTime and date to a Date object
+    const calculateStartTime = (date, time) => {
+        // Combine date and time strings
+        const [hour, minutes] = time.split(':');
+        startTime = date.setHours(hour, minutes, 0);
+
+        // Create a new Date object from the combined date and time string
+        dateObject = new Date(startTime);
+
+        return dateObject;
+    };
+
+    // Calculate endTime according to startTime + torTypeDuration
+    const calculateEndTime = (startTime) => {
+
+        // Create a new Date object for the end time
+        endTime = new Date(startTime)
+
+        // Calculate end time
+        endTime.setMinutes(endTime.getMinutes() + selectedTorType.duration);
+
+        return endTime;
+    };
 
     // Function to open the selected navigation app
-    const saveHandler = () => {
-        console.log('Appointment saved')
+    const saveHandler = async () => {
+        try {
+            // Check the user select both time and torType
+            if (selectedTime === '' || selectedTorType === undefined) {
+                Toast.show({
+                    type: 'error',
+                    text1: 'יש לבחור את כל השדות'
+                });
+                return;
+            }
+
+            // Save new appointment
+            const startTime = calculateStartTime(selectedDate, selectedTime)
+            // const endTime = calculateEndTime(startTime, selectedTorType.duration)
+            const endTime = calculateEndTime(startTime)
+            const data = {
+                businessID: businessID,
+                clientID: auth.currentUser.uid,
+                name: selectedTorType.name,
+                price: selectedTorType.price,
+                startTime: startTime,
+                endTime: endTime,
+            };
+
+            // Check if update or new 
+            setIsLoading(true);
+            if (appointment)
+                await setDoc(doc(db, 'Appointments', appointment.id), data)
+            else
+                await addDoc(collection(db, "Appointments"), data);
+            setIsLoading(false);
+
+            // Print Appointment saved
+            console.log('Appointment saved');
+            Toast.show({
+                type: 'success',
+                text1: 'ההרשמה בוצעה בהצלחה'
+            })
+            navigation.navigate('יומן');
+        }
+        catch (error) {
+            console.log(error);
+        }
     };
 
     return (
         <View style={styles.container}>
-            {/* Top section with business image and name */}
-            <View style={styles.header}>
-                <Image
-                    source={{ uri: "https://picsum.photos/202" }}
-                    style={styles.businessImage}
-                />
-                <Text style={styles.businessName}>Dance Bar</Text>
-            </View>
-
-            {/* Choose a speciality section */}
-            <View style={styles.section}>
-                <Text style={styles.sectionText}>בחר סוג תור:</Text>
-                <View style={styles.options}>
-                    {specialities.map((spec) => (
-                        <Pressable key={spec} onPress={() => setSpeciality(spec)}
-                            style={speciality === spec ? styles.selectedOption : styles.option}>
-                            <Text style={{ color: speciality === spec ? 'white' : 'black' }} >
-                                {spec}
-                            </Text>
-                        </Pressable>
-                    ))}
+            <ScrollView style={businessPageStyles.container}>
+                {/* Top section with business image and name */}
+                <View style={styles.header}>
+                    <Image
+                        source={{ uri: "https://picsum.photos/202" }}
+                        style={styles.businessImage}
+                    />
+                    <Text style={styles.businessName}>{businessName}</Text>
                 </View>
-            </View>
 
-            {/* Choose a date section */}
-            <View style={styles.dateSection}>
-                <Text style={styles.sectionText}>בחר תאריך:</Text>
-                <DatePicker date={selectedDate} setDate={setSelectedDate} />
-            </View>
-
-            {/* Choose a time section */}
-            <View style={styles.section}>
-                <Text style={styles.sectionText}>בחר שעה:</Text>
-                <View style={styles.options}>
-                    {times.map((time) => (
-                        <Pressable key={time} onPress={() => setSelectedTime(time)}
-                            style={selectedTime === time ? styles.selectedOption : styles.option}>
-                            <Text style={{ color: selectedTime === time ? 'white' : 'black' }} >
-                                {time}
-                            </Text>
-                        </Pressable>
-                    ))}
+                {/* Choose a selectedType section */}
+                <View style={styles.section}>
+                    <Text style={styles.sectionText}>בחר סוג תור:</Text>
+                    <View style={styles.options}>
+                        {torTypes.map((torType) => (
+                            <Pressable key={torType.name} onPress={() => setSelectedTorType(torType)}
+                                style={selectedTorType?.name === torType.name ? styles.selectedOption : styles.option}>
+                                <Text style={{ color: selectedTorType === torType.name ? 'white' : 'black' }} >
+                                    {torType.name}
+                                </Text>
+                            </Pressable>
+                        ))}
+                    </View>
                 </View>
-            </View>
 
-            {/* Save button */}
-            <View style={{ alignItems: 'center' }}>
-                <Pressable style={styles.saveButton} onPress={() => saveHandler()}>
-                    <Text style={styles.saveButtonText}>שמירה</Text>
-                </Pressable>
-            </View>
+                {/* Choose a date section */}
+                <View style={styles.dateSection}>
+                    <Text style={styles.sectionText}>בחר תאריך:</Text>
+                    <DatePicker date={selectedDate} setDate={setSelectedDate} />
+                </View>
+
+                {/* Choose a time section */}
+                <View style={styles.section}>
+                    <Text style={styles.sectionText}>בחר שעה:</Text>
+                    <View style={styles.options}>
+                        {freeTimes && freeTimes.length > 0 ? freeTimes.map((time) => (
+                            <Pressable key={time} onPress={() => setSelectedTime(time)}
+                                style={selectedTime === time ? styles.selectedOption : styles.option}>
+                                <Text style={{ color: selectedTime === time ? 'white' : 'black' }} >
+                                    {time}
+                                </Text>
+                            </Pressable>
+                        )) : <Text style={styles.warningText}>אין תורים פנויים ביום זה</Text>}
+                    </View>
+                </View>
+
+                {/* Save button */}
+                {isLoading ? <Spinner /> : <View style={{ alignItems: 'center' }}>
+                    <Pressable style={styles.saveButton} onPress={() => saveHandler()}>
+                        <Text style={styles.saveButtonText}>שמירה</Text>
+                    </Pressable>
+                </View>}
+            </ScrollView>
         </View >
     );
 };

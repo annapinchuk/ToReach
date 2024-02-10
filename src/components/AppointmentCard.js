@@ -4,13 +4,27 @@ import NavigationButton from "./NavigationButton";
 import { FontAwesome } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { getHour } from "../shared/dateMethods";
 
-const AppointmentCard = ({ appointment }) => {
+const AppointmentCard = ({ navigation, appointment }) => {
 
-    const getHour = date => date.toLocaleTimeString('he-IL', {
-        hour: '2-digit',
-        minute: '2-digit',
-    });
+    const handleEdit = () => {
+        const diff = appointment.endTime.getTime() - appointment.startTime.getTime();
+        const duration = Math.round(diff / 60000);
+        const torType = {
+            price: appointment.price,
+            name: appointment.name,
+            duration: duration,
+        };
+        const appointmentToSend = {
+            ...appointment,
+            torType: torType,
+            date: appointment.startTime.toString(),
+            startTime: getHour(appointment.startTime),
+            endTime: undefined,
+        };
+        navigation.navigate("BookAppointmentScreen", { appointment: appointmentToSend, businessID: appointment.businessID })
+    }
 
     return (
         <View style={styles.card}>
@@ -36,10 +50,10 @@ const AppointmentCard = ({ appointment }) => {
                 </View>
             </View>
             <View style={styles.cardMiddleRow}>
-                <Pressable style={styles.button}>
+                <Pressable style={styles.button} onPress={handleEdit}>
                     <Text style={styles.buttonText}>עריכה</Text>
                 </Pressable>
-                <NavigationButton destination='הבושם 63 תל אביב יפו' />
+                <NavigationButton destination={appointment.address} />
             </View>
         </View>
     );
