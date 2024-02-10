@@ -2,72 +2,27 @@ import React, { useEffect, useState } from 'react';
 import { View, ScrollView } from 'react-native';
 import AppointmentCard from '../components/AppointmentCard';
 import { styles } from '../styles/CalendarClientStyles';
-import { collection, getDocs, query, where } from '@firebase/firestore';
+import { collection, getDocs, orderBy, query, where } from '@firebase/firestore';
 import { auth, db } from '../firebaseConfig';
+import { useIsFocused } from '@react-navigation/native';
 
-const CalendarClientScreen = () => {
+const CalendarClientScreen = ({ navigation }) => {
+
+    const isFocused = useIsFocused();
 
     const [appointments, setAppointments] = useState([]);
-
-    const data = [
-        {
-            id: 124,
-            name: 'תספורת',
-            businessName: "Daniel's hair",
-            startTime: '13:00',
-            endTime: '13:30',
-            date: new Date(2023, 1, 14),
-            price: 60,
-        },
-        {
-            id: 125,
-            name: 'תזונאית',
-            businessName: "Shlomo's gym",
-            startTime: '9:00',
-            endTime: '10:00',
-            date: new Date(2023, 1, 15),
-            price: 120,
-        },
-        {
-            id: 126,
-            name: 'תספורת',
-            businessName: "Daniel's hair",
-            startTime: '11:00',
-            endTime: '11:30',
-            date: new Date(2023, 1, 15),
-            price: 60,
-        },
-        {
-            id: 127,
-            appointmentName: 'תספורת',
-            businessName: "Daniel's hair",
-            startTime: '11:00',
-            endTime: '11:30',
-            date: new Date(2023, 1, 15),
-            price: 60,
-        },
-        {
-            id: 128,
-            appointmentName: 'תספורת',
-            businessName: "Daniel's hair",
-            startTime: '11:00',
-            endTime: '11:30',
-            date: new Date(2023, 1, 15),
-            price: 60,
-        },
-    ];
 
     useEffect(() => {
         const getData = async () => {
             try {
-                const businessIdToName = {};
+                const docIdToBusiness = {};
                 const businessesCollection = collection(db, 'Businesses');
                 const businessesSnapshot = await getDocs(businessesCollection);
-                businessesSnapshot.docs.forEach(doc => businessIdToName[doc.id] = doc.data().businessName);
-                
+                businessesSnapshot.docs.forEach(doc => docIdToBusiness[doc.id] = doc.data());
+
                 const { uid } = auth.currentUser;
                 const appointmentsCollection = collection(db, 'Appointments');
-                const appointmentsQuery = query(appointmentsCollection, where('clientID', '==', uid));
+                const appointmentsQuery = query(appointmentsCollection, where('clientID', '==', uid), orderBy('startTime'));
                 const appointmentsSnapshot = await getDocs(appointmentsQuery);
                 const appointmentsData = appointmentsSnapshot.docs.map(
                     (doc) => ({
@@ -75,7 +30,8 @@ const CalendarClientScreen = () => {
                         id: doc.id,
                         startTime: doc.data().startTime.toDate(),
                         endTime: doc.data().endTime.toDate(),
-                        businessName: businessIdToName[doc.data().businessID],
+                        businessName: docIdToBusiness[doc.data().businessID].businessName,
+                        address: docIdToBusiness[doc.data().businessID].address,
                     })
                 );
                 console.log(appointmentsData[0]);
@@ -86,12 +42,16 @@ const CalendarClientScreen = () => {
             }
         }
         getData();
-    }, []);
+    }, [isFocused]);
 
     return (
         <ScrollView>
             <View style={styles.container}>
-                {appointments.map(appointment => <AppointmentCard key={appointment.id} appointment={appointment} />)}
+                {appointments.map(appointment =>
+                    <AppointmentCard key={appointment.id}
+                        appointment={appointment}
+                        navigation={navigation}
+                    />)}
             </View>
         </ScrollView>
     );

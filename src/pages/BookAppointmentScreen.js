@@ -3,22 +3,25 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Image, Pressable, ScrollView } from 'react-native';
 import DatePicker from '../components/DatePicker';
 import { styles } from '../styles/BookAppointmentScreenStyles';
-import { addDoc, collection, doc, getDoc, getDocs, query, where } from '@firebase/firestore';
+import { addDoc, collection, doc, getDoc, getDocs, query, setDoc, where } from '@firebase/firestore';
 import { auth, db } from '../firebaseConfig';
 import Toast from 'react-native-toast-message';
 import { getHour } from '../shared/dateMethods';
 import { businessPageStyles } from '../styles/BusinessPageStyles';
+import Spinner from '../components/Spinner';
 
 const BookAppointmentScreen = ({ route, navigation }) => {
 
     // CHANGE !!!
     // const businessID = route.params.businessID;
     const businessID = "hH9jVyyFtvf6FrtRWiCp";
+    const appointment = route.params?.appointment;
+    const [isLoading, setIsLoading] = useState(false);
 
     // State variables to store user selections
-    const [selectedDate, setSelectedDate] = useState(new Date());
-    const [selectedTime, setSelectedTime] = useState('');
-    const [selectedTorType, setSelectedTorType] = useState(undefined);
+    const [selectedDate, setSelectedDate] = useState(appointment ? new Date(appointment.date) : new Date());
+    const [selectedTime, setSelectedTime] = useState(appointment ? appointment.startTime : '');
+    const [selectedTorType, setSelectedTorType] = useState(appointment ? appointment.torType : undefined);
 
     // State variables to store business data
     const [torTypes, setTorTypes] = useState([]);
@@ -79,8 +82,9 @@ const BookAppointmentScreen = ({ route, navigation }) => {
                 where("startTime", "<=", new Date(endDay))
             );
             const querySnapshot = await getDocs(findTakenTimes);
-
+            const appointmentID = appointment?.id;
             querySnapshot.forEach((doc) => {
+                if (appointmentID === doc.id) return;
                 const appointment = doc.data();
                 const start = appointment.startTime.toDate();
                 start.setMinutes(start.getMinutes() - selectedTorType.duration);
@@ -156,7 +160,13 @@ const BookAppointmentScreen = ({ route, navigation }) => {
                 endTime: endTime,
             };
 
-            const appointmentDocRef = await addDoc(collection(db, "Appointments"), data);
+            // Check if update or new 
+            setIsLoading(true);
+            if (appointment)
+                await setDoc(doc(db, 'Appointments', appointment.id), data)
+            else
+                await addDoc(collection(db, "Appointments"), data);
+            setIsLoading(false);
 
             // Print Appointment saved
             console.log('Appointment saved');
@@ -220,11 +230,11 @@ const BookAppointmentScreen = ({ route, navigation }) => {
                 </View>
 
                 {/* Save button */}
-                <View style={{ alignItems: 'center' }}>
+                {isLoading ? <Spinner /> : <View style={{ alignItems: 'center' }}>
                     <Pressable style={styles.saveButton} onPress={() => saveHandler()}>
                         <Text style={styles.saveButtonText}>שמירה</Text>
                     </Pressable>
-                </View>
+                </View>}
             </ScrollView>
         </View >
     );
