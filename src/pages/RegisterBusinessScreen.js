@@ -33,6 +33,7 @@ const RegisterBusinessScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [businessName, setBusinessName] = useState('');
+  const [address, setAddress] = useState('');
   const [businessPhoneNumber, setBusinessPhoneNumber] = useState('');
   const [businessNumber, setBusinessNumber] = useState('');
   const [businessDescription, setBusinessDescription] = useState('');
@@ -55,6 +56,7 @@ const RegisterBusinessScreen = ({ navigation }) => {
       email.trim() === '' ||
       password.trim() === '' ||
       businessName.trim() === '' ||
+      address.trim() === '' ||
       businessPhoneNumber.trim() === '' ||
       businessNumber.trim() === '' ||
       selectedCities.length === 0 ||
@@ -74,6 +76,7 @@ const RegisterBusinessScreen = ({ navigation }) => {
       email,
       password,
       businessName,
+      address,
       businessPhoneNumber,
       businessNumber,
       selectedCities,
@@ -91,6 +94,7 @@ const RegisterBusinessScreen = ({ navigation }) => {
         // uid: user.uid,
         email,
         businessName,
+        address,
         businessPhoneNumber,
         businessNumber,
         Cities: selectedCities,
@@ -199,6 +203,14 @@ const RegisterBusinessScreen = ({ navigation }) => {
               placeholderTextColor={registerStyles.placeHolderStyle.color}
               value={businessName}
               onChangeText={(text) => setBusinessName(text)}
+            />
+
+            <TextInput
+              style={registerStyles.input}
+              placeholder=" כתובת *"
+              placeholderTextColor={registerStyles.placeHolderStyle.color}
+              value={address}
+              onChangeText={(text) => setAddress(text)}
             />
 
             <TextInput

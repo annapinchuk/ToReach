@@ -2,19 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { View, ScrollView } from 'react-native';
 import AppointmentCard from '../components/AppointmentCard';
 import { styles } from '../styles/CalendarClientStyles';
-import { collection, getDocs, orderBy, query, where } from '@firebase/firestore';
+import { collection, getDocs, onSnapshot, orderBy, query, where } from '@firebase/firestore';
 import { auth, db } from '../firebaseConfig';
-import { useIsFocused } from '@react-navigation/native';
+import Spinner from '../components/Spinner';
 
 const CalendarClientScreen = ({ navigation }) => {
 
-    const isFocused = useIsFocused();
-
     const [appointments, setAppointments] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         const getData = async () => {
             try {
+                setIsLoading(true);
                 const docIdToBusiness = {};
                 const businessesCollection = collection(db, 'Businesses');
                 const businessesSnapshot = await getDocs(businessesCollection);
@@ -23,31 +23,32 @@ const CalendarClientScreen = ({ navigation }) => {
                 const { uid } = auth.currentUser;
                 const appointmentsCollection = collection(db, 'Appointments');
                 const appointmentsQuery = query(appointmentsCollection, where('clientID', '==', uid), orderBy('startTime'));
-                const appointmentsSnapshot = await getDocs(appointmentsQuery);
-                const appointmentsData = appointmentsSnapshot.docs.map(
-                    (doc) => ({
-                        ...doc.data(),
-                        id: doc.id,
-                        startTime: doc.data().startTime.toDate(),
-                        endTime: doc.data().endTime.toDate(),
-                        businessName: docIdToBusiness[doc.data().businessID].businessName,
-                        address: docIdToBusiness[doc.data().businessID].address,
-                    })
-                );
-                console.log(appointmentsData[0]);
-                setAppointments(appointmentsData);
+                onSnapshot(appointmentsQuery, (appointmentsSnapshot) => {
+                    const appointmentsData = appointmentsSnapshot.docs.map(
+                        (doc) => ({
+                            ...doc.data(),
+                            id: doc.id,
+                            startTime: doc.data().startTime.toDate(),
+                            endTime: doc.data().endTime.toDate(),
+                            businessName: docIdToBusiness[doc.data().businessID].businessName,
+                            address: docIdToBusiness[doc.data().businessID].address,
+                        })
+                    );
+                    setAppointments(appointmentsData);
+                    setIsLoading(false);
+                });
             } catch (err) {
                 console.log(err);
                 console.log(err.message);
             }
         }
         getData();
-    }, [isFocused]);
+    }, []);
 
     return (
-        <ScrollView>
+        <ScrollView style={styles.scrollView}>
             <View style={styles.container}>
-                {appointments.map(appointment =>
+                {isLoading ? <Spinner /> : appointments.map(appointment =>
                     <AppointmentCard key={appointment.id}
                         appointment={appointment}
                         navigation={navigation}
