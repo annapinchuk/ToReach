@@ -20,17 +20,20 @@ import {
   collection,
   query,
   getFirestore,
-  addDoc,
+  setDoc,
+  doc,
 } from 'firebase/firestore';
 import { app, auth, db } from '../firebaseConfig';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Toast from 'react-native-toast-message';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
+import Spinner from '../components/Spinner';
 
 const RegisterBusinessScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [businessName, setBusinessName] = useState('');
+  const [address, setAddress] = useState('');
   const [businessPhoneNumber, setBusinessPhoneNumber] = useState('');
   const [businessNumber, setBusinessNumber] = useState('');
   const [businessDescription, setBusinessDescription] = useState('');
@@ -46,12 +49,14 @@ const RegisterBusinessScreen = ({ navigation }) => {
   const [isLoadingCities, setIsLoadingCities] = useState(true);
   const [isOpenCities, setIsOpenCities] = useState(false);
   const [currentValueCities, setCurrentValueCities] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const areRequiredFieldsMissing = () => {
     return (
       email.trim() === '' ||
       password.trim() === '' ||
       businessName.trim() === '' ||
+      address.trim() === '' ||
       businessPhoneNumber.trim() === '' ||
       businessNumber.trim() === '' ||
       selectedCities.length === 0 ||
@@ -71,21 +76,25 @@ const RegisterBusinessScreen = ({ navigation }) => {
       email,
       password,
       businessName,
+      address,
       businessPhoneNumber,
       businessNumber,
-      Cities,
+      selectedCities,
       businessDescription,
       selectedCategories,
     });
 
+    setIsLoading(true);
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       const businessesRef = collection(db, 'Businesses');
-      await addDoc(businessesRef, {
-        uid: user.uid,
+      const docRef = doc(businessesRef, user.uid)
+      await setDoc(docRef, {
+        // uid: user.uid,
         email,
         businessName,
+        address,
         businessPhoneNumber,
         businessNumber,
         Cities: selectedCities,
@@ -106,12 +115,12 @@ const RegisterBusinessScreen = ({ navigation }) => {
       const errorCode = error.code;
       const errorMessage = error.message;
       console.log(error, error.message);
+      setIsLoading(false);
     };
   };
 
   const fetchCategories = async () => {
     try {
-      const db = getFirestore(app);
       const categoriesCollection = collection(db, 'Categories');
       const categoriesSnapshot = await getDocs(categoriesCollection);
       const categoriesData = categoriesSnapshot.docs.map(
@@ -125,7 +134,6 @@ const RegisterBusinessScreen = ({ navigation }) => {
   };
   const fetchCities = async () => {
     try {
-      const db = getFirestore(app);
       const citiessCollection = collection(db, 'Cities');
       const citiesSnapshot = await getDocs(citiessCollection);
       const citiesData = citiesSnapshot.docs.map(
@@ -195,6 +203,14 @@ const RegisterBusinessScreen = ({ navigation }) => {
               placeholderTextColor={registerStyles.placeHolderStyle.color}
               value={businessName}
               onChangeText={(text) => setBusinessName(text)}
+            />
+
+            <TextInput
+              style={registerStyles.input}
+              placeholder=" כתובת *"
+              placeholderTextColor={registerStyles.placeHolderStyle.color}
+              value={address}
+              onChangeText={(text) => setAddress(text)}
             />
 
             <TextInput
@@ -279,7 +295,7 @@ const RegisterBusinessScreen = ({ navigation }) => {
               onChangeText={(text) => setBusinessDescription(text)}
             />
 
-            <Pressable
+            {isLoading ? <Spinner /> : <Pressable
               style={[
                 registerStyles.button,
                 formSubmitted && areRequiredFieldsMissing() && { backgroundColor: 'gray' },
@@ -288,7 +304,7 @@ const RegisterBusinessScreen = ({ navigation }) => {
               disabled={formSubmitted && areRequiredFieldsMissing()}
             >
               <Text style={registerStyles.buttonText}>הרשמה</Text>
-            </Pressable>
+            </Pressable>}
 
             {formSubmitted && areRequiredFieldsMissing() && (
               <Text style={{ color: 'red', marginTop: 8 }}>

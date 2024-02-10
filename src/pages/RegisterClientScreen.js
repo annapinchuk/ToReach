@@ -5,8 +5,9 @@ import { registerStyles } from '../styles/RegisterBusinessScreenStyles';
 import { styles } from '../styles/HomeScreenStyles';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth, db } from '../firebaseConfig';
-import { addDoc, collection } from '@firebase/firestore';
+import { setDoc, collection, doc } from '@firebase/firestore';
 import Toast from 'react-native-toast-message';
+import Spinner from '../components/Spinner';
 
 
 const RegisterClientScreen = ({ navigation }) => {
@@ -15,6 +16,7 @@ const RegisterClientScreen = ({ navigation }) => {
   const [name, setName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const areRequiredFieldsMissing = () => {
     return (
@@ -32,11 +34,14 @@ const RegisterClientScreen = ({ navigation }) => {
       console.log('Please fill in all required fields');
       return;
     }
+
+    setIsLoading(true);
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       const clientsRef = collection(db, 'Clients');
-      await addDoc(clientsRef, { uid: user.uid, name, phoneNumber, email });
+      const docRef = doc(clientsRef, user.uid)
+      await setDoc(docRef, { name, phoneNumber, email });
       Toast.show({
         type: 'success',
         text1: 'ההרשמה בוצעה בהצלחה'
@@ -51,6 +56,7 @@ const RegisterClientScreen = ({ navigation }) => {
       const errorCode = error.code;
       const errorMessage = error.message;
       console.log(error, error.message);
+      setIsLoading(false);
     };
   };
 
@@ -96,7 +102,7 @@ const RegisterClientScreen = ({ navigation }) => {
           keyboardType="numeric"
         />
 
-        <Pressable
+        {isLoading ? <Spinner /> : <Pressable
           style={[
             registerStyles.button,
             formSubmitted && areRequiredFieldsMissing() && { backgroundColor: 'gray' },
@@ -105,7 +111,7 @@ const RegisterClientScreen = ({ navigation }) => {
           disabled={formSubmitted && areRequiredFieldsMissing()}
         >
           <Text style={registerStyles.buttonText}>הרשמה</Text>
-        </Pressable>
+        </Pressable>}
 
         {formSubmitted && areRequiredFieldsMissing() && (
           <Text style={{ color: 'red', marginTop: 8 }}>
