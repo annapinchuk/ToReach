@@ -12,19 +12,19 @@ const temptry = async () => {
     const appointmentsCollection = collection(db, 'Appointments');
     const appointmentsQuery = query(appointmentsCollection, where('businessID', '==', uid));
     const appointmentsSnapshot = await getDocs(appointmentsQuery);
-    // const appointmentsData = appointmentsSnapshot.docs.map(
-    //     (doc) => ({
-    //         ...doc.data(),
-    //         id: doc.id,
-    //         startTime: doc.data().startTime.toDate(),
-    //         endTime: doc.data().endTime.toDate(),
-    //         businessName: businessIdToName[doc.data().businessID],
-    //     })
-    // );
+    const appointmentsData = appointmentsSnapshot.docs.map(
+        (doc) => ({
+            ...doc.data(),
+            id: doc.id,
+            startTime: doc.data().startTime.toDate(),
+            endTime: doc.data().endTime.toDate(),
+            businessName: businessIdToName[doc.data().businessID],
+        })
+    );
 
-    console.log(appointmentsSnapshot);
+    // console.log(appointmentsSnapshot);
 
-    // console.log(appointmentsData[0]);
+    console.log(appointmentsData[0]);
     // setAppointments(appointmentsData);
 }
 
@@ -32,7 +32,7 @@ const temptry = async () => {
 const CalendarBusinessScreen =  () => {
 
 
-    // temptry();
+    temptry();
 
     const [selectedDay, setSelectedDay] = useState(null);
     const [appointments, setAppointments] = useState({

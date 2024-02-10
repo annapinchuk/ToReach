@@ -1,6 +1,6 @@
 // Import necessary components and libraries
 import React, { useState } from 'react';
-import { View, Text, TextInput, Pressable, Modal, Alert } from 'react-native';
+import { View, Text, TextInput, Pressable, Modal, Alert,  KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback, } from 'react-native';
 import { Loginstyles as styles } from '../styles/LoginScreenStyles';
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import { Image } from 'react-native';
@@ -103,6 +103,12 @@ const LoginScreen = ({ navigation }) => {
 
   // JSX rendering
   return (
+    // close keyboard when clicking outside of input
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <View style={styles.container}>
       <Image style={styles.logo} source={require('../../Images/logo.jpg')} />
 
@@ -164,6 +170,8 @@ const LoginScreen = ({ navigation }) => {
         </View>
       </Modal>
     </View>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 
