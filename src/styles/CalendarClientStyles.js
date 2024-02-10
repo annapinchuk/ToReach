@@ -37,7 +37,7 @@ export const styles = StyleSheet.create({
         height: 50,
         backgroundColor: 'rgba(255, 255, 255, 0.3)',
         width: 50,
-        borderRadius: 50,
+        borderRadius: 15,
     },
     title: {
         fontWeight: "800",

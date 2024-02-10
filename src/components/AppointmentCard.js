@@ -1,4 +1,4 @@
-import { Image, Pressable, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { styles } from "../styles/CalendarClientStyles";
 import NavigationButton from "./NavigationButton";
 import { FontAwesome } from '@expo/vector-icons';
@@ -6,25 +6,19 @@ import { AntDesign } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const AppointmentCard = ({ appointment }) => {
-
-    const getHour = date => date.toLocaleTimeString('he-IL', {
-        hour: '2-digit',
-        minute: '2-digit',
-    });
-
     return (
         <View style={styles.card}>
             <View style={styles.cardTopRow}>
-                <Image source={{ uri: 'https://picsum.photos/200' }} style={styles.businessLogo} />
+                <View style={styles.businessLogo} />
                 <View>
                     <Text style={styles.title}>{appointment.businessName}</Text>
-                    <Text style={styles.subTitle}>{appointment.name}</Text>
+                    <Text style={styles.subTitle}>{appointment.appointmentName}</Text>
                 </View>
             </View>
             <View style={styles.cardMiddleRow}>
                 <View style={styles.iconAndTextContainer}>
                     <FontAwesome name="calendar" size={22} color="black" />
-                    <Text>{new Date(appointment.startTime).toLocaleDateString('he-IL')}</Text>
+                    <Text>{appointment.date.toLocaleDateString('he-IL')}</Text>
                 </View>
                 <View style={styles.iconAndTextContainer}>
                     <MaterialCommunityIcons name="currency-ils" size={22} color="black" />
@@ -32,14 +26,14 @@ const AppointmentCard = ({ appointment }) => {
                 </View>
                 <View style={styles.iconAndTextContainer}>
                     <AntDesign name="clockcircleo" size={22} color="black" />
-                    <Text>{`${getHour(appointment.startTime)} - ${getHour(appointment.endTime)}`}</Text>
+                    <Text>{`${appointment.startTime} - ${appointment.endTime}`}</Text>
                 </View>
             </View>
             <View style={styles.cardMiddleRow}>
                 <Pressable style={styles.button}>
                     <Text style={styles.buttonText}>עריכה</Text>
                 </Pressable>
-                <NavigationButton destination='הבושם 63 תל אביב יפו' />
+                <NavigationButton destination='הבושם 63 תל אביב יפו'/>
             </View>
         </View>
     );

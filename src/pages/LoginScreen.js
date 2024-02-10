@@ -1,21 +1,19 @@
 // LoginScreen.js
 import React, { useState } from 'react';
-import { View, Text, TextInput, Pressable, Modal, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, Pressable, Modal } from 'react-native';
 import { Loginstyles as styles } from '../styles/LoginScreenStyles';
 import { signInWithEmailAndPassword, getAuth } from 'firebase/auth';
 import { Image } from 'react-native';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { auth, db } from '../firebaseConfig';
 import Toast from 'react-native-toast-message';
-import { collection, doc, getDoc, getDocs, query, where } from '@firebase/firestore';
-import Spinner from '../components/Spinner';
+import { collection, getDocs, query, where } from '@firebase/firestore';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [registrationType, setRegistrationType] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleRegister = (type) => {
     // Handle registration logic based on the selected type (client or business)
@@ -36,14 +34,14 @@ const LoginScreen = ({ navigation }) => {
   };
 
   const handleForgotPassword = () => {
-    console.log('Forgot Password');
-    sendPasswordResetEmail(auth, email)
-      .then(() => {
-        console.log('Password reset email sent');
-      })
-      .catch((error) => {
-        console.log('Error sending password reset email:', error);
-      });
+      console.log('Forgot Password');
+      sendPasswordResetEmail(auth, email)
+        .then(() => {
+          console.log('Password reset email sent');
+        })
+        .catch((error) => {
+          console.log('Error sending password reset email:', error);
+        });
   };
 
   const checkUserPermission = async (uid) => {
@@ -53,43 +51,38 @@ const LoginScreen = ({ navigation }) => {
     const clientsCollection = collection(db, "Clients");
     const businessCollection = collection(db, "Businesses");
 
-    const clientDocRef = doc(clientsCollection, uid);
-    const businessDocRef = doc(businessCollection, uid);
+    const clientsQuery = query(clientsCollection, where('uid', '==', uid));
+    const businessQuery = query(businessCollection, where('uid', '==', uid));
 
     try {
-      const clientSnapshot = await getDoc(clientDocRef);
-      const businessSnapshot = await getDoc(businessDocRef);
-
-      if (clientSnapshot.exists()) isClient = true;
-      if (businessSnapshot.exists()) isClient = false;
+      const clientQuerySnapshot = await getDocs(clientsQuery);
+      const businessQuerySnapshot = await getDocs(businessQuery);
+      if (!clientQuerySnapshot.empty) isClient = true;
+      if (!businessQuerySnapshot.empty) isClient = false;
       console.log(isClient);
       if (isClient === undefined) throw new Error('user not found');
       Toast.show({
         type: 'success',
         text1: 'התחברת בהצלחה'
       })
-      setIsLoading(false);
       navigation.navigate('Navbar', ({ isClient }));
     } catch (err) {
       console.log(err);
-      console.log(err.message);
       Toast.show({
         type: 'error',
         text1: 'שם משתמש או סיסמה שגויים'
-      });
-      setIsLoading(false);
+      })
     }
   }
 
   const handleLogin = () => {
-
     if (isFormValid()) {
       console.log('Login Details:', {
         email,
         password,
       });
 
-      setIsLoading(true);
+
       signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           const user = userCredential.user;
@@ -103,15 +96,11 @@ const LoginScreen = ({ navigation }) => {
           const errorCode = error.code;
           const errorMessage = error.message;
           console.log(error, errorMessage);
-          setIsLoading(false);
         });
 
       navigation.navigate('Navbar', ({ isClient: true }));
     } else {
-      Toast.show({
-        type: 'error',
-        text1: 'יש למלא את כל השדות'
-      })
+      console.log('Please fill in all required fields');
     }
   };
 
@@ -141,11 +130,9 @@ const LoginScreen = ({ navigation }) => {
           <Text style={styles.ForgotPassword}>שכחתי סיסמא</Text>
         </Pressable>
       </View>
-
-      {isLoading ? <Spinner /> :
-        <Pressable style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>התחבר</Text>
-        </Pressable>}
+      <Pressable style={styles.button} onPress={handleLogin}>
+        <Text style={styles.buttonText}>התחבר</Text>
+      </Pressable>
 
       <View style={styles.View}>
         <Text style={styles.Text}>חדש ב - toreach? </Text>

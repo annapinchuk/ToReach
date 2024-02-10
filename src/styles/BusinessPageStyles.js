@@ -103,25 +103,4 @@ export const businessPageStyles = StyleSheet.create({
     gap: 15,
     marginBottom: 8
   },
-  editDescriptionInput: {
-    backgroundColor: 'white', // Set the background color as needed
-    padding: 10,
-    borderRadius: 8,
-    marginBottom: 10,
-    textAlign: 'right'
-  },
-
-  // Container style for name, price, and duration
-  torTypeInputContainer: {
-    backgroundColor: 'white', // Set the background color as needed
-    padding: 10,
-    borderRadius: 8,
-    marginBottom: 10,
-  },
-
-  // Individual styles for name, price, and duration (adjust as needed)
-  torTypeInputField: {
-    marginBottom: 8,
-    fontSize: 16,
-  },
 });
