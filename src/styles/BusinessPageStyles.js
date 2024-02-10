@@ -7,7 +7,8 @@ export const businessPageStyles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    margin: 16
+    margin: 16,
+    rowGap: 10
   },
   logoContainer: {
     alignItems: 'center',
@@ -43,7 +44,7 @@ export const businessPageStyles = StyleSheet.create({
     color: 'white',
     textAlign: 'right',
     flexDirection: 'row',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
   },
   label: {
     fontSize: 18,

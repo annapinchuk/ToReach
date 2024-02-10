@@ -56,7 +56,7 @@ const HomeUserScreen = ({ navigation }) => {
       contentOffset={{ x: 5, y: -15 }} // Adjust the value based on your needs
     >
 
-      <Pressable onPress={() => navigation.navigate('ResultScreen')} style={styles.container_icon}>
+      <Pressable onPress={() => navigation.navigate('ResultScreen' , { selectedCatagories: "טיפול" })} style={styles.container_icon}>
         <View style={[styles.iconContainer_icon, { alignItems: 'center' }]}>
           <FontAwesome name="circle-thin" size={100} color="white" />
           <FontAwesome5 name="hands" size={40} color="white" style={styles.icon_icon} />
@@ -64,7 +64,7 @@ const HomeUserScreen = ({ navigation }) => {
         <Text style={[styles.iconText, { textAlign: 'center' }]}>טיפול</Text>
       </Pressable>
 
-      <Pressable onPress={() => navigation.navigate('ResultScreen')} style={styles.container_icon}>
+      <Pressable onPress={() => navigation.navigate('ResultScreen', { selectedCatagories: "חיות" })} style={styles.container_icon}>
         <View style={[styles.iconContainer_icon, { alignItems: 'center' }]}>
           <FontAwesome name="circle-thin" size={100} color="white" />
           <FontAwesome5 name="dog" size={40} color="white" style={styles.icon_icon} />
@@ -73,7 +73,7 @@ const HomeUserScreen = ({ navigation }) => {
       </Pressable>
 
         
-      <Pressable onPress={() => navigation.navigate('ResultScreen')} style={styles.container_icon}>
+      <Pressable onPress={() => navigation.navigate('ResultScreen', { selectedCatagories: "טכנאים" })} style={styles.container_icon}>
         <View style={[styles.iconContainer_icon, { alignItems: 'center' }]}>
           <FontAwesome name="circle-thin" size={100} color="white" />
           <MaterialCommunityIcons name="hammer-wrench" size={50} color="white" style={styles.icon_icon} />
@@ -81,7 +81,7 @@ const HomeUserScreen = ({ navigation }) => {
         <Text style={[styles.iconText, { textAlign: 'center' }]}>טכנאים</Text>
       </Pressable>
 
-      <Pressable onPress={() => navigation.navigate('ResultScreen')} style={styles.container_icon}>
+      <Pressable onPress={() => navigation.navigate('ResultScreen', { selectedCatagories: "מספרה" })} style={styles.container_icon}>
         <View style={[styles.iconContainer_icon, { alignItems: 'center' }]}>
           <FontAwesome name="circle-thin" size={100} color="white" />
           <MaterialCommunityIcons name="hair-dryer-outline" size={50} color="white" style={styles.icon_icon} />
@@ -89,7 +89,7 @@ const HomeUserScreen = ({ navigation }) => {
         <Text style={[styles.iconText, { textAlign: 'center' }]}>מספרה</Text>
       </Pressable>
 
-      <Pressable onPress={() => navigation.navigate('ResultScreen')} style={styles.container_icon}>
+      <Pressable onPress={() => navigation.navigate('ResultScreen', { selectedCatagories: "ניקיון" })} style={styles.container_icon}>
         <View style={[styles.iconContainer_icon, { alignItems: 'center' }]}>
           <FontAwesome name="circle-thin" size={100} color="white" />
           <MaterialCommunityIcons name="broom" size={50} color="white" style={styles.icon_icon} />
@@ -97,7 +97,7 @@ const HomeUserScreen = ({ navigation }) => {
         <Text style={[styles.iconText, { textAlign: 'center' }]}>ניקיון</Text>
       </Pressable>
 
-      <Pressable onPress={() => navigation.navigate('ResultScreen')} style={styles.container_icon}>
+      <Pressable onPress={() => navigation.navigate('ResultScreen', { selectedCatagories: "ימי הולדת" })} style={styles.container_icon}>
         <View style={[styles.iconContainer_icon, { alignItems: 'center' }]}>
           <FontAwesome name="circle-thin" size={100} color="white" />
           <FontAwesome name="birthday-cake" size={40} color="white" style={styles.icon_icon}/>
@@ -105,7 +105,7 @@ const HomeUserScreen = ({ navigation }) => {
         <Text style={[styles.iconText, { textAlign: 'center' }]}>ימי הולדת</Text>
       </Pressable>
 
-      <Pressable onPress={() => navigation.navigate('ResultScreen')} style={styles.container_icon}>
+      <Pressable onPress={() => navigation.navigate('ResultScreen', { selectedCatagories:"כושר"})} style={styles.container_icon}>
         <View style={[styles.iconContainer_icon, { alignItems: 'center' }]}>
           <FontAwesome name="circle-thin" size={100} color="white" />
           <MaterialCommunityIcons name="weight-lifter" size={50} color="white" style={styles.icon_icon}/>
@@ -113,7 +113,7 @@ const HomeUserScreen = ({ navigation }) => {
         <Text style={[styles.iconText, { textAlign: 'center' }]}>כושר</Text>
       </Pressable>
 
-      <Pressable onPress={() => navigation.navigate('ResultScreen')} style={styles.container_icon}>
+      <Pressable onPress={() => navigation.navigate('ResultScreen', { selectedCatagories:"אוכל"})} style={styles.container_icon}>
         <View style={[styles.iconContainer_icon, { alignItems: 'center' }]}>
           <FontAwesome name="circle-thin" size={100} color="white" />
           <MaterialCommunityIcons name="silverware-fork-knife" size={50} color="white" style={styles.icon_icon}/>
@@ -121,7 +121,8 @@ const HomeUserScreen = ({ navigation }) => {
         <Text style={[styles.iconText, { textAlign: 'center' }]}>אוכל</Text>
       </Pressable>
 
-      <Pressable onPress={() => navigation.navigate('ResultScreen')} style={styles.container_icon}>
+    
+      <Pressable onPress={() => navigation.navigate('ResultScreen', { selectedCatagories: "קוסמטיקה" })} style={styles.container_icon}>
         <View style={[styles.iconContainer_icon, { alignItems: 'center' }]}>
           <FontAwesome name="circle-thin" size={100} color="white" />
           <MaterialCommunityIcons name="face-woman-shimmer" size={50} color="white" style={styles.icon_icon}/>
@@ -134,11 +135,11 @@ const HomeUserScreen = ({ navigation }) => {
 
       </View>
       <Text style={[styles.iconText, {color:'black'}]}>אולי זה יכול לעניין אותך</Text>
-     <ScrollView contentOffset={{ x: 0, y: 10 }} >
+     {/* <ScrollView contentOffset={{ x: 0, y: 10 }} >
             <View style={ResultScreenStyles.container}>
-                {data.map(appointment => <ResultCard  navigation= {navigation} key={appointment.id} appointment={appointment} />)}
+                {data.map(appointment => <ResultCard key={business.id} navigation={navigation} business={business} />)}
             </View>
-        </ScrollView>
+        </ScrollView> */}
     </View>
   );
 };
