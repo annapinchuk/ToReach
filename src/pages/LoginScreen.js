@@ -1,6 +1,8 @@
 // LoginScreen.js
 import React, { useState } from 'react';
-import { View, Text, TextInput, Pressable, Modal } from 'react-native';
+import { View, Text, TextInput, Pressable, Modal,Keyboard,
+  KeyboardAvoidingView,ScrollView,
+  TouchableWithoutFeedback, } from 'react-native';
 import { Loginstyles as styles } from '../styles/LoginScreenStyles';
 import { signInWithEmailAndPassword, getAuth } from 'firebase/auth';
 import { Image } from 'react-native';
@@ -105,6 +107,12 @@ const LoginScreen = ({ navigation }) => {
 
   // forgot password clickable link in one line and look like link under line and blue color
   return (
+    <KeyboardAvoidingView
+    style={{ flex: 1 }}
+    behavior={Platform.OS === "ios" ? "padding" : "height"}
+  >
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+   
     <View style={styles.container}>
       <Image
         style={styles.logo}
@@ -159,6 +167,9 @@ const LoginScreen = ({ navigation }) => {
         </View>
       </Modal>
     </View>
+   
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
 

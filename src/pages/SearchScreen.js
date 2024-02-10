@@ -154,7 +154,7 @@ const fetchCategories = async () => {
         <Pressable
 
           style={[styles.button, styles.pressableWithMargin]}
-          onPress={() => navigation.navigate('ResultScreen')}
+          onPress={() => navigation.navigate('ResultScreen', ({selectedCities, categories,selectedDate1,selectedDate2}))}
         >
           <View style={styles.buttonContent}>
             <Text style={styles.buttonText}>
