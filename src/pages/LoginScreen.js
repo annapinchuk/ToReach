@@ -1,60 +1,55 @@
-// LoginScreen.js
+// Import necessary components and libraries
 import React, { useState } from 'react';
-import { View, Text, TextInput, Pressable, Modal,Keyboard,
-  KeyboardAvoidingView,ScrollView,
-  TouchableWithoutFeedback, } from 'react-native';
+import { View, Text, TextInput, Pressable, Modal, Alert } from 'react-native';
 import { Loginstyles as styles } from '../styles/LoginScreenStyles';
-import { signInWithEmailAndPassword, getAuth } from 'firebase/auth';
+import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import { Image } from 'react-native';
-import { sendPasswordResetEmail } from 'firebase/auth';
 import { auth, db } from '../firebaseConfig';
 import Toast from 'react-native-toast-message';
-import { collection, doc, getDoc, getDocs, query, where } from '@firebase/firestore';
+import { collection, doc, getDoc } from '@firebase/firestore';
 import Spinner from '../components/Spinner';
 
+// LoginScreen component
 const LoginScreen = ({ navigation }) => {
+  // State variables
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showModal, setShowModal] = useState(false);
-  const [registrationType, setRegistrationType] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  // Handle registration logic
   const handleRegister = (type) => {
-    // Handle registration logic based on the selected type (client or business)
     if (type === 'client') {
-      // Handle client registration
-      navigation.navigate('RegisterClientScreen')
+      navigation.navigate('RegisterClientScreen');
     } else if (type === 'business') {
-      // Handle business registration
-      navigation.navigate('RegisterBusinessScreen')
+      navigation.navigate('RegisterBusinessScreen');
     }
-    console.log('Register as:', type);
     setShowModal(false);
-    setRegistrationType(type);
   };
 
+  // Validate if the form is valid
   const isFormValid = () => {
     return email !== '' && password !== '';
   };
 
+  // Handle forgot password functionality
   const handleForgotPassword = () => {
-    console.log('Forgot Password');
     sendPasswordResetEmail(auth, email)
       .then(() => {
-        console.log('Password reset email sent');
+        Alert.alert('אימייל איפוס סיסמא נשלח לאימייל שלך');
       })
       .catch((error) => {
         console.log('Error sending password reset email:', error);
       });
   };
 
+  // Check user permissions after login
   const checkUserPermission = async (uid) => {
-
     let isClient = undefined;
 
-    const clientsCollection = collection(db, "Clients");
-    const businessCollection = collection(db, "Businesses");
-
+    // Firestore references
+    const clientsCollection = collection(db, 'Clients');
+    const businessCollection = collection(db, 'Businesses');
     const clientDocRef = doc(clientsCollection, uid);
     const businessDocRef = doc(businessCollection, uid);
 
@@ -64,33 +59,27 @@ const LoginScreen = ({ navigation }) => {
 
       if (clientSnapshot.exists()) isClient = true;
       if (businessSnapshot.exists()) isClient = false;
-      console.log(isClient);
+
       if (isClient === undefined) throw new Error('user not found');
       Toast.show({
         type: 'success',
-        text1: 'התחברת בהצלחה'
-      })
+        text1: 'התחברת בהצלחה',
+      });
       setIsLoading(false);
-      navigation.navigate('Navbar', ({ isClient }));
+      navigation.navigate('Navbar', { isClient });
     } catch (err) {
       console.log(err);
-      console.log(err.message);
       Toast.show({
         type: 'error',
-        text1: 'שם משתמש או סיסמה שגויים'
+        text1: 'שם משתמש או סיסמה שגויים',
       });
       setIsLoading(false);
     }
-  }
+  };
 
+  // Handle login functionality
   const handleLogin = () => {
-
     if (isFormValid()) {
-      console.log('Login Details:', {
-        email,
-        password,
-      });
-
       setIsLoading(true);
       signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
@@ -100,36 +89,24 @@ const LoginScreen = ({ navigation }) => {
         .catch((error) => {
           Toast.show({
             type: 'error',
-            text1: 'שם משתמש או סיסמה שגויים'
-          })
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          console.log(error, errorMessage);
+            text1: 'שם משתמש או סיסמא לא נכונים',
+          });
           setIsLoading(false);
         });
-
-      navigation.navigate('Navbar', ({ isClient: true }));
     } else {
       Toast.show({
         type: 'error',
-        text1: 'יש למלא את כל השדות'
-      })
+        text1: 'יש למלא את כל השדות',
+      });
     }
   };
 
-  // forgot password clickable link in one line and look like link under line and blue color
+  // JSX rendering
   return (
-    <KeyboardAvoidingView
-    style={{ flex: 1 }}
-    behavior={Platform.OS === "ios" ? "padding" : "height"}
-  >
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-   
     <View style={styles.container}>
-      <Image
-        style={styles.logo}
-        source={require('../../Images/logo.jpg')}
-      />
+      <Image style={styles.logo} source={require('../../Images/logo.jpg')} />
+
+      {/* Email Input */}
       <TextInput
         style={styles.input}
         placeholder=" אימייל *"
@@ -137,6 +114,8 @@ const LoginScreen = ({ navigation }) => {
         onChangeText={(text) => setEmail(text)}
         keyboardType="email-address"
       />
+
+      {/* Password Input */}
       <TextInput
         style={styles.input}
         placeholder="סיסמא *"
@@ -144,17 +123,24 @@ const LoginScreen = ({ navigation }) => {
         value={password}
         secureTextEntry
       />
+
+      {/* Forgot Password Link */}
       <View style={styles.inputContainer}>
-        <Pressable onPress={handleForgotPassword}>
+        <Pressable onPress={() => handleForgotPassword()}>
           <Text style={styles.ForgotPassword}>שכחתי סיסמא</Text>
         </Pressable>
       </View>
 
-      {isLoading ? <Spinner /> :
-        <Pressable style={styles.button} onPress={handleLogin}>
+      {/* Login Button */}
+      {isLoading ? (
+        <Spinner />
+      ) : (
+        <Pressable style={styles.button} onPress={() => handleLogin()}>
           <Text style={styles.buttonText}>התחבר</Text>
-        </Pressable>}
+        </Pressable>
+      )}
 
+      {/* New User Link */}
       <View style={styles.View}>
         <Text style={styles.Text}>חדש ב - toreach? </Text>
         <Pressable onPress={() => setShowModal(true)}>
@@ -162,13 +148,10 @@ const LoginScreen = ({ navigation }) => {
         </Pressable>
       </View>
 
-      {/* Model for registration type selection */}
+      {/* Modal for registration type selection */}
       <Modal visible={showModal} animationType="slide">
         <View style={styles.modalContainer}>
-          <Image
-            style={styles.logo}
-            source={require('../../Images/logow.jpeg')}
-          />
+          <Image style={styles.logo} source={require('../../Images/logow.jpeg')} />
           <Pressable style={styles.modalButton} onPress={() => handleRegister('client')}>
             <Text style={styles.modalButtonText}>הרשמה</Text>
           </Pressable>
@@ -181,10 +164,7 @@ const LoginScreen = ({ navigation }) => {
         </View>
       </Modal>
     </View>
-   
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
   );
-}
+};
 
 export default LoginScreen;

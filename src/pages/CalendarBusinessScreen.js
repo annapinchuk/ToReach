@@ -1,7 +1,39 @@
-import React from 'react';
-import { View, Text } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, Alert} from 'react-native';
+import { styles } from '../styles/CalendarBusinessStyles';
+import {Agenda} from 'react-native-calendars';
+import { app, auth, db } from '../firebaseConfig';
+import { collection, getDocs, query, where } from '@firebase/firestore';
 
-const CalendarBusinessScreen = () => {
+
+const temptry = async () => {
+    const { uid } = auth.currentUser;
+    console.log(uid)
+    const appointmentsCollection = collection(db, 'Appointments');
+    const appointmentsQuery = query(appointmentsCollection, where('businessID', '==', uid));
+    const appointmentsSnapshot = await getDocs(appointmentsQuery);
+    // const appointmentsData = appointmentsSnapshot.docs.map(
+    //     (doc) => ({
+    //         ...doc.data(),
+    //         id: doc.id,
+    //         startTime: doc.data().startTime.toDate(),
+    //         endTime: doc.data().endTime.toDate(),
+    //         businessName: businessIdToName[doc.data().businessID],
+    //     })
+    // );
+
+    console.log(appointmentsSnapshot);
+
+    // console.log(appointmentsData[0]);
+    // setAppointments(appointmentsData);
+}
+
+
+const CalendarBusinessScreen =  () => {
+
+
+    // temptry();
+
     const [selectedDay, setSelectedDay] = useState(null);
     const [appointments, setAppointments] = useState({
         '2023-08-01': [
@@ -18,9 +50,7 @@ const CalendarBusinessScreen = () => {
         // Add more appointments for future dates
     });
 
-    const onDayPress = (day) => {
-        setSelectedDay(day.dateString);
-    };
+
 
     const renderItem = (item) => {
         const startTime = new Date(item.time);
@@ -57,14 +87,29 @@ const CalendarBusinessScreen = () => {
         }));
     });
 
+
+    const onDayPress = (day) => {
+        console.log(appointments)
+        // console.log(day.dateString)
+        setSelectedDay(day.dateString);
+
+
+    };
+
+    const getEventsForDay = (date) => {
+        return appointments.filter((event) => event.date === date);
+    };
+
     return (
         <View style={styles.container}>
             <Agenda
+                // items={agendaItems}
                 items={agendaItems}
-                selected={selectedDay}
+                // selected={selectedDay}
                 renderItem={renderItem}
                 renderEmptyDate={renderEmptyDate}
                 onDayPress={onDayPress}
+
                 theme={{
                     selectedDayBackgroundColor: '#3498db',
                     dotColor: '#3498db',
