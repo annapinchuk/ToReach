@@ -11,6 +11,12 @@ export const styles = StyleSheet.create({
         paddingTop: 20,
         gap: 15,
     },
+    header:{
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: 'white',
+        textAlign: 'right',
+    },
     card: {
         width: '90%',
         backgroundColor: 'rgba(255, 255, 255 , 0.4)',
@@ -52,6 +58,12 @@ export const styles = StyleSheet.create({
     },
     button: {
         backgroundColor: '#3B82F6',
+        width: 120,
+        paddingVertical: 13,
+        borderRadius: 10,
+    },
+    buttonDisabled: {
+        backgroundColor: '#77A9F9',
         width: 120,
         paddingVertical: 13,
         borderRadius: 10,

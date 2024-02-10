@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, ScrollView } from 'react-native';
+import { View, ScrollView, Text } from 'react-native';
 import AppointmentCard from '../components/AppointmentCard';
 import { styles } from '../styles/CalendarClientStyles';
 import { collection, getDocs, onSnapshot, orderBy, query, where } from '@firebase/firestore';
@@ -8,35 +8,56 @@ import Spinner from '../components/Spinner';
 
 const CalendarClientScreen = ({ navigation }) => {
 
-    const [appointments, setAppointments] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
+    const [prevAppointments, setPrevAppointments] = useState([]);
+    const [futureAppointments, setFutureAppointments] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+
 
     useEffect(() => {
+        const getAppointments = (docIdToBusiness, sign) => {
+            const todady = new Date();
+            const { uid } = auth.currentUser;
+            const appointmentsCollection = collection(db, 'Appointments');
+            const appointmentsQuery = query(appointmentsCollection,
+                where('clientID', '==', uid),
+                where("startTime", sign, todady),
+                orderBy('startTime'));
+            // console.log(appointmentsQuery);
+            onSnapshot(appointmentsQuery, (appointmentsSnapshot) => {
+                const appointmentsData = appointmentsSnapshot.docs.map(
+                    (doc) => ({
+                        ...doc.data(),
+                        id: doc.id,
+                        startTime: doc.data().startTime.toDate(),
+                        endTime: doc.data().endTime.toDate(),
+                        businessName: docIdToBusiness[doc.data().businessID].businessName,
+                        address: docIdToBusiness[doc.data().businessID].address,
+                    })
+                );
+                if (sign === '>')
+                    setFutureAppointments(appointmentsData);
+                else
+                    setPrevAppointments(appointmentsData);
+
+                setIsLoading(false);
+            });
+        }
         const getData = async () => {
             try {
                 setIsLoading(true);
+
                 const docIdToBusiness = {};
                 const businessesCollection = collection(db, 'Businesses');
-                const businessesSnapshot = await getDocs(businessesCollection);
-                businessesSnapshot.docs.forEach(doc => docIdToBusiness[doc.id] = doc.data());
-
-                const { uid } = auth.currentUser;
-                const appointmentsCollection = collection(db, 'Appointments');
-                const appointmentsQuery = query(appointmentsCollection, where('clientID', '==', uid), orderBy('startTime'));
-                onSnapshot(appointmentsQuery, (appointmentsSnapshot) => {
-                    const appointmentsData = appointmentsSnapshot.docs.map(
-                        (doc) => ({
-                            ...doc.data(),
-                            id: doc.id,
-                            startTime: doc.data().startTime.toDate(),
-                            endTime: doc.data().endTime.toDate(),
-                            businessName: docIdToBusiness[doc.data().businessID].businessName,
-                            address: docIdToBusiness[doc.data().businessID].address,
-                        })
-                    );
-                    setAppointments(appointmentsData);
-                    setIsLoading(false);
+                onSnapshot(businessesCollection, (businessesSnapshot) => {
+                    businessesSnapshot.docs.forEach(doc => docIdToBusiness[doc.id] = doc.data());
                 });
+
+                // Get future appointments
+                getAppointments(docIdToBusiness, '>')
+                // Get previous appointments
+                getAppointments(docIdToBusiness, '<')
+
             } catch (err) {
                 console.log(err);
                 console.log(err.message);
@@ -48,13 +69,26 @@ const CalendarClientScreen = ({ navigation }) => {
     return (
         <ScrollView style={styles.scrollView}>
             <View style={styles.container}>
-                {isLoading ? <Spinner /> : appointments.map(appointment =>
-                    <AppointmentCard key={appointment.id}
-                        appointment={appointment}
-                        navigation={navigation}
-                    />)}
+                {isLoading ? <Spinner /> :
+                    <View style={styles.container}>
+                        <Text style={styles.header}>תורים עתידיים:</Text>
+                        {futureAppointments.map(appointment =>
+                            <AppointmentCard key={appointment.id}
+                                appointment={appointment}
+                                isEditable={true}
+                                navigation={navigation}
+                            />)}
+                        <Text style={styles.header}>תורים קודמים:</Text>
+                        {prevAppointments.map(appointment =>
+                            <AppointmentCard key={appointment.id}
+                                appointment={appointment}
+                                isEditable={false}
+                                navigation={navigation}
+                            />)}
+                    </View>
+                }
             </View>
-        </ScrollView>
+        </ScrollView >
     );
 }
 

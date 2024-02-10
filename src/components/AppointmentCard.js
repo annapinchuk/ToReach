@@ -5,8 +5,9 @@ import { FontAwesome } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { getHour } from "../shared/dateMethods";
+import Toast from "react-native-toast-message";
 
-const AppointmentCard = ({ navigation, appointment }) => {
+const AppointmentCard = ({ navigation, appointment, isEditable }) => {
 
     const handleEdit = () => {
         const diff = appointment.endTime.getTime() - appointment.startTime.getTime();
@@ -50,9 +51,21 @@ const AppointmentCard = ({ navigation, appointment }) => {
                 </View>
             </View>
             <View style={styles.cardMiddleRow}>
-                <Pressable style={styles.button} onPress={handleEdit}>
-                    <Text style={styles.buttonText}>עריכה</Text>
-                </Pressable>
+                {
+                    isEditable ?
+                        <Pressable style={styles.button} onPress={handleEdit}>
+                            <Text style={styles.buttonText}>עריכה</Text>
+                        </Pressable> :
+                        <Pressable style={styles.buttonDisabled} onPress={() => {
+                            Toast.show({
+                                type: 'error',
+                                text1: 'לא ניתן לערוך תור זה'
+                            });
+                        }}>
+                            <Text style={styles.buttonText}>עריכה</Text>
+                        </Pressable>
+                }
+
                 <NavigationButton destination={appointment.address} />
             </View>
         </View>
