@@ -32,7 +32,7 @@ const App = () => {
         <Stack.Screen name="BusinessPage" component={BusinessPage} options={{ title: 'מסך עסק' }} />
         <Stack.Screen name="BookAppointmentScreen" component={BookAppointmentScreen} options={{ title: 'קביעת תור' }} />
       </Stack.Navigator>
-      <Toast position='bottom' />
+      <Toast position='bottom' visibilityTime={2000} />
     </NavigationContainer>
   );
 };
