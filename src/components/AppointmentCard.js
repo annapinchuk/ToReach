@@ -4,13 +4,9 @@ import NavigationButton from "./NavigationButton";
 import { FontAwesome } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { getHour } from "../shared/dateMethods";
 
 const AppointmentCard = ({ appointment }) => {
-
-    const getHour = date => date.toLocaleTimeString('he-IL', {
-        hour: '2-digit',
-        minute: '2-digit',
-    });
 
     return (
         <View style={styles.card}>
