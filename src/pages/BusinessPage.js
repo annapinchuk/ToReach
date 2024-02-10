@@ -75,7 +75,7 @@ const BusinessPage = ({ navigation }) => {
         {/* Business Description */}
 
         <Text style={businessPageStyles.label}>תיאור העסק: </Text>
-        <Text style={businessPageStyles.description}>{businessData.description}</Text>
+        <Text style={businessPageStyles.description}>{businessData.businessDescription}</Text>
         
         <ScrollView contentOffset={{ x: 0, y: 10 }} >
             <View style={ResultScreenStyles.container}>
