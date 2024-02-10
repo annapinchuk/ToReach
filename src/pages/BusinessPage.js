@@ -36,18 +36,19 @@ const businessData = {
   ]
 };
 
-const BusinessPage = ({ route ,navigation }) => {
-  console.log(route.params);
+const BusinessPage = ({ route, navigation }) => {
+  console.log(route.params.business.id);
   return (
-    
+
     <View style={{ flex: 1, backgroundColor: '#5B8BDF', }}>
-      
+
       <ScrollView style={businessPageStyles.container}>
         <View style={businessPageStyles.logoContainer}>
           <Image source={{ uri: businessData.logo }} style={businessPageStyles.logo} />
-          <Text style={businessPageStyles.businessName}>{route.params.businessName}</Text>
         </View>
-        
+        <Text style={businessPageStyles.businessName}>{route.params.business.businessName}</Text>
+
+
 
         <View style={businessPageStyles.categoryContainer}>
           <Text style={businessPageStyles.label}>טלפון: </Text>
@@ -57,7 +58,7 @@ const BusinessPage = ({ route ,navigation }) => {
         <View style={businessPageStyles.categoryContainer}>
           <Text style={businessPageStyles.label}>תחום: </Text>
           <Text style={businessPageStyles.category}>
-          
+
             {route.params.business.Categories.join(', ')}
           </Text>
         </View>
@@ -77,7 +78,7 @@ const BusinessPage = ({ route ,navigation }) => {
         <Text style={businessPageStyles.label}>תיאור העסק: </Text>
         <Text style={businessPageStyles.description}>{route.params.business.businessDescription}</Text>
 
-        <ScrollView contentOffset={{ x: 0, y: 0 }} >
+        <ScrollView contentOffset={{ x: 0, y: 50 }} >
           <View style={businessPageStyles.container}>
             {businessData.torTypes && businessData.torTypes.length > 0 ? (
               businessData.torTypes.map(appointment => (
@@ -91,7 +92,7 @@ const BusinessPage = ({ route ,navigation }) => {
         <View style={businessPageStyles.torButtonContainer}>
           <Pressable
             style={businessPageStyles.torButton}
-            onPress={() => navigation.navigate('BookAppointmentScreen')}
+            onPress={() => navigation.navigate('BookAppointmentScreen', { businessID: route.params.business.id })}
           >
             <Text style={businessPageStyles.buttonText}>תאם תור</Text>
           </Pressable>
