@@ -82,7 +82,7 @@ const ProfileBusinessScreen = ({ navigation }) => {
                     setEditedCategories(data.Categories);
                     setCurrentValueCategories(data.Categories);
                     setEditedCities(data.Cities);
-                    console.log("busniess data:", businessData);
+                    setCurrentValueCities(data.Cities);
                 } else {
                     // docSnap.data() will be undefined in this case
                     console.log("No such document!");
@@ -97,16 +97,18 @@ const ProfileBusinessScreen = ({ navigation }) => {
     }, []);
 
     const handleSave = async () => {
-        await setEditedCategories(currentValueCategories);
+        setEditedCategories(currentValueCategories);
+        setEditedCities(currentValueCities);
         const newData = {...businessData, 
             businessName: editedName,
             businessDescription: editedDescription,
             pictures: editedPictures,
             torTypes: editedTorTypes,
             logo: editedLogo,
-            Categories: editedCategories
+            Categories: currentValueCategories,
+            Cities: currentValueCities,
         }
-        setDoc(docRef, newData).then(() => {
+        await setDoc(docRef, newData).then(() => {
             console.log("Document has been changed successfully");
         })
             .catch(error => {
@@ -115,18 +117,6 @@ const ProfileBusinessScreen = ({ navigation }) => {
 
         setEditMode(false);
     };
-    const handleCategoryPress = (items) => {
-        setIsOpenCities(false);
-        setEditedCategories(items.map(item => item.value));
-        console.log(items.map(item => item.value))
-        setIsOpenCategories(true);
-      };
-      const handleCityPress = (items) => {
-        setIsOpenCategories(false);
-        setSelectedCities(items.map(item => item.value));
-        console.log(items.map(item => item.value))
-        setIsOpenCities(true);
-      };
     const handleAddPicture = () => {
         // Implement your logic to add more pictures
         const newPicture = { url: "https://picsum.photos/204" }; // Replace with actual logic
@@ -214,11 +204,9 @@ const ProfileBusinessScreen = ({ navigation }) => {
                                     dropDownStyle={registerStyles.dropdownListStyle}
                                     searchable={true}
                                     searchPlaceholder="חיפוש..."
-                                    onSelectItem={(item) => handleCategoryPress(item)}
-                                    onChangeItem={() => console.log("press")}
                                   />
                     ):(
-                    <View>
+                    <View style={{flexDirection: 'row'}}>
                         <Text style={businessPageStyles.label}>תחום: </Text>
                         <Text style={businessPageStyles.category}>
                             {editedCategories.map((category, index) => (
@@ -228,7 +216,46 @@ const ProfileBusinessScreen = ({ navigation }) => {
                     </View>
 
                     )}
+                </View>
 
+                {/* Cities */}
+                <View style={[businessPageStyles.categoryContainer,{ zIndex: 3 }]}>
+                    {editMode? (
+                                    <DropDownPicker
+                                    items={Cities.map((city) => ({ label: city, value: city }))}
+                                    open={isOpenCities}
+                                    setOpen={() => setIsOpenCities(!isOpenCategories)}
+                                    value={currentValueCities}
+                                    setValue={(val) => setCurrentValueCities(val)}
+                                    dropDownDirection='DOWN'
+                                    multiple={true}
+                                    min={1}
+                                    max={5}
+                                    showArrowIcon={false}
+                                    mode='BADGE'
+                                    badgeColors={'#2C64C6'}
+                                    badgeDotColors={['white']}
+                                    listMode={Platform.OS === 'ios' ? 'FLATLIST' : 'MODAL'}
+                                    badgeTextStyle={{ color: "white" }}
+                                    placeholder="ערים"
+                                    placeholderStyle={registerStyles.placeHolderStyle}
+                                    style={registerStyles.dropdownStyle}
+                                    itemStyle={registerStyles.dropdownItemStyle}
+                                    dropDownStyle={registerStyles.dropdownListStyle}
+                                    searchable={true}
+                                    searchPlaceholder="חיפוש..."
+                                  />
+                    ):(
+                    <View style={{flexDirection: 'row'}}>
+                        <Text style={businessPageStyles.label}>ערים: </Text>
+                        <Text style={businessPageStyles.category}>
+                            {editedCities.map((category, index) => (
+                                <Text key={index}>{category}{index !== editedCities.length - 1 ? ', ' : ''}</Text>
+                            ))}
+                        </Text>
+                    </View>
+
+                    )}
                 </View>
 
                 {/* Category and Rating */}
@@ -242,9 +269,9 @@ const ProfileBusinessScreen = ({ navigation }) => {
                 <Text style={businessPageStyles.label}>תמונות של העסק: </Text>
                 {/* Business Photos */}
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={businessPageStyles.photosContainer}>
-                    {editedPictures.map((picture, index) => (
+                    {(editedPictures.map((picture, index) => (
                         <Image key={index} source={{ uri: picture.url }} style={businessPageStyles.photo} />
-                    ))}
+                    )))}
                     {/* Button to add more pictures */}
                     {editMode? (
                         <Pressable style={businessPageStyles.addPictureButton} onPress={handleAddPicture}>
