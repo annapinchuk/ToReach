@@ -1,6 +1,6 @@
 // Import necessary components and libraries
 import React, { useState } from 'react';
-import { View, Text, TextInput, Pressable, Modal, Alert,  KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback, } from 'react-native';
+import { View, Text, TextInput, Pressable, Modal, Alert } from 'react-native';
 import { Loginstyles as styles } from '../styles/LoginScreenStyles';
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import { Image } from 'react-native';
@@ -17,14 +17,38 @@ const LoginScreen = ({ navigation }) => {
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+   const messageToUser = (messageType, message) => {
+      // Display success message and navigate to Navbar
+      Toast.show({
+        type: messageType || 'success',
+        text1: message || ''
+      });
+   }
+
   // Handle registration logic
-  const handleRegister = (type) => {
-    if (type === 'client') {
-      navigation.navigate('RegisterClientScreen');
-    } else if (type === 'business') {
-      navigation.navigate('RegisterBusinessScreen');
+  const navToNextScreen = (isClient, type='') => {
+    if (type === 'register'){
+      if (isClient === true) {
+        navigation.navigate('RegisterClientScreen');
+      } else if (isClient === false) {
+        navigation.navigate('RegisterBusinessScreen');
+      }
+      setShowModal(false);
     }
-    setShowModal(false);
+    else {
+      if (isClient === true){
+        messageToUser('success', 'משתמש יקר התחברת בהצלחה');
+      }
+      else {
+        messageToUser('success', 'בעל עסק יקר התחברת בהצלחה');
+      }
+      navigation.navigate('Navbar', { isClient });
+    }
+  };
+
+  // Validate if the form is valid
+  const isFormValid = () => {
+    return email !== '' && password !== '';
   };
 
   // Handle forgot password functionality
@@ -35,81 +59,63 @@ const LoginScreen = ({ navigation }) => {
       })
       .catch((error) => {
         console.log('Error sending password reset email:', error);
+        Alert.alert('משהו השתבש באיפוס סיסמא נסה שוב בעוד כמה רגעים');
       });
   };
 
   // Check user permissions after login
-  const checkUserPermission = async (uid) => {
-    let isClient = undefined;
+  const handleUserType = async (uid) => {
 
-    // Firestore references
-    const clientsCollection = collection(db, 'Clients');
-    const businessCollection = collection(db, 'Businesses');
-    const clientDocRef = doc(clientsCollection, uid);
-    const businessDocRef = doc(businessCollection, uid);
+    // Retrieve snapshots for client and business
+    const clientSnapshotPromise = getDoc(doc(collection(db, 'Clients'), uid));
+    const businessSnapshotPromise = getDoc(doc(collection(db, 'Businesses'), uid));
 
     try {
-      const clientSnapshot = await getDoc(clientDocRef);
-      const businessSnapshot = await getDoc(businessDocRef);
-
-      if (clientSnapshot.exists()) isClient = true;
-      if (businessSnapshot.exists()) isClient = false;
-
-      if (isClient === undefined) throw new Error('user not found');
-      Toast.show({
-        type: 'success',
-        text1: 'התחברת בהצלחה',
-      });
-      setIsLoading(false);
-      navigation.navigate('Navbar', { isClient });
-    } catch (err) {
+      // Wait till we get all querys responds
+      const [clientSnapshot, businessSnapshot] = await Promise.all([clientSnapshotPromise, businessSnapshotPromise]);
+  
+      // Determine user type based on snapshot existence & navigate to the corresponding page
+      if (businessSnapshot.exists()) {
+          navToNextScreen(isClient=false,)
+      } else if (clientSnapshot.exists()) {
+          navToNextScreen(isClient=true)
+      } else {
+          // User not found
+          console.log('User not found');
+          messageToUser(messageType='error', message='משתמש לא נמצא')
+      }
+    } 
+    catch (err) {
       console.log(err);
-      Toast.show({
-        type: 'error',
-        text1: 'שם משתמש או סיסמה שגויים',
-      });
+      // Display error message
+      messageToUser(messageType='error', message='שם משתמש או סיסמה שגויים')
+    }
+    finally {
       setIsLoading(false);
     }
   };
 
- 
-  // Validate if the form is valid
-  const isFormValid = () => {
-    return email !== '' && password !== '';
-  };
 
-  // Handle login functionality
+  // Handle login via firebase auth
   const handleLogin = () => {
     if (isFormValid()) {
       setIsLoading(true);
       signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-          const user = userCredential.user;
-          checkUserPermission(user.uid);
+            handleUserType(userCredential.user.uid);
         })
         .catch((error) => {
-          Toast.show({
-            type: 'error',
-            text1: 'שם משתמש או סיסמא לא נכונים',
-          });
+          console.log("handleLogin - " + error);
+          messageToUser(messageType='error', message='שם משתמש או סיסמא לא נכונים');
           setIsLoading(false);
         });
     } else {
-      Toast.show({
-        type: 'error',
-        text1: 'יש למלא את כל השדות',
-      });
+      messageToUser(messageType='error', message='יש למלא את כל השדות')
     }
   };
 
   // JSX rendering
   return (
-    // close keyboard when clicking outside of input
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <View style={styles.container}>
       <Image style={styles.logo} source={require('../../Images/logo.jpg')} />
 
@@ -159,10 +165,10 @@ const LoginScreen = ({ navigation }) => {
       <Modal visible={showModal} animationType="slide">
         <View style={styles.modalContainer}>
           <Image style={styles.logo} source={require('../../Images/logow.jpeg')} />
-          <Pressable style={styles.modalButton} onPress={() => handleRegister('client')}>
+          <Pressable style={styles.modalButton} onPress={() => navToNextScreen(isClient=true, type='register')}>
             <Text style={styles.modalButtonText}>הרשמה</Text>
           </Pressable>
-          <Pressable style={styles.modalButton} onPress={() => handleRegister('business')}>
+          <Pressable style={styles.modalButton} onPress={() => navToNextScreen(isClient=false, type='register')}>
             <Text style={styles.modalButtonText}>הרשמה לעסקים</Text>
           </Pressable>
           <Pressable style={styles.modalButton} onPress={() => setShowModal(false)}>
@@ -171,8 +177,6 @@ const LoginScreen = ({ navigation }) => {
         </View>
       </Modal>
     </View>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
   );
 };
 
