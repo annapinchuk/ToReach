@@ -9,7 +9,7 @@ import { app, auth, db } from '../firebaseConfig';
 
 
 const SearchScreen = ({ navigation }) => {
-  const [business, setBusiness] = useState([]);
+  const [business, setBusiness] = useState([]);// כל העסקים
   const [isOpenBusiness, setIsOpenBusiness] = useState(false);
   const [currentValueBusiness, setCurrentValueBusiness] = useState([]);
   const [selectedBusiness, setSelectedBusiness] = useState([]);
@@ -18,9 +18,10 @@ const SearchScreen = ({ navigation }) => {
   const [categories, setCategories] = useState([]);
   const [isOpenCategories, setIsOpenCategories] = useState(false);
   const [currentValueCategories, setCurrentValueCategories] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState([]);
 
   const [selectedCities, setSelectedCities] = useState([]);
-  const [Cities, setCities] = useState([]);
+  const [Cities, setCities] = useState([]); //כל הערים
   const [isOpenCities, setIsOpenCities] = useState(false);
   const [currentValueCities, setCurrentValueCities] = useState([]);
 
@@ -36,7 +37,7 @@ const SearchScreen = ({ navigation }) => {
         (doc) => doc.data().name
       );
       setCategories(categoriesData);
-      
+
     } catch (error) {
       console.error('Firebase initialization error:', error);
     }
@@ -51,7 +52,7 @@ const SearchScreen = ({ navigation }) => {
         (doc) => doc.data().name
       );
       setCities(citiesData);
-      
+
     } catch (error) {
       console.error('Firebase initialization error:', error);
     }
@@ -66,13 +67,13 @@ const SearchScreen = ({ navigation }) => {
         (doc) => doc.data().businessName
       );
       setBusiness(businessesData);
-      
+
     } catch (error) {
       console.error('Firebase initialization error:', error);
     }
   };
 
- 
+
 
 
   useEffect(() => {
@@ -91,7 +92,7 @@ const SearchScreen = ({ navigation }) => {
   const handleCategoryPress = (item) => {
     setIsOpenCities(false);
     setIsOpenBusiness(false);
-    setSelectedCities(item);
+    setSelectedCategories(item);
     setIsOpenCategories(true);
   };
 
@@ -100,7 +101,7 @@ const SearchScreen = ({ navigation }) => {
     setIsOpenCategories(false);
     setIsOpenBusiness(true);
     setSelectedBusiness(item);
-    
+
   };
 
   const handleCityPress = (item) => {
@@ -224,7 +225,14 @@ const SearchScreen = ({ navigation }) => {
         <Pressable
 
           style={[styles.button, styles.pressableWithMargin]}
-          onPress={() => navigation.navigate('ResultScreen', ({ selectedCities, categories, selectedDate1, selectedDate2 }))}
+          onPress={() => navigation.navigate('ResultScreen',
+            ({
+              selectedCities: currentValueCities,
+              selectedCategories: currentValueCategories,
+              selectedBusiness: currentValueBusiness,
+              selectedDate1: selectedDate1.toString(),
+              selectedDate2: selectedDate2.toString()
+            }))}
         >
           <View style={styles.buttonContent}>
             <Text style={styles.buttonText}>

@@ -50,7 +50,7 @@ const HomeUserScreen = ({ navigation }) => {
           contentOffset={{ x: 5, y: -15 }} // Adjust the value based on your needs
         >
 
-          <Pressable onPress={() => navigation.navigate('ResultScreen', { selectedCatagories: "טיפול" })} style={styles.container_icon}>
+          <Pressable onPress={() => navigation.navigate('ResultScreen', { selectedCategories: ["טיפול"] })} style={styles.container_icon}>
             <View style={[styles.iconContainer_icon, { alignItems: 'center' }]}>
               <FontAwesome name="circle-thin" size={100} color="white" />
               <FontAwesome5 name="hands" size={40} color="white" style={styles.icon_icon} />
@@ -58,7 +58,7 @@ const HomeUserScreen = ({ navigation }) => {
             <Text style={[styles.iconText, { textAlign: 'center' }]}>טיפול</Text>
           </Pressable>
 
-          <Pressable onPress={() => navigation.navigate('ResultScreen', { selectedCatagories: "חיות" })} style={styles.container_icon}>
+          <Pressable onPress={() => navigation.navigate('ResultScreen', { selectedCategories: ["חיות"] })} style={styles.container_icon}>
             <View style={[styles.iconContainer_icon, { alignItems: 'center' }]}>
               <FontAwesome name="circle-thin" size={100} color="white" />
               <FontAwesome5 name="dog" size={40} color="white" style={styles.icon_icon} />
@@ -67,7 +67,7 @@ const HomeUserScreen = ({ navigation }) => {
           </Pressable>
 
 
-          <Pressable onPress={() => navigation.navigate('ResultScreen', { selectedCatagories: "טכנאים" })} style={styles.container_icon}>
+          <Pressable onPress={() => navigation.navigate('ResultScreen', { selectedCategories: ["טכנאים"] })} style={styles.container_icon}>
             <View style={[styles.iconContainer_icon, { alignItems: 'center' }]}>
               <FontAwesome name="circle-thin" size={100} color="white" />
               <MaterialCommunityIcons name="hammer-wrench" size={50} color="white" style={styles.icon_icon} />
@@ -75,7 +75,7 @@ const HomeUserScreen = ({ navigation }) => {
             <Text style={[styles.iconText, { textAlign: 'center' }]}>טכנאים</Text>
           </Pressable>
 
-          <Pressable onPress={() => navigation.navigate('ResultScreen', { selectedCatagories: "מספרה" })} style={styles.container_icon}>
+          <Pressable onPress={() => navigation.navigate('ResultScreen', { selectedCategories: ["מספרה"] })} style={styles.container_icon}>
             <View style={[styles.iconContainer_icon, { alignItems: 'center' }]}>
               <FontAwesome name="circle-thin" size={100} color="white" />
               <MaterialCommunityIcons name="hair-dryer-outline" size={50} color="white" style={styles.icon_icon} />
@@ -83,7 +83,7 @@ const HomeUserScreen = ({ navigation }) => {
             <Text style={[styles.iconText, { textAlign: 'center' }]}>מספרה</Text>
           </Pressable>
 
-          <Pressable onPress={() => navigation.navigate('ResultScreen', { selectedCatagories: "ניקיון" })} style={styles.container_icon}>
+          <Pressable onPress={() => navigation.navigate('ResultScreen', { selectedCategories: ["ניקיון"] })} style={styles.container_icon}>
             <View style={[styles.iconContainer_icon, { alignItems: 'center' }]}>
               <FontAwesome name="circle-thin" size={100} color="white" />
               <MaterialCommunityIcons name="broom" size={50} color="white" style={styles.icon_icon} />
@@ -91,7 +91,7 @@ const HomeUserScreen = ({ navigation }) => {
             <Text style={[styles.iconText, { textAlign: 'center' }]}>ניקיון</Text>
           </Pressable>
 
-          <Pressable onPress={() => navigation.navigate('ResultScreen', { selectedCatagories: "ימי הולדת" })} style={styles.container_icon}>
+          <Pressable onPress={() => navigation.navigate('ResultScreen', { selectedCategories: ["ימי הולדת"] })} style={styles.container_icon}>
             <View style={[styles.iconContainer_icon, { alignItems: 'center' }]}>
               <FontAwesome name="circle-thin" size={100} color="white" />
               <FontAwesome name="birthday-cake" size={40} color="white" style={styles.icon_icon} />
@@ -99,7 +99,7 @@ const HomeUserScreen = ({ navigation }) => {
             <Text style={[styles.iconText, { textAlign: 'center' }]}>ימי הולדת</Text>
           </Pressable>
 
-          <Pressable onPress={() => navigation.navigate('ResultScreen', { selectedCatagories: "כושר" })} style={styles.container_icon}>
+          <Pressable onPress={() => navigation.navigate('ResultScreen', { selectedCategories: ["כושר"] })} style={styles.container_icon}>
             <View style={[styles.iconContainer_icon, { alignItems: 'center' }]}>
               <FontAwesome name="circle-thin" size={100} color="white" />
               <MaterialCommunityIcons name="weight-lifter" size={50} color="white" style={styles.icon_icon} />
@@ -107,7 +107,7 @@ const HomeUserScreen = ({ navigation }) => {
             <Text style={[styles.iconText, { textAlign: 'center' }]}>כושר</Text>
           </Pressable>
 
-          <Pressable onPress={() => navigation.navigate('ResultScreen', { selectedCatagories: "אוכל" })} style={styles.container_icon}>
+          <Pressable onPress={() => navigation.navigate('ResultScreen', { selectedCategories: ["אוכל"] })} style={styles.container_icon}>
             <View style={[styles.iconContainer_icon, { alignItems: 'center' }]}>
               <FontAwesome name="circle-thin" size={100} color="white" />
               <MaterialCommunityIcons name="silverware-fork-knife" size={50} color="white" style={styles.icon_icon} />
@@ -116,7 +116,7 @@ const HomeUserScreen = ({ navigation }) => {
           </Pressable>
 
 
-          <Pressable onPress={() => navigation.navigate('ResultScreen', { selectedCatagories: "קוסמטיקה" })} style={styles.container_icon}>
+          <Pressable onPress={() => navigation.navigate('ResultScreen', { selectedCategories: ["קוסמטיקה"] })} style={styles.container_icon}>
             <View style={[styles.iconContainer_icon, { alignItems: 'center' }]}>
               <FontAwesome name="circle-thin" size={100} color="white" />
               <MaterialCommunityIcons name="face-woman-shimmer" size={50} color="white" style={styles.icon_icon} />
