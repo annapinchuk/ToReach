@@ -27,11 +27,6 @@ const LoginScreen = ({ navigation }) => {
     setShowModal(false);
   };
 
-  // Validate if the form is valid
-  const isFormValid = () => {
-    return email !== '' && password !== '';
-  };
-
   // Handle forgot password functionality
   const handleForgotPassword = () => {
     sendPasswordResetEmail(auth, email)
@@ -75,6 +70,12 @@ const LoginScreen = ({ navigation }) => {
       });
       setIsLoading(false);
     }
+  };
+
+ 
+  // Validate if the form is valid
+  const isFormValid = () => {
+    return email !== '' && password !== '';
   };
 
   // Handle login functionality
