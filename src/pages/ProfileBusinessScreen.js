@@ -11,6 +11,8 @@ import { styles } from '../styles/ProfileClientScreenStyles';
 import { registerStyles} from '../styles/RegisterBusinessScreenStyles.js';
 import TorTypeInput from '../components/TorTypeInput';
 import DropDownPicker from 'react-native-dropdown-picker';
+import PhoneButton from '../components/PhoneButton';
+import { Feather } from '@expo/vector-icons';
 
 
 const ProfileBusinessScreen = ({ navigation }) => {
@@ -19,6 +21,8 @@ const ProfileBusinessScreen = ({ navigation }) => {
     const [editedPictures, setEditedPictures] = useState([]);
     const [editedLogo, setEditedLogo] = useState('');
     const [editedName, setEditedName] = useState('');
+    const [editedPhone, setEditedPhone] = useState('');
+    const [editedAddress, setEditedAddress] = useState('');
     const [editedTorTypes, setEditedTorTypes] = useState([]);
     const [editedCategories, setEditedCategories] = useState([]);
     const [editedCities, setEditedCities] = useState([]);
@@ -75,6 +79,7 @@ const ProfileBusinessScreen = ({ navigation }) => {
 
                     setBusinessData(data);
                     setEditedName(data.businessName);
+                    setEditedPhone(data.businessPhoneNumber);
                     setEditedDescription(data.businessDescription);
                     setEditedPictures(data.pictures ?? []);
                     setEditedTorTypes(data.torTypes ?? []);
@@ -83,6 +88,7 @@ const ProfileBusinessScreen = ({ navigation }) => {
                     setCurrentValueCategories(data.Categories);
                     setEditedCities(data.Cities);
                     setCurrentValueCities(data.Cities);
+                    setEditedAddress(data.address);
                 } else {
                     // docSnap.data() will be undefined in this case
                     console.log("No such document!");
@@ -107,6 +113,8 @@ const ProfileBusinessScreen = ({ navigation }) => {
             logo: editedLogo,
             Categories: currentValueCategories,
             Cities: currentValueCities,
+            businessPhoneNumber: editedPhone,
+            address: editedAddress,
         }
         await setDoc(docRef, newData).then(() => {
             console.log("Document has been changed successfully");
@@ -177,34 +185,74 @@ const ProfileBusinessScreen = ({ navigation }) => {
                         <Text style={businessPageStyles.businessName}>{businessData.businessName}</Text>
                     )}
                 </View>
+                {/* Phone */}
+                                
+                
+                {editMode ? (
+                    <View style={businessPageStyles.editDescriptionContainer}>
+                        <Text style={businessPageStyles.label}>טלפון: </Text>
+                        <TextInput
+                            style={{...businessPageStyles.editDescriptionInput, textAlign: 'right'}}
+                            value={editedPhone}
+                            onChangeText={(text) => setEditedPhone(text)}
+                        />
+                    </View>
+                ) : (
+                    <View style={businessPageStyles.categoryContainer}>
+                    <Text style={businessPageStyles.label}>טלפון: </Text>
+                    <PhoneButton phoneNumber={editedPhone} />
+                    <PhoneButton phoneNumber={<Feather name="phone-call" size={24} color="white" />} />
+                  </View>
+                )}
+                {/* Adress*/}
+                {editMode ? (
+                    <View style={businessPageStyles.editDescriptionContainer}>
+                        <Text style={businessPageStyles.label}>כתובת: </Text>
+                        <TextInput
+                            style={{...businessPageStyles.editDescriptionInput, textAlign: 'right'}}
+                            value={editedAddress}
+                            onChangeText={(text) => setEditedAddress(text)}
+                        />
+                    </View>
+                ) : (
+                    <View style={businessPageStyles.categoryContainer}>
+                    <Text style={businessPageStyles.label}>כתובת: </Text>
+                    <Text style={businessPageStyles.category}> {editedAddress} </Text>
+                    {/* <NavigationButton destination={business.address} /> */}
+                  </View>
+                )}
 
+
+
+                {editMode? (<Text style={businessPageStyles.label}>תחום: </Text>):(<View></View>)}
                 {/* Categories */}
                 <View style={[businessPageStyles.categoryContainer,{ zIndex: 4 }]}>
                     {editMode? (
-                                    <DropDownPicker
-                                    items={categories.map((category) => ({ label: category, value: category }))}
-                                    open={isOpenCategories}
-                                    setOpen={() => setIsOpenCategories(!isOpenCategories)}
-                                    value={currentValueCategories}
-                                    setValue={(val) => setCurrentValueCategories(val)}
-                                    dropDownDirection='DOWN'
-                                    multiple={true}
-                                    min={1}
-                                    max={4}
-                                    showArrowIcon={false}
-                                    mode='BADGE'
-                                    badgeColors={'#2C64C6'}
-                                    badgeDotColors={['white']}
-                                    listMode={Platform.OS === 'ios' ? 'FLATLIST' : 'MODAL'}
-                                    badgeTextStyle={{ color: "white" }}
-                                    placeholder="תחום עסק "
-                                    placeholderStyle={registerStyles.placeHolderStyle}
-                                    style={registerStyles.dropdownStyle}
-                                    itemStyle={registerStyles.dropdownItemStyle}
-                                    dropDownStyle={registerStyles.dropdownListStyle}
-                                    searchable={true}
-                                    searchPlaceholder="חיפוש..."
-                                  />
+                        
+                                <DropDownPicker
+                                items={categories.map((category) => ({ label: category, value: category }))}
+                                open={isOpenCategories}
+                                setOpen={() => setIsOpenCategories(!isOpenCategories)}
+                                value={currentValueCategories}
+                                setValue={(val) => setCurrentValueCategories(val)}
+                                dropDownDirection='DOWN'
+                                multiple={true}
+                                min={1}
+                                max={4}
+                                showArrowIcon={false}
+                                mode='BADGE'
+                                badgeColors={'#2C64C6'}
+                                badgeDotColors={['white']}
+                                listMode={Platform.OS === 'ios' ? 'FLATLIST' : 'MODAL'}
+                                badgeTextStyle={{ color: "white" }}
+                                placeholder="תחום עסק "
+                                placeholderStyle={registerStyles.placeHolderStyle}
+                                style={registerStyles.dropdownStyle}
+                                itemStyle={registerStyles.dropdownItemStyle}
+                                dropDownStyle={registerStyles.dropdownListStyle}
+                                searchable={true}
+                                searchPlaceholder="חיפוש..."
+                                />
                     ):(
                     <View style={{flexDirection: 'row'}}>
                         <Text style={businessPageStyles.label}>תחום: </Text>
@@ -219,6 +267,7 @@ const ProfileBusinessScreen = ({ navigation }) => {
                 </View>
 
                 {/* Cities */}
+                {editMode? (<Text style={businessPageStyles.label}>ערים: </Text>):(<View></View>)}
                 <View style={[businessPageStyles.categoryContainer,{ zIndex: 3 }]}>
                     {editMode? (
                                     <DropDownPicker
