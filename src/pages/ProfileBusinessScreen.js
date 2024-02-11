@@ -242,9 +242,9 @@ const ProfileBusinessScreen = ({ navigation }) => {
                 <Text style={businessPageStyles.label}>תמונות של העסק: </Text>
                 {/* Business Photos */}
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={businessPageStyles.photosContainer}>
-                    {editedPictures.map((picture, index) => (
+                    {(editedPictures.map((picture, index) => (
                         <Image key={index} source={{ uri: picture.url }} style={businessPageStyles.photo} />
-                    ))}
+                    )))}
                     {/* Button to add more pictures */}
                     {editMode? (
                         <Pressable style={businessPageStyles.addPictureButton} onPress={handleAddPicture}>
