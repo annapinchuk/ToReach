@@ -6,7 +6,7 @@ import { Colors } from 'react-native/Libraries/NewAppScreen';
 import TorType from '../components/TorType';
 import firebase from 'firebase/app';
 import { app, auth, db } from '../firebaseConfig';
-import { collection,getDoc, setDoc, doc ,getDocs} from 'firebase/firestore';
+import { collection,getDoc, setDoc, doc ,getDocs,query,limit} from 'firebase/firestore';
 import { styles } from '../styles/ProfileClientScreenStyles';
 import { registerStyles} from '../styles/RegisterBusinessScreenStyles.js';
 import TorTypeInput from '../components/TorTypeInput';
@@ -47,7 +47,8 @@ const ProfileBusinessScreen = ({ navigation }) => {
       const fetchCities = async () => {
         try {
           const citiessCollection = collection(db, 'Cities');
-          const citiesSnapshot = await getDocs(citiessCollection);
+          const citiesQuery = query(citiessCollection, limit(10));
+          const citiesSnapshot = await getDocs(citiesQuery);
           const citiesData = citiesSnapshot.docs.map(
             (doc) => doc.data().name
           );
@@ -79,6 +80,7 @@ const ProfileBusinessScreen = ({ navigation }) => {
                     setEditedTorTypes(data.torTypes);
                     setEditedLogo(data.logo);
                     setEditedCategories(data.Categories);
+                    setCurrentValueCategories(data.Categories);
                     setEditedCities(data.Cities);
                     console.log("busniess data:", businessData);
                 } else {
@@ -94,13 +96,15 @@ const ProfileBusinessScreen = ({ navigation }) => {
         getData();
     }, []);
 
-    const handleSave = () => {
+    const handleSave = async () => {
+        await setEditedCategories(currentValueCategories);
         const newData = {...businessData, 
             businessName: editedName,
             businessDescription: editedDescription,
             pictures: editedPictures,
             torTypes: editedTorTypes,
             logo: editedLogo,
+            Categories: editedCategories
         }
         setDoc(docRef, newData).then(() => {
             console.log("Document has been changed successfully");
@@ -185,7 +189,7 @@ const ProfileBusinessScreen = ({ navigation }) => {
                 </View>
 
                 {/* Categories */}
-                <View style={businessPageStyles.categoryContainer}>
+                <View style={[businessPageStyles.categoryContainer,{ zIndex: 4 }]}>
                     {editMode? (
                                     <DropDownPicker
                                     items={categories.map((category) => ({ label: category, value: category }))}
@@ -203,22 +207,22 @@ const ProfileBusinessScreen = ({ navigation }) => {
                                     badgeDotColors={['white']}
                                     listMode={Platform.OS === 'ios' ? 'FLATLIST' : 'MODAL'}
                                     badgeTextStyle={{ color: "white" }}
-                                    placeholder="תחום עסק *"
+                                    placeholder="תחום עסק "
                                     placeholderStyle={registerStyles.placeHolderStyle}
-                                    containerStyle={[registerStyles.dropdownContainer, { zIndex: 3 }]}
                                     style={registerStyles.dropdownStyle}
                                     itemStyle={registerStyles.dropdownItemStyle}
                                     dropDownStyle={registerStyles.dropdownListStyle}
                                     searchable={true}
                                     searchPlaceholder="חיפוש..."
                                     onSelectItem={(item) => handleCategoryPress(item)}
+                                    onChangeItem={() => console.log("press")}
                                   />
                     ):(
                     <View>
                         <Text style={businessPageStyles.label}>תחום: </Text>
                         <Text style={businessPageStyles.category}>
-                            {businessData.Categories.map((category, index) => (
-                                <Text key={index}>{category}{index !== businessData.Categories.length - 1 ? ', ' : ''}</Text>
+                            {editedCategories.map((category, index) => (
+                                <Text key={index}>{category}{index !== editedCategories.length - 1 ? ', ' : ''}</Text>
                             ))}
                         </Text>
                     </View>
@@ -228,7 +232,7 @@ const ProfileBusinessScreen = ({ navigation }) => {
                 </View>
 
                 {/* Category and Rating */}
-                <View style={businessPageStyles.categoryContainer}>
+                <View style={[businessPageStyles.categoryContainer, { zIndex: 1 }]}>
                     {/* Assuming there's a function to render stars based on the rating */}
                     <Text style={businessPageStyles.label}>דירוג העסק: </Text>
                     {businessData.ratings && businessData.ratings.length > 0 && (
@@ -275,7 +279,10 @@ const ProfileBusinessScreen = ({ navigation }) => {
                                 <TorType key={appointment.name} appointment={appointment} />
                             ))
                         ) : (
-                            <Text>No tor types available</Text>
+                            <View>
+                            <Text>שים לב! אין סוג תור.</Text>
+                            <Text> כדי שלקוחות יכלו לקבוע תור עם העסק יש להוסיף לפחות סוג תור אחד</Text>
+                            </View>
                         )}
                     </View>
                     {/* Button to add more torTypes */}
