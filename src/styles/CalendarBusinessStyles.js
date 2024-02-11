@@ -1,51 +1,42 @@
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 20,
-  },
-  timeSlotsContainer: {
-    flexDirection: 'row',
-  },
-  timeSlotColumn: {
-    marginRight: 10,
-    paddingHorizontal: 10,
-  },
-  timeSlot: {
-    height: 30,
-    justifyContent: 'center',
-  },
-  timeSlotText: {
-    textAlign: 'right',
-    color: '#777',
-  },
-  meetingsContainer: {
-    flex: 1,
-  },
-  itemContainer: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-  },
-  itemContent: {
-    flex: 1,
-  },
-  itemTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 5,
-    color: '#333',
-  },
-  itemTime: {
-    color: '#777',
-  },
-  emptyDate: {
-    height: 15,
-    flex: 1,
-    paddingTop: 30,
-  },
+    container: {
+      flex: 1,
+    },
+    itemContainer: {
+      backgroundColor: 'white',
+      borderRadius: 5,
+      padding: 10,
+      marginRight: 10,
+      marginTop: 17,
+    },
+    itemContent: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    itemTitle: {
+      fontSize: 16,
+      fontWeight: 'bold',
+    },
+    itemTime: {
+      color: 'black' ,// black
+    },
+    appointmentRectangle: {
+      width: 60,
+      backgroundColor: '#3498db',
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 5,
+    },
+    separator: {
+      height: 1,
+      backgroundColor: '#ced0ce',
+    },
+    emptyDate: {
+      height: 15,
+      flex: 1,
+      paddingTop: 30,
+    },
 });
