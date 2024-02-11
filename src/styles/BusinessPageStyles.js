@@ -85,6 +85,12 @@ export const businessPageStyles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 20,
   },
+  torButtonDisabled: {
+    backgroundColor: '#77A9F9',
+    width: 100,
+    paddingVertical: 12,
+    borderRadius: 20,
+  },
   torButtonContainer: {
     flex: 1,
     justifyContent: 'center',
