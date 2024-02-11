@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, ScrollView, Pressable, TextInput } from 'react-native';
+import { View, Text, Image, ScrollView, Pressable, TextInput,LogBox } from 'react-native';
 import { businessPageStyles } from '../styles/BusinessPageStyles';
 import { styles as ResultScreenStyles } from '../styles/ResultScreenStyles.js';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import TorType from '../components/TorType';
 import firebase from 'firebase/app';
 import { app, auth, db } from '../firebaseConfig';
-import { collection,getDoc, setDoc, doc } from 'firebase/firestore';
+import { collection,getDoc, setDoc, doc ,getDocs} from 'firebase/firestore';
 import { styles } from '../styles/ProfileClientScreenStyles';
+import { registerStyles} from '../styles/RegisterBusinessScreenStyles.js';
 import TorTypeInput from '../components/TorTypeInput';
+import DropDownPicker from 'react-native-dropdown-picker';
+
 
 const ProfileBusinessScreen = ({ navigation }) => {
     const [businessData, setBusinessData] = useState(null);
@@ -17,12 +20,46 @@ const ProfileBusinessScreen = ({ navigation }) => {
     const [editedLogo, setEditedLogo] = useState('');
     const [editedName, setEditedName] = useState('');
     const [editedTorTypes, setEditedTorTypes] = useState([]);
+    const [editedCategories, setEditedCategories] = useState([]);
+    const [editedCities, setEditedCities] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [isOpenCategories, setIsOpenCategories] = useState(false);
+    const [currentValueCategories, setCurrentValueCategories] = useState([]);
+    const [Cities, setCities] = useState([]);
+    const [isOpenCities, setIsOpenCities] = useState(false);
+    const [currentValueCities, setCurrentValueCities] = useState([]);
     // State to track whether the fields are in edit mode
     const [editMode, setEditMode] = useState(false);
-
     const [docRef, setDocRef] = useState(undefined);
 
+    const fetchCategories = async () => {
+        try {
+          const categoriesCollection = collection(db, 'Categories');
+          const categoriesSnapshot = await getDocs(categoriesCollection);
+          const categoriesData = categoriesSnapshot.docs.map(
+            (doc) => doc.data().name
+          );
+          setCategories(categoriesData);
+        } catch (error) {
+          console.error('Firebase initialization error:', error);
+        }
+      };
+      const fetchCities = async () => {
+        try {
+          const citiessCollection = collection(db, 'Cities');
+          const citiesSnapshot = await getDocs(citiessCollection);
+          const citiesData = citiesSnapshot.docs.map(
+            (doc) => doc.data().name
+          );
+          setCities(citiesData);
+        } catch (error) {
+          console.error('Firebase initialization error:', error);
+        }
+      };
     useEffect(() => {
+        fetchCategories();
+        fetchCities();
+        LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
         const user = auth.currentUser;
         const clientsCollection = collection(db, "Businesses");
         const docRef = doc(clientsCollection, user.uid)
@@ -41,6 +78,8 @@ const ProfileBusinessScreen = ({ navigation }) => {
                     setEditedPictures(data.pictures);
                     setEditedTorTypes(data.torTypes);
                     setEditedLogo(data.logo);
+                    setEditedCategories(data.Categories);
+                    setEditedCities(data.Cities);
                     console.log("busniess data:", businessData);
                 } else {
                     // docSnap.data() will be undefined in this case
@@ -54,6 +93,7 @@ const ProfileBusinessScreen = ({ navigation }) => {
         }
         getData();
     }, []);
+
     const handleSave = () => {
         const newData = {...businessData, 
             businessName: editedName,
@@ -71,6 +111,18 @@ const ProfileBusinessScreen = ({ navigation }) => {
 
         setEditMode(false);
     };
+    const handleCategoryPress = (items) => {
+        setIsOpenCities(false);
+        setEditedCategories(items.map(item => item.value));
+        console.log(items.map(item => item.value))
+        setIsOpenCategories(true);
+      };
+      const handleCityPress = (items) => {
+        setIsOpenCategories(false);
+        setSelectedCities(items.map(item => item.value));
+        console.log(items.map(item => item.value))
+        setIsOpenCities(true);
+      };
     const handleAddPicture = () => {
         // Implement your logic to add more pictures
         const newPicture = { url: "https://picsum.photos/204" }; // Replace with actual logic
@@ -80,7 +132,8 @@ const ProfileBusinessScreen = ({ navigation }) => {
     const handleEditLogo = () => {
         // Implement your logic to edit the logo
         console.log("Edit Logo");
-    };    
+    }; 
+
     const handleAddTorType = newTorType => {
         setEditedTorTypes([...editedTorTypes, newTorType]);
     };
@@ -133,12 +186,45 @@ const ProfileBusinessScreen = ({ navigation }) => {
 
                 {/* Categories */}
                 <View style={businessPageStyles.categoryContainer}>
-                    <Text style={businessPageStyles.label}>תחום: </Text>
-                    <Text style={businessPageStyles.category}>
-                        {businessData.Categories.map((category, index) => (
-                            <Text key={index}>{category}{index !== businessData.Categories.length - 1 ? ', ' : ''}</Text>
-                        ))}
-                    </Text>
+                    {editMode? (
+                                    <DropDownPicker
+                                    items={categories.map((category) => ({ label: category, value: category }))}
+                                    open={isOpenCategories}
+                                    setOpen={() => setIsOpenCategories(!isOpenCategories)}
+                                    value={currentValueCategories}
+                                    setValue={(val) => setCurrentValueCategories(val)}
+                                    dropDownDirection='DOWN'
+                                    multiple={true}
+                                    min={1}
+                                    max={4}
+                                    showArrowIcon={false}
+                                    mode='BADGE'
+                                    badgeColors={'#2C64C6'}
+                                    badgeDotColors={['white']}
+                                    listMode={Platform.OS === 'ios' ? 'FLATLIST' : 'MODAL'}
+                                    badgeTextStyle={{ color: "white" }}
+                                    placeholder="תחום עסק *"
+                                    placeholderStyle={registerStyles.placeHolderStyle}
+                                    containerStyle={[registerStyles.dropdownContainer, { zIndex: 3 }]}
+                                    style={registerStyles.dropdownStyle}
+                                    itemStyle={registerStyles.dropdownItemStyle}
+                                    dropDownStyle={registerStyles.dropdownListStyle}
+                                    searchable={true}
+                                    searchPlaceholder="חיפוש..."
+                                    onSelectItem={(item) => handleCategoryPress(item)}
+                                  />
+                    ):(
+                    <View>
+                        <Text style={businessPageStyles.label}>תחום: </Text>
+                        <Text style={businessPageStyles.category}>
+                            {businessData.Categories.map((category, index) => (
+                                <Text key={index}>{category}{index !== businessData.Categories.length - 1 ? ', ' : ''}</Text>
+                            ))}
+                        </Text>
+                    </View>
+
+                    )}
+
                 </View>
 
                 {/* Category and Rating */}
