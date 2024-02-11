@@ -12,9 +12,12 @@ export const styles = StyleSheet.create({
         gap: 15,
     },
     header:{
+        backgroundColor: '#5B8BDF',
         fontSize: 18,
         fontWeight: 'bold',
         color: 'white',
+        paddingBottom: 10,
+        textAlign: 'center'
     },
     text:{
         fontSize: 16,
