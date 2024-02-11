@@ -15,7 +15,10 @@ export const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         color: 'white',
-        textAlign: 'right',
+    },
+    text:{
+        fontSize: 16,
+        color: 'white',
     },
     card: {
         width: '90%',

@@ -73,7 +73,7 @@ const ProfilePage = ({ navigation }) => {
     return (
         <View style={styles.container}>
             {/* Display user information */}
-            <Text style={styles.label}>שם משתמש:</Text>
+            <Text style={styles.label}>שם:</Text>
             {editMode ? (
                 <TextInput
                     style={styles.input}

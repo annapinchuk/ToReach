@@ -4,6 +4,7 @@ import { View, Text, Image, ScrollView, Pressable } from 'react-native';
 import { businessPageStyles } from '../styles/BusinessPageStyles';
 import PhoneButton from '../components/PhoneButton';
 import TorType from '../components/TorType';
+import Toast from 'react-native-toast-message';
 
 const businessData = {
   name: "Mispara",
@@ -80,22 +81,35 @@ const BusinessPage = ({ route, navigation }) => {
 
         <ScrollView contentOffset={{ x: 0, y: 50 }} >
           <View style={businessPageStyles.container}>
-            {businessData.torTypes && businessData.torTypes.length > 0 ? (
-              businessData.torTypes.map(appointment => (
+            {route.params.business.torTypes && route.params.business.torTypes.length > 0 ? (
+              route.params.business.torTypes.map(appointment => (
                 <TorType key={appointment.name} appointment={appointment} />
               ))
             ) : (
-              <Text>No tor types available</Text>
+              <Text>אין סוגי תורים</Text>
             )}
           </View>
         </ScrollView>
         <View style={businessPageStyles.torButtonContainer}>
-          <Pressable
-            style={businessPageStyles.torButton}
-            onPress={() => navigation.navigate('BookAppointmentScreen', { businessID: route.params.business.id })}
-          >
-            <Text style={businessPageStyles.buttonText}>תאם תור</Text>
-          </Pressable>
+          {route.params.business.torTypes && route.params.business.torTypes.length > 0 ?
+            <Pressable
+              style={businessPageStyles.torButton}
+              onPress={() => navigation.navigate('BookAppointmentScreen', { businessID: route.params.business.id })}
+            >
+              <Text style={businessPageStyles.buttonText}>תאם תור</Text>
+            </Pressable> :
+            <Pressable
+              style={businessPageStyles.torButtonDisabled}
+              onPress={() => {
+                Toast.show({
+                  type: 'error',
+                  text1: 'לא ניתן לקבוע תור לעסק זה'
+                });
+              }}>
+              <Text style={businessPageStyles.buttonText}>תאם תור</Text>
+            </Pressable>
+
+          }
         </View>
       </ScrollView>
     </View>

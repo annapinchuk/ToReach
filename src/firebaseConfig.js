@@ -8,12 +8,12 @@ window.navigator.userAgent = "ReactNative";
 // Initialize Firebase
 window.navigator.userAgent = "ReactNative";
 const firebaseConfig = {
-    apiKey: "AIzaSyDGGIS4Pky6s69yJTm6KnotLZkQvnskmgE",
-    authDomain: "toreach-32a88.firebaseapp.com",
-    projectId: "toreach-32a88",
-    storageBucket: "toreach-32a88.appspot.com",
-    messagingSenderId: "963588212263",
-    appId: "1:963588212263:web:5fcbe3e6d691e612693002"
+  apiKey: "AIzaSyDoPCcx9Hi67FgG-kAQQ1UXvtFa9uyHn1k",
+  authDomain: "toreach2-5ad74.firebaseapp.com",
+  projectId: "toreach2-5ad74",
+  storageBucket: "toreach2-5ad74.appspot.com",
+  messagingSenderId: "587606023475",
+  appId: "1:587606023475:web:a9d0aa9be1684dfb117246",
 };
 
 const app = initializeApp(firebaseConfig);
