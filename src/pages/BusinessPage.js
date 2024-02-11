@@ -5,6 +5,8 @@ import { businessPageStyles } from '../styles/BusinessPageStyles';
 import PhoneButton from '../components/PhoneButton';
 import TorType from '../components/TorType';
 import Toast from 'react-native-toast-message';
+import NavigationButton from '../components/NavigationButton';
+import { Feather } from '@expo/vector-icons';
 
 const businessData = {
   name: "Mispara",
@@ -38,7 +40,12 @@ const businessData = {
 };
 
 const BusinessPage = ({ route, navigation }) => {
-  console.log(route.params.business.id);
+
+  const business = route.params.business;
+  const startTime = business.startTime ? business.startTime : "09:00"
+  const endTime = business.startTime ? business.startTime : "18:00"
+  console.log(business.id);
+
   return (
 
     <View style={{ flex: 1, backgroundColor: '#5B8BDF', }}>
@@ -47,20 +54,25 @@ const BusinessPage = ({ route, navigation }) => {
         <View style={businessPageStyles.logoContainer}>
           <Image source={{ uri: businessData.logo }} style={businessPageStyles.logo} />
         </View>
-        <Text style={businessPageStyles.businessName}>{route.params.business.businessName}</Text>
-
-
+        <Text style={businessPageStyles.businessName}>{business.businessName}</Text>
 
         <View style={businessPageStyles.categoryContainer}>
           <Text style={businessPageStyles.label}>טלפון: </Text>
-          <PhoneButton phoneNumber={route.params.business.businessPhoneNumber} />
+          <PhoneButton phoneNumber={business.businessPhoneNumber} />
+          <PhoneButton phoneNumber={<Feather name="phone-call" size={24} color="white" />} />
+          
+        </View>
+
+        <View style={businessPageStyles.categoryContainer}>
+          <Text style={businessPageStyles.label}>כתובת: </Text>
+          <Text style={businessPageStyles.category}> {business.address} </Text>
+          {/* <NavigationButton destination={business.address} /> */}
         </View>
 
         <View style={businessPageStyles.categoryContainer}>
           <Text style={businessPageStyles.label}>תחום: </Text>
           <Text style={businessPageStyles.category}>
-
-            {route.params.business.Categories.join(', ')}
+            {business.Categories.join(', ')}
           </Text>
         </View>
 
@@ -76,13 +88,32 @@ const BusinessPage = ({ route, navigation }) => {
           ))}
         </ScrollView>
 
-        <Text style={businessPageStyles.label}>תיאור העסק: </Text>
-        <Text style={businessPageStyles.description}>{route.params.business.businessDescription}</Text>
+        {
+          business.businessDescription ?
+            <View>
+              <Text style={businessPageStyles.label}>תיאור העסק: </Text>
+              <Text style={businessPageStyles.description}>{business.businessDescription}</Text>
+            </View> :
+            <View></View>
+        }
 
+        <Text style={businessPageStyles.label}>שעות פעילות העסק:</Text>
+        <View style={businessPageStyles.categoryContainer}>
+          <Text style={businessPageStyles.subLabel}>שעת פתיחה:</Text>
+          <Text style={businessPageStyles.category}>{startTime}</Text>
+        </View>
+        <View>
+          <View style={businessPageStyles.categoryContainer}>
+            <Text style={businessPageStyles.subLabel}>שעת סיום:</Text>
+            <Text style={businessPageStyles.category}>{endTime}</Text>
+          </View>
+        </View>
+
+        <Text style={businessPageStyles.label}>סוגי תורים</Text>
         <ScrollView contentOffset={{ x: 0, y: 50 }} >
           <View style={businessPageStyles.container}>
-            {route.params.business.torTypes && route.params.business.torTypes.length > 0 ? (
-              route.params.business.torTypes.map(appointment => (
+            {business.torTypes && business.torTypes.length > 0 ? (
+              business.torTypes.map(appointment => (
                 <TorType key={appointment.name} appointment={appointment} />
               ))
             ) : (
@@ -91,10 +122,10 @@ const BusinessPage = ({ route, navigation }) => {
           </View>
         </ScrollView>
         <View style={businessPageStyles.torButtonContainer}>
-          {route.params.business.torTypes && route.params.business.torTypes.length > 0 ?
+          {business.torTypes && business.torTypes.length > 0 ?
             <Pressable
               style={businessPageStyles.torButton}
-              onPress={() => navigation.navigate('BookAppointmentScreen', { businessID: route.params.business.id })}
+              onPress={() => navigation.navigate('BookAppointmentScreen', { businessID: business.id })}
             >
               <Text style={businessPageStyles.buttonText}>תאם תור</Text>
             </Pressable> :
