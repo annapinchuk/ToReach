@@ -311,7 +311,7 @@ const RegisterBusinessScreen = ({ navigation }) => {
               <Text style={registerStyles.loginText}>יש לך משתמש? </Text>
               <Pressable
                 style={registerStyles.loginButton}
-                onPress={() => navigation.navigate('BusinessPage')}
+                onPress={() => navigation.navigate('LoginScreen')}
               >
                 <Text style={registerStyles.linkText}>התחברות</Text>
               </Pressable>

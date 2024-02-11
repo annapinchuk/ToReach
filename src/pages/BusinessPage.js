@@ -76,6 +76,13 @@ const BusinessPage = ({ route, navigation }) => {
           </Text>
         </View>
 
+        <View style={businessPageStyles.categoryContainer}>
+          <Text style={businessPageStyles.label}>עיר: </Text>
+          <Text style={businessPageStyles.category}>
+            {business.Cities.join(', ')}
+          </Text>
+        </View>
+
         {/* <View style={businessPageStyles.categoryContainer}>
           <Text style={businessPageStyles.label}>דירוג העסק: </Text>
           <Text style={businessPageStyles.rating}>{renderStars(business.ratings[0].rating)}</Text>
