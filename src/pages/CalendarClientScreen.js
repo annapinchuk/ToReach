@@ -23,7 +23,6 @@ const CalendarClientScreen = ({ navigation }) => {
                 where('clientID', '==', uid),
                 where("startTime", sign, todady),
                 orderBy('startTime'));
-            // console.log(appointmentsQuery);
             onSnapshot(appointmentsQuery, (appointmentsSnapshot) => {
                 const appointmentsData = appointmentsSnapshot.docs.map(
                     (doc) => ({
