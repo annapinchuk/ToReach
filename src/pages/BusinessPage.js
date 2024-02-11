@@ -80,12 +80,12 @@ const BusinessPage = ({ route, navigation }) => {
 
         <ScrollView contentOffset={{ x: 0, y: 50 }} >
           <View style={businessPageStyles.container}>
-            {businessData.torTypes && businessData.torTypes.length > 0 ? (
-              businessData.torTypes.map(appointment => (
+            {route.params.business.torTypes && route.params.business.torTypes.length > 0 ? (
+              route.params.business.torTypes.map(appointment => (
                 <TorType key={appointment.name} appointment={appointment} />
               ))
             ) : (
-              <Text>No tor types available</Text>
+              <Text>אין סוגי תורים</Text>
             )}
           </View>
         </ScrollView>

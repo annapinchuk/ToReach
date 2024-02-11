@@ -12,10 +12,7 @@ import Spinner from '../components/Spinner';
 
 const BookAppointmentScreen = ({ route, navigation }) => {
 
-    // CHANGE !!!
     const businessID = route.params.businessID;
-    // console.log(route.params.businessID);
-    // const businessID = "hH9jVyyFtvf6FrtRWiCp";
     const appointment = route.params?.appointment;
     const [isLoading, setIsLoading] = useState(false);
 
