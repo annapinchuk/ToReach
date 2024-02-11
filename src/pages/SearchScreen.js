@@ -4,24 +4,30 @@ import { styles } from '../styles/HomeUserScreenStyles';
 import { EvilIcons, FontAwesome } from '@expo/vector-icons';
 import DropDownPicker from 'react-native-dropdown-picker';
 import DatePicker from '../components/DatePicker';
-import {getDocs, collection, query, getFirestore, addDoc,} from 'firebase/firestore';
+import { getDocs, collection, query, getFirestore, addDoc, limit, } from 'firebase/firestore';
 import { app, auth, db } from '../firebaseConfig';
 
 
 const SearchScreen = ({ navigation }) => {
-    const [categories, setCategories] = useState([]);
-    const [isLoadingCategories, setIsLoadingCategories] = useState(true);
-    const [isOpenCategories, setIsOpenCategories] = useState(false);
-    const [currentValueCategories, setCurrentValueCategories] = useState([]);
-    const [selectedCities, setSelectedCities] = useState([]);
-    const [Cities, setCities] = useState([]);
-    const [isLoadingCities, setIsLoadingCities] = useState(true);
-    const [isOpenCities, setIsOpenCities] = useState(false);
-    const [currentValueCities, setCurrentValueCities] = useState([]);
-    const [selectedDate1, setSelectedDate1] = useState(new Date());
-    const [selectedDate2, setSelectedDate2] = useState(new Date());
+  const [business, setBusiness] = useState([]);
+  const [isOpenBusiness, setIsOpenBusiness] = useState(false);
+  const [currentValueBusiness, setCurrentValueBusiness] = useState([]);
+  const [selectedBusiness, setSelectedBusiness] = useState([]);
 
-const fetchCategories = async () => {
+
+  const [categories, setCategories] = useState([]);
+  const [isOpenCategories, setIsOpenCategories] = useState(false);
+  const [currentValueCategories, setCurrentValueCategories] = useState([]);
+
+  const [selectedCities, setSelectedCities] = useState([]);
+  const [Cities, setCities] = useState([]);
+  const [isOpenCities, setIsOpenCities] = useState(false);
+  const [currentValueCities, setCurrentValueCities] = useState([]);
+
+  const [selectedDate1, setSelectedDate1] = useState(new Date());
+  const [selectedDate2, setSelectedDate2] = useState(new Date());
+
+  const fetchCategories = async () => {
     try {
       const db = getFirestore(app);
       const categoriesCollection = collection(db, 'Categories');
@@ -30,7 +36,7 @@ const fetchCategories = async () => {
         (doc) => doc.data().name
       );
       setCategories(categoriesData);
-      setIsLoadingCategories(false);
+      
     } catch (error) {
       console.error('Firebase initialization error:', error);
     }
@@ -40,52 +46,115 @@ const fetchCategories = async () => {
     try {
       const db = getFirestore(app);
       const citiessCollection = collection(db, 'Cities');
-      const citiesSnapshot = await getDocs(citiessCollection);
+      const citiesSnapshot = await getDocs(citiessCollection, limit(10));
       const citiesData = citiesSnapshot.docs.map(
         (doc) => doc.data().name
       );
       setCities(citiesData);
-      setIsLoadingCities(false);
+      
     } catch (error) {
       console.error('Firebase initialization error:', error);
     }
   };
 
-  useEffect(() => {
-    fetchCategories();
-    fetchCities();
-    LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
-  }, []);
-
-
-  useEffect(() => {
-    LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
-  }, []);
-
-  
-  const handleCategoryPress = (item) => {
-    setIsOpenCities(false);
-    setSelectedCities(item);
-    setIsOpenCategories(true);
-  };
-
-  const handleCityPress = (item) => {
-    setIsOpenCategories(false);
-    setSelectedCities(item);
-    setIsOpenCities(true);
+  const fetchBusinesses = async () => {
+    try {
+      const db = getFirestore(app);
+      const businessesCollection = collection(db, 'Businesses');
+      const businessesSnapshot = await getDocs(businessesCollection, limit(10));
+      const businessesData = businessesSnapshot.docs.map(
+        (doc) => doc.data().businessName
+      );
+      setBusiness(businessesData);
+      
+    } catch (error) {
+      console.error('Firebase initialization error:', error);
+    }
   };
 
  
 
+
+  useEffect(() => {
+    fetchCategories();
+    fetchCities();
+    fetchBusinesses();
+    LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
+  }, []);
+
+
+  useEffect(() => {
+    LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
+  }, []);
+
+
+  const handleCategoryPress = (item) => {
+    setIsOpenCities(false);
+    setIsOpenBusiness(false);
+    setSelectedCities(item);
+    setIsOpenCategories(true);
+  };
+
+  const handleBuisnessPress = (item) => {
+    setIsOpenCities(false);
+    setIsOpenCategories(false);
+    setIsOpenBusiness(true);
+    setSelectedBusiness(item);
+    
+  };
+
+  const handleCityPress = (item) => {
+    setIsOpenCategories(false);
+    setIsOpenBusiness(false);
+    setSelectedCities(item);
+    setIsOpenCities(true);
+  };
+
+
+
   return (
-    <TouchableWithoutFeedback onPress={() => { setIsOpenCities(false); setIsOpenCategories(false) }}>
+    <TouchableWithoutFeedback onPress={() => { setIsOpenCities(false); setIsOpenCategories(false); setIsOpenBusiness(false) }}>
       <View style={styles.container}>
         <Image style={styles.logo} source={require('../../Images/logo.jpg')} />
+
+
+        <Text style={[styles.searchtext, { textAlign: 'right' }]}>שם עסק:</Text>
+
+        <DropDownPicker
+          items={business.map((busines) => ({ label: busines, value: busines }))}
+          open={isOpenBusiness}
+          setOpen={setIsOpenBusiness}
+          value={currentValueBusiness}
+          setValue={setCurrentValueBusiness}
+          dropDownDirection='DOWN'
+          multiple={true}
+          min={1}
+          max={5}
+          showArrowIcon={false}
+          mode='BADGE'
+          badgeColors={'#2C64C6'}
+          badgeDotColors={['white']}
+          badgeTextStyle={{ color: "white" }}
+          listMode={Platform.OS === 'ios' ? 'FLATLIST' : 'MODAL'}
+          placeholder="בחר"
+          placeholderStyle={styles.placeHolderStyle}
+          containerStyle={styles.dropdownContainer}
+          style={[styles.dropdownStyle, { zIndex: isOpenBusiness ? 3 : 0 }]}
+          itemStyle={styles.dropdownItemStyle}
+          dropDownStyle={styles.dropdownListStyle}
+          searchable={true}
+          searchPlaceholder="חיפוש..."
+          onSelectItem={handleBuisnessPress}
+        />
+
+
+
+
 
         <Text style={[styles.searchtext, { textAlign: 'right' }]}>תחום עסק:</Text>
 
         <DropDownPicker
-          items= {categories.map((category) => ({ label: category, value: category }))}
+          items={categories.map((category) => ({ label: category, value: category }))}
           open={isOpenCategories}
           setOpen={setIsOpenCategories}
           value={currentValueCategories}
@@ -102,8 +171,9 @@ const fetchCategories = async () => {
           listMode={Platform.OS === 'ios' ? 'FLATLIST' : 'MODAL'}
           placeholder="בחר"
           placeholderStyle={styles.placeHolderStyle}
-          containerStyle={styles.dropdownContainer}
+          containerStyle={[styles.dropdownContainer, { zIndex: isOpenCategories ? 2 : 0 }]}
           style={[styles.dropdownStyle, { zIndex: isOpenCategories ? 2 : 0 }]}
+
           itemStyle={styles.dropdownItemStyle}
           dropDownStyle={styles.dropdownListStyle}
           searchable={true}
@@ -113,7 +183,7 @@ const fetchCategories = async () => {
         <Text style={styles.searchtext}>עיר:</Text>
 
         <DropDownPicker
-           items= {Cities.map((city) => ({ label: city, value: city }))}
+          items={Cities.map((city) => ({ label: city, value: city }))}
           open={isOpenCities}
           setOpen={setIsOpenCities}
           value={currentValueCities}
@@ -154,7 +224,7 @@ const fetchCategories = async () => {
         <Pressable
 
           style={[styles.button, styles.pressableWithMargin]}
-          onPress={() => navigation.navigate('ResultScreen', ({selectedCities, categories,selectedDate1,selectedDate2}))}
+          onPress={() => navigation.navigate('ResultScreen', ({ selectedCities, categories, selectedDate1, selectedDate2 }))}
         >
           <View style={styles.buttonContent}>
             <Text style={styles.buttonText}>
