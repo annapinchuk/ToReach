@@ -38,13 +38,10 @@ const RegisterBusinessScreen = ({ navigation }) => {
   const [businessNumber, setBusinessNumber] = useState('');
   const [businessDescription, setBusinessDescription] = useState('');
   const [formSubmitted, setFormSubmitted] = useState(false);
-  const [selectedCategories, setSelectedCategories] = useState([]);
   const [categories, setCategories] = useState([]);
   const [isLoadingCategories, setIsLoadingCategories] = useState(true);
   const [isOpenCategories, setIsOpenCategories] = useState(false);
   const [currentValueCategories, setCurrentValueCategories] = useState([]);
-
-  const [selectedCities, setSelectedCities] = useState([]);
   const [Cities, setCities] = useState([]);
   const [isLoadingCities, setIsLoadingCities] = useState(true);
   const [isOpenCities, setIsOpenCities] = useState(false);
@@ -59,8 +56,8 @@ const RegisterBusinessScreen = ({ navigation }) => {
       address.trim() === '' ||
       businessPhoneNumber.trim() === '' ||
       businessNumber.trim() === '' ||
-      selectedCities.length === 0 ||
-      selectedCategories.length === 0
+      currentValueCategories.length === 0 ||
+      currentValueCities.length === 0
 
     );
   };
@@ -79,9 +76,9 @@ const RegisterBusinessScreen = ({ navigation }) => {
       address,
       businessPhoneNumber,
       businessNumber,
-      selectedCities,
+      currentValueCities,
       businessDescription,
-      selectedCategories,
+      currentValueCategories,
     });
 
     setIsLoading(true);
@@ -97,9 +94,9 @@ const RegisterBusinessScreen = ({ navigation }) => {
         address,
         businessPhoneNumber,
         businessNumber,
-        Cities: selectedCities,
+        Cities: currentValueCities,
         businessDescription,
-        Categories: selectedCategories,
+        Categories: currentValueCategories,
       });
       Toast.show({
         type: 'success',
@@ -154,13 +151,11 @@ const RegisterBusinessScreen = ({ navigation }) => {
 
   const handleCategoryPress = (items) => {
     setIsOpenCities(false);
-    setSelectedCategories(items.map(item => item.value));
     console.log(items.map(item => item.value))
     setIsOpenCategories(true);
   };
   const handleCityPress = (items) => {
     setIsOpenCategories(false);
-    setSelectedCities(items.map(item => item.value));
     console.log(items.map(item => item.value))
     setIsOpenCities(true);
   };
