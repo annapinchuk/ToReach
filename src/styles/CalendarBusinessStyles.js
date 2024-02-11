@@ -35,8 +35,13 @@ export const styles = StyleSheet.create({
       backgroundColor: '#ced0ce',
     },
     emptyDate: {
-      height: 15,
+      height: 250,
       flex: 1,
-      paddingTop: 30,
+      justifyContent: 'center', // Center the content vertically
+      alignItems: 'center',     // Center the content horizontally
+      backgroundColor: '#f0f0f0', // Set a background color
+      borderBottomWidth: 1,       // Add a border at the bottom
+      borderBottomColor: '#ccc',  // Border color
+      marginVertical: 10,         // Adjust vertical margin
     },
 });

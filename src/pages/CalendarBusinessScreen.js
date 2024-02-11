@@ -141,7 +141,7 @@ const CalendarBusinessScreen = () => {
             <Agenda
                 items={agendaItems}
                 renderItem={renderItem}
-                renderEmptyDate={renderEmptyDate}
+                renderEmptyData={renderEmptyDate}
                 onDayPress={onDayPress}
                 theme={{
                     selectedDayBackgroundColor: '#3498db',
