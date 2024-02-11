@@ -23,8 +23,8 @@ const CalendarClientScreen = ({ navigation }) => {
                 where('clientID', '==', uid),
                 where("startTime", sign, todady),
                 orderBy('startTime'));
-            // console.log(appointmentsQuery);
-            onSnapshot(appointmentsQuery, (appointmentsSnapshot) => {
+
+            const unsubscribe = onSnapshot(appointmentsQuery, (appointmentsSnapshot) => {
                 const appointmentsData = appointmentsSnapshot.docs.map(
                     (doc) => ({
                         ...doc.data(),
@@ -41,28 +41,30 @@ const CalendarClientScreen = ({ navigation }) => {
 
                 setIsLoading(false);
             });
+            return unsubscribe;
         }
-        const getData = async () => {
-            try {
-                setIsLoading(true);
+        const getData = () => {
+            setIsLoading(true);
 
-                const docIdToBusiness = {};
-                const businessesCollection = collection(db, 'Businesses');
-                onSnapshot(businessesCollection, (businessesSnapshot) => {
-                    businessesSnapshot.docs.forEach(doc => docIdToBusiness[doc.id] = doc.data());
-                });
+            const docIdToBusiness = {};
+            const businessesCollection = collection(db, 'Businesses');
+            const unsubscribeBusinesses = onSnapshot(businessesCollection, (businessesSnapshot) => {
+                businessesSnapshot.docs.forEach(doc => docIdToBusiness[doc.id] = doc.data());
+            });
 
-                // Get future appointments
-                getAppointments(docIdToBusiness, '>')
-                // Get previous appointments
-                getAppointments(docIdToBusiness, '<')
+            // Get future appointments
+            const unsubscribeFutureAppointments = getAppointments(docIdToBusiness, '>');
+            // Get previous appointments
+            const unsubscribePreviousAppointments = getAppointments(docIdToBusiness, '<');
 
-            } catch (err) {
-                console.log(err);
-                console.log(err.message);
-            }
+            return [unsubscribeBusinesses, unsubscribeFutureAppointments, unsubscribePreviousAppointments]
         }
-        getData();
+        const [unsubscribeBusinesses, unsubscribeFutureAppointments, unsubscribePreviousAppointments] = getData();
+        return () => {
+            unsubscribeBusinesses();
+            unsubscribeFutureAppointments();
+            unsubscribePreviousAppointments();
+        }
     }, []);
 
     return (

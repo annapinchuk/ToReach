@@ -34,8 +34,8 @@ export const businessPageStyles = StyleSheet.create({
   },
   categoryContainer: {
     flexDirection: 'row',
-    marginTop: 8,
-    marginBottom: 8,
+    // marginTop: 8,
+    // marginBottom: 8,
     alignSelf: 'flex-start'
   },
   category: {
@@ -53,7 +53,20 @@ export const businessPageStyles = StyleSheet.create({
     textDecorationLine: 'underline',
     marginRight: 8,
     textAlign: 'left',
-
+  },
+  subLabel: {
+    fontSize: 18,
+    color: 'white',
+    marginRight: 8,
+    textAlign: 'left',
+  },
+  hour: {
+    fontSize: 18,
+    marginBottom: 8,
+    color: 'white',
+    textAlign: 'left',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
   rating: {
     fontSize: 20,

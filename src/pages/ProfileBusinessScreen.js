@@ -11,6 +11,8 @@ import { styles } from '../styles/ProfileClientScreenStyles';
 import { registerStyles} from '../styles/RegisterBusinessScreenStyles.js';
 import TorTypeInput from '../components/TorTypeInput';
 import DropDownPicker from 'react-native-dropdown-picker';
+import PhoneButton from '../components/PhoneButton';
+import { Feather } from '@expo/vector-icons';
 
 
 const ProfileBusinessScreen = ({ navigation }) => {
@@ -19,6 +21,8 @@ const ProfileBusinessScreen = ({ navigation }) => {
     const [editedPictures, setEditedPictures] = useState([]);
     const [editedLogo, setEditedLogo] = useState('');
     const [editedName, setEditedName] = useState('');
+    const [editedPhone, setEditedPhone] = useState('');
+    const [editedAddress, setEditedAddress] = useState('');
     const [editedTorTypes, setEditedTorTypes] = useState([]);
     const [editedCategories, setEditedCategories] = useState([]);
     const [editedCities, setEditedCities] = useState([]);
@@ -75,6 +79,7 @@ const ProfileBusinessScreen = ({ navigation }) => {
 
                     setBusinessData(data);
                     setEditedName(data.businessName);
+                    setEditedPhone(data.businessPhoneNumber);
                     setEditedDescription(data.businessDescription);
                     setEditedPictures(data.pictures ?? []);
                     setEditedTorTypes(data.torTypes ?? []);
@@ -82,7 +87,8 @@ const ProfileBusinessScreen = ({ navigation }) => {
                     setEditedCategories(data.Categories);
                     setCurrentValueCategories(data.Categories);
                     setEditedCities(data.Cities);
-                    console.log("busniess data:", businessData);
+                    setCurrentValueCities(data.Cities);
+                    setEditedAddress(data.address);
                 } else {
                     // docSnap.data() will be undefined in this case
                     console.log("No such document!");
@@ -97,16 +103,20 @@ const ProfileBusinessScreen = ({ navigation }) => {
     }, []);
 
     const handleSave = async () => {
-        await setEditedCategories(currentValueCategories);
+        setEditedCategories(currentValueCategories);
+        setEditedCities(currentValueCities);
         const newData = {...businessData, 
             businessName: editedName,
             businessDescription: editedDescription,
             pictures: editedPictures,
             torTypes: editedTorTypes,
             logo: editedLogo,
-            Categories: editedCategories
+            Categories: currentValueCategories,
+            Cities: currentValueCities,
+            businessPhoneNumber: editedPhone,
+            address: editedAddress,
         }
-        setDoc(docRef, newData).then(() => {
+        await setDoc(docRef, newData).then(() => {
             console.log("Document has been changed successfully");
         })
             .catch(error => {
@@ -115,18 +125,6 @@ const ProfileBusinessScreen = ({ navigation }) => {
 
         setEditMode(false);
     };
-    const handleCategoryPress = (items) => {
-        setIsOpenCities(false);
-        setEditedCategories(items.map(item => item.value));
-        console.log(items.map(item => item.value))
-        setIsOpenCategories(true);
-      };
-      const handleCityPress = (items) => {
-        setIsOpenCategories(false);
-        setSelectedCities(items.map(item => item.value));
-        console.log(items.map(item => item.value))
-        setIsOpenCities(true);
-      };
     const handleAddPicture = () => {
         // Implement your logic to add more pictures
         const newPicture = { url: "https://picsum.photos/204" }; // Replace with actual logic
@@ -187,38 +185,76 @@ const ProfileBusinessScreen = ({ navigation }) => {
                         <Text style={businessPageStyles.businessName}>{businessData.businessName}</Text>
                     )}
                 </View>
+                {/* Phone */}
+                                
+                
+                {editMode ? (
+                    <View style={businessPageStyles.editDescriptionContainer}>
+                        <Text style={businessPageStyles.label}>טלפון: </Text>
+                        <TextInput
+                            style={{...businessPageStyles.editDescriptionInput, textAlign: 'right'}}
+                            value={editedPhone}
+                            onChangeText={(text) => setEditedPhone(text)}
+                        />
+                    </View>
+                ) : (
+                    <View style={businessPageStyles.categoryContainer}>
+                    <Text style={businessPageStyles.label}>טלפון: </Text>
+                    <PhoneButton phoneNumber={editedPhone} />
+                    <PhoneButton phoneNumber={<Feather name="phone-call" size={24} color="white" />} />
+                  </View>
+                )}
+                {/* Adress*/}
+                {editMode ? (
+                    <View style={businessPageStyles.editDescriptionContainer}>
+                        <Text style={businessPageStyles.label}>כתובת: </Text>
+                        <TextInput
+                            style={{...businessPageStyles.editDescriptionInput, textAlign: 'right'}}
+                            value={editedAddress}
+                            onChangeText={(text) => setEditedAddress(text)}
+                        />
+                    </View>
+                ) : (
+                    <View style={businessPageStyles.categoryContainer}>
+                    <Text style={businessPageStyles.label}>כתובת: </Text>
+                    <Text style={businessPageStyles.category}> {editedAddress} </Text>
+                    {/* <NavigationButton destination={business.address} /> */}
+                  </View>
+                )}
 
+
+
+                {editMode? (<Text style={businessPageStyles.label}>תחום: </Text>):(<View></View>)}
                 {/* Categories */}
                 <View style={[businessPageStyles.categoryContainer,{ zIndex: 4 }]}>
                     {editMode? (
-                                    <DropDownPicker
-                                    items={categories.map((category) => ({ label: category, value: category }))}
-                                    open={isOpenCategories}
-                                    setOpen={() => setIsOpenCategories(!isOpenCategories)}
-                                    value={currentValueCategories}
-                                    setValue={(val) => setCurrentValueCategories(val)}
-                                    dropDownDirection='DOWN'
-                                    multiple={true}
-                                    min={1}
-                                    max={4}
-                                    showArrowIcon={false}
-                                    mode='BADGE'
-                                    badgeColors={'#2C64C6'}
-                                    badgeDotColors={['white']}
-                                    listMode={Platform.OS === 'ios' ? 'FLATLIST' : 'MODAL'}
-                                    badgeTextStyle={{ color: "white" }}
-                                    placeholder="תחום עסק "
-                                    placeholderStyle={registerStyles.placeHolderStyle}
-                                    style={registerStyles.dropdownStyle}
-                                    itemStyle={registerStyles.dropdownItemStyle}
-                                    dropDownStyle={registerStyles.dropdownListStyle}
-                                    searchable={true}
-                                    searchPlaceholder="חיפוש..."
-                                    onSelectItem={(item) => handleCategoryPress(item)}
-                                    onChangeItem={() => console.log("press")}
-                                  />
+                        
+                                <DropDownPicker
+                                items={categories.map((category) => ({ label: category, value: category }))}
+                                open={isOpenCategories}
+                                setOpen={() => setIsOpenCategories(!isOpenCategories)}
+                                value={currentValueCategories}
+                                setValue={(val) => setCurrentValueCategories(val)}
+                                dropDownDirection='DOWN'
+                                multiple={true}
+                                min={1}
+                                max={4}
+                                showArrowIcon={false}
+                                mode='BADGE'
+                                badgeColors={'#2C64C6'}
+                                badgeDotColors={['white']}
+                                listMode={Platform.OS === 'ios' ? 'FLATLIST' : 'MODAL'}
+                                badgeTextStyle={{ color: "white" }}
+                                placeholder="תחום עסק "
+                                placeholderStyle={registerStyles.placeHolderStyle}
+                                style={registerStyles.dropdownStyle}
+                                itemStyle={registerStyles.dropdownItemStyle}
+                                dropDownStyle={registerStyles.dropdownListStyle}
+                                searchable={true}
+                                searchPlaceholder="חיפוש..."
+                                />
                     ):(
-                    <View>
+                    <View style={{flexDirection: 'row'}}>
                         <Text style={businessPageStyles.label}>תחום: </Text>
                         <Text style={businessPageStyles.category}>
                             {editedCategories.map((category, index) => (
@@ -228,7 +264,47 @@ const ProfileBusinessScreen = ({ navigation }) => {
                     </View>
 
                     )}
+                </View>
 
+                {/* Cities */}
+                {editMode? (<Text style={businessPageStyles.label}>ערים: </Text>):(<View></View>)}
+                <View style={[businessPageStyles.categoryContainer,{ zIndex: 3 }]}>
+                    {editMode? (
+                                    <DropDownPicker
+                                    items={Cities.map((city) => ({ label: city, value: city }))}
+                                    open={isOpenCities}
+                                    setOpen={() => setIsOpenCities(!isOpenCategories)}
+                                    value={currentValueCities}
+                                    setValue={(val) => setCurrentValueCities(val)}
+                                    dropDownDirection='DOWN'
+                                    multiple={true}
+                                    min={1}
+                                    max={5}
+                                    showArrowIcon={false}
+                                    mode='BADGE'
+                                    badgeColors={'#2C64C6'}
+                                    badgeDotColors={['white']}
+                                    listMode={Platform.OS === 'ios' ? 'FLATLIST' : 'MODAL'}
+                                    badgeTextStyle={{ color: "white" }}
+                                    placeholder="ערים"
+                                    placeholderStyle={registerStyles.placeHolderStyle}
+                                    style={registerStyles.dropdownStyle}
+                                    itemStyle={registerStyles.dropdownItemStyle}
+                                    dropDownStyle={registerStyles.dropdownListStyle}
+                                    searchable={true}
+                                    searchPlaceholder="חיפוש..."
+                                  />
+                    ):(
+                    <View style={{flexDirection: 'row'}}>
+                        <Text style={businessPageStyles.label}>ערים: </Text>
+                        <Text style={businessPageStyles.category}>
+                            {editedCities.map((category, index) => (
+                                <Text key={index}>{category}{index !== editedCities.length - 1 ? ', ' : ''}</Text>
+                            ))}
+                        </Text>
+                    </View>
+
+                    )}
                 </View>
 
                 {/* Category and Rating */}
@@ -242,9 +318,9 @@ const ProfileBusinessScreen = ({ navigation }) => {
                 <Text style={businessPageStyles.label}>תמונות של העסק: </Text>
                 {/* Business Photos */}
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={businessPageStyles.photosContainer}>
-                    {editedPictures.map((picture, index) => (
+                    {(editedPictures.map((picture, index) => (
                         <Image key={index} source={{ uri: picture.url }} style={businessPageStyles.photo} />
-                    ))}
+                    )))}
                     {/* Button to add more pictures */}
                     {editMode? (
                         <Pressable style={businessPageStyles.addPictureButton} onPress={handleAddPicture}>

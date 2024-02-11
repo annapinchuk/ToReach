@@ -9,7 +9,7 @@ const PhoneButton = ({ phoneNumber }) => {
 
   return (
     <TouchableOpacity onPress={handleCallPress}>
-      <Text style={businessPageStyles.description}> {phoneNumber}</Text>
+      <Text style={businessPageStyles.category}> {phoneNumber}</Text>
     </TouchableOpacity>
   );
 };
