@@ -58,7 +58,7 @@ export const Loginstyles = StyleSheet.create({
     },
     // view components
     View: {
-        flexDirection: 'row-reverse', // Ensure items are in the same row and in reverse order
+        flexDirection: 'row', // Ensure items are in the same row and in reverse order
         alignItems: 'center', // Align items vertically in the center
         alignSelf: 'center',
         marginTop: 16,
