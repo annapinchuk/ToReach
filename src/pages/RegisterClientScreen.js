@@ -1,6 +1,10 @@
 import { View, Text, Button } from 'react-native';
 import { useState, useEffect } from 'react';
-import { TextInput, Pressable, ScrollView, Image } from 'react-native';
+import {
+  TextInput, Pressable, ScrollView, Image, Keyboard,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import { registerStyles } from '../styles/RegisterBusinessScreenStyles';
 import { styles } from '../styles/HomeScreenStyles';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
@@ -61,78 +65,89 @@ const RegisterClientScreen = ({ navigation }) => {
   };
 
   return (
-    <ScrollView contentContainerStyle={registerStyles.scrollContainer}
-      keyboardShouldPersistTaps="always">
-      <View style={registerStyles.container}>
-        <Image style={styles.logo} source={require('../../Images/logo.jpg')} />
-        <Text style={registerStyles.title}>יצירת משתמש חדש</Text>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 
-        <TextInput
-          style={registerStyles.input}
-          placeholder=" אימייל *"
-          placeholderTextColor={registerStyles.placeHolderStyle.color}
-          value={email}
-          onChangeText={(text) => setEmail(text)}
-          keyboardType="email-address"
-        />
-
-        <TextInput
-          style={registerStyles.input}
-          placeholder=" סיסמה *"
-          placeholderTextColor={registerStyles.placeHolderStyle.color}
-          secureTextEntry={true}
-          value={password}
-          onChangeText={(text) => setPassword(text)}
-        />
-
-        <TextInput
-          style={registerStyles.input}
-          placeholder=" שם מלא *"
-          placeholderTextColor={registerStyles.placeHolderStyle.color}
-          value={name}
-          onChangeText={(text) => setName(text)}
-          />
-
-        <TextInput
-          style={registerStyles.input}
-          placeholder=" מספר טלפון *"
-          placeholderTextColor={registerStyles.placeHolderStyle.color}
-          value={phoneNumber}
-          onChangeText={(text) => setPhoneNumber(text)}
-          keyboardType="numeric"
-        />
-
-        {isLoading ? <Spinner /> : <Pressable
-          style={[
-            registerStyles.button,
-            formSubmitted && areRequiredFieldsMissing() && { backgroundColor: 'gray' },
-          ]}
-          onPress={handleRegister}
-          disabled={formSubmitted && areRequiredFieldsMissing()}
+        <ScrollView
+          contentContainerStyle={registerStyles.scrollContainer}
+          keyboardShouldPersistTaps="handled"
         >
-          <Text style={registerStyles.buttonText}>הרשמה</Text>
-        </Pressable>}
+          <ScrollView contentContainerStyle={registerStyles.scrollContainer}
+            keyboardShouldPersistTaps="always">
+            <View style={registerStyles.container}>
+              <Image style={styles.logo} source={require('../../Images/logo.jpg')} />
+              <Text style={registerStyles.title}>יצירת משתמש חדש</Text>
 
-        {formSubmitted && areRequiredFieldsMissing() && (
-          <Text style={{ color: 'red', marginTop: 8 }}>
-            אנא מלא את כל שדות החובה *
-          </Text>
-        )}
+              <TextInput
+                style={registerStyles.input}
+                placeholder=" אימייל *"
+                placeholderTextColor={registerStyles.placeHolderStyle.color}
+                value={email}
+                onChangeText={(text) => setEmail(text)}
+                keyboardType="email-address"
+              />
 
-        <View style={registerStyles.loginContainer}>
-          <Text style={registerStyles.loginText}>יש לך משתמש? </Text>
-          <Pressable
-            style={registerStyles.loginButton}
-            onPress={() => navigation.navigate('LoginScreen')}
-          >
-            <Text style={registerStyles.linkText}>התחברות</Text>
-          </Pressable>
-        </View>
+              <TextInput
+                style={registerStyles.input}
+                placeholder=" סיסמה *"
+                placeholderTextColor={registerStyles.placeHolderStyle.color}
+                secureTextEntry={true}
+                value={password}
+                onChangeText={(text) => setPassword(text)}
+              />
 
-      </View>
-    </ScrollView>
+              <TextInput
+                style={registerStyles.input}
+                placeholder=" שם מלא *"
+                placeholderTextColor={registerStyles.placeHolderStyle.color}
+                value={name}
+                onChangeText={(text) => setName(text)}
+              />
 
+              <TextInput
+                style={registerStyles.input}
+                placeholder=" מספר טלפון *"
+                placeholderTextColor={registerStyles.placeHolderStyle.color}
+                value={phoneNumber}
+                onChangeText={(text) => setPhoneNumber(text)}
+                keyboardType="numeric"
+              />
 
+              {isLoading ? <Spinner /> : <Pressable
+                style={[
+                  registerStyles.button,
+                  formSubmitted && areRequiredFieldsMissing() && { backgroundColor: 'gray' },
+                ]}
+                onPress={handleRegister}
+                disabled={formSubmitted && areRequiredFieldsMissing()}
+              >
+                <Text style={registerStyles.buttonText}>הרשמה</Text>
+              </Pressable>}
+
+              {formSubmitted && areRequiredFieldsMissing() && (
+                <Text style={{ color: 'red', marginTop: 8 }}>
+                  אנא מלא את כל שדות החובה *
+                </Text>
+              )}
+
+              <View style={registerStyles.loginContainer}>
+                <Text style={registerStyles.loginText}>יש לך משתמש? </Text>
+                <Pressable
+                  style={registerStyles.loginButton}
+                  onPress={() => navigation.navigate('LoginScreen')}
+                >
+                  <Text style={registerStyles.linkText}>התחברות</Text>
+                </Pressable>
+              </View>
+
+            </View>
+          </ScrollView>
+        </ScrollView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 
