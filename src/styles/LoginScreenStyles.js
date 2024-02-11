@@ -16,8 +16,9 @@ export const Loginstyles = StyleSheet.create({
         position: 'relative', // Make the position of TextInput container relative
         width: '80%',
         alignItems : 'flex-end'   ,
-        marginBottom: 0,
+        marginBottom: 5,
         marginTop: 0,
+        marginTop: 10
         
     },
     input: {
@@ -76,6 +77,7 @@ export const Loginstyles = StyleSheet.create({
         fontSize: 16,
         marginRight: 8, // Add margin to separate text and button
     },
+    
     ForgotPassword: {
         color: 'blue',
         textDecorationLine: 'underline',
