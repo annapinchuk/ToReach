@@ -7,6 +7,7 @@ export const styles = StyleSheet.create({
         paddingBottom: 40,
         paddingTop: 20,
         gap: 15,
+        flex: 1,
     },
     card: {
         width: '100%',

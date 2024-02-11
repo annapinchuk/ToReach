@@ -31,8 +31,7 @@ const CalendarClientScreen = ({ navigation }) => {
                         id: doc.id,
                         startTime: doc.data().startTime.toDate(),
                         endTime: doc.data().endTime.toDate(),
-                        businessName: docIdToBusiness[doc.data().businessID].businessName,
-                        address: docIdToBusiness[doc.data().businessID].address,
+                        business: docIdToBusiness[doc.data().businessID],
                     })
                 );
                 if (sign === '>')
@@ -72,19 +71,23 @@ const CalendarClientScreen = ({ navigation }) => {
                 {isLoading ? <Spinner /> :
                     <View style={styles.container}>
                         <Text style={styles.header}>תורים עתידיים:</Text>
-                        {futureAppointments.map(appointment =>
+                        {futureAppointments.length > 0 ? futureAppointments.map(appointment =>
                             <AppointmentCard key={appointment.id}
                                 appointment={appointment}
                                 isEditable={true}
                                 navigation={navigation}
-                            />)}
+                            />) :
+                            <Text style={styles.text}>לא קיימים תורים עתידיים</Text>
+                        }
                         <Text style={styles.header}>תורים קודמים:</Text>
-                        {prevAppointments.map(appointment =>
+                        {prevAppointments.length > 0 ? prevAppointments.map(appointment =>
                             <AppointmentCard key={appointment.id}
                                 appointment={appointment}
                                 isEditable={false}
                                 navigation={navigation}
-                            />)}
+                            />) :
+                            <Text style={styles.text}>לא קיימים תורים קודמים</Text>
+                        }
                     </View>
                 }
             </View>

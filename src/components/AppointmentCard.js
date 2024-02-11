@@ -29,13 +29,15 @@ const AppointmentCard = ({ navigation, appointment, isEditable }) => {
 
     return (
         <View style={styles.card}>
-            <View style={styles.cardTopRow}>
-                <Image source={{ uri: 'https://picsum.photos/200' }} style={styles.businessLogo} />
-                <View>
-                    <Text style={styles.title}>{appointment.businessName}</Text>
-                    <Text style={styles.subTitle}>{appointment.name}</Text>
+            <Pressable onPress={() => navigation.navigate('BusinessPage', { business: { ...appointment.business, id: appointment.businessID } })}>
+                <View style={styles.cardTopRow}>
+                    <Image source={{ uri: 'https://picsum.photos/200' }} style={styles.businessLogo} />
+                    <View>
+                        <Text style={styles.title}>{appointment.business.businessName}</Text>
+                        <Text style={styles.subTitle}>{appointment.name}</Text>
+                    </View>
                 </View>
-            </View>
+            </Pressable>
             <View style={styles.cardMiddleRow}>
                 <View style={styles.iconAndTextContainer}>
                     <FontAwesome name="calendar" size={22} color="black" />
@@ -66,7 +68,7 @@ const AppointmentCard = ({ navigation, appointment, isEditable }) => {
                         </Pressable>
                 }
 
-                <NavigationButton destination={appointment.address} />
+                <NavigationButton destination={appointment.business.address} />
             </View>
         </View>
     );

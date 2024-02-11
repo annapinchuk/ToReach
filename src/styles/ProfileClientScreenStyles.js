@@ -18,7 +18,7 @@ export const styles = StyleSheet.create({
         color: 'white',
         fontSize: 16,
         marginTop: 8,
-        textAlign: 'right',
+        textAlign: 'left',
     },
     input: {
         fontSize: 16,
@@ -27,6 +27,7 @@ export const styles = StyleSheet.create({
         padding: 8,
         color: 'white',
         borderColor: 'white',
+        textAlign: 'right',
     },
     button: {
         backgroundColor: '#3B82F6',
