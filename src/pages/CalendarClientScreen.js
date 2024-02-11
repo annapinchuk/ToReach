@@ -1,85 +1,63 @@
 import React, { useEffect, useState } from 'react';
-import { View, ScrollView } from 'react-native';
+import { View, ScrollView, Text } from 'react-native';
 import AppointmentCard from '../components/AppointmentCard';
 import { styles } from '../styles/CalendarClientStyles';
-import { collection, getDocs, query, where } from '@firebase/firestore';
+import { collection, getDocs, onSnapshot, orderBy, query, where } from '@firebase/firestore';
 import { auth, db } from '../firebaseConfig';
+import Spinner from '../components/Spinner';
 
-const CalendarClientScreen = () => {
+const CalendarClientScreen = ({ navigation }) => {
 
-    const [appointments, setAppointments] = useState([]);
+    const [prevAppointments, setPrevAppointments] = useState([]);
+    const [futureAppointments, setFutureAppointments] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-    const data = [
-        {
-            id: 124,
-            name: 'תספורת',
-            businessName: "Daniel's hair",
-            startTime: '13:00',
-            endTime: '13:30',
-            date: new Date(2023, 1, 14),
-            price: 60,
-        },
-        {
-            id: 125,
-            name: 'תזונאית',
-            businessName: "Shlomo's gym",
-            startTime: '9:00',
-            endTime: '10:00',
-            date: new Date(2023, 1, 15),
-            price: 120,
-        },
-        {
-            id: 126,
-            name: 'תספורת',
-            businessName: "Daniel's hair",
-            startTime: '11:00',
-            endTime: '11:30',
-            date: new Date(2023, 1, 15),
-            price: 60,
-        },
-        {
-            id: 127,
-            appointmentName: 'תספורת',
-            businessName: "Daniel's hair",
-            startTime: '11:00',
-            endTime: '11:30',
-            date: new Date(2023, 1, 15),
-            price: 60,
-        },
-        {
-            id: 128,
-            appointmentName: 'תספורת',
-            businessName: "Daniel's hair",
-            startTime: '11:00',
-            endTime: '11:30',
-            date: new Date(2023, 1, 15),
-            price: 60,
-        },
-    ];
+
 
     useEffect(() => {
-        const getData = async () => {
-            try {
-                const businessIdToName = {};
-                const businessesCollection = collection(db, 'Businesses');
-                const businessesSnapshot = await getDocs(businessesCollection);
-                businessesSnapshot.docs.forEach(doc => businessIdToName[doc.id] = doc.data().businessName);
-                
-                const { uid } = auth.currentUser;
-                const appointmentsCollection = collection(db, 'Appointments');
-                const appointmentsQuery = query(appointmentsCollection, where('clientID', '==', uid));
-                const appointmentsSnapshot = await getDocs(appointmentsQuery);
+        const getAppointments = (docIdToBusiness, sign) => {
+            const todady = new Date();
+            const { uid } = auth.currentUser;
+            const appointmentsCollection = collection(db, 'Appointments');
+            const appointmentsQuery = query(appointmentsCollection,
+                where('clientID', '==', uid),
+                where("startTime", sign, todady),
+                orderBy('startTime'));
+            // console.log(appointmentsQuery);
+            onSnapshot(appointmentsQuery, (appointmentsSnapshot) => {
                 const appointmentsData = appointmentsSnapshot.docs.map(
                     (doc) => ({
                         ...doc.data(),
                         id: doc.id,
                         startTime: doc.data().startTime.toDate(),
                         endTime: doc.data().endTime.toDate(),
-                        businessName: businessIdToName[doc.data().businessID],
+                        businessName: docIdToBusiness[doc.data().businessID].businessName,
+                        address: docIdToBusiness[doc.data().businessID].address,
                     })
                 );
-                console.log(appointmentsData[0]);
-                setAppointments(appointmentsData);
+                if (sign === '>')
+                    setFutureAppointments(appointmentsData);
+                else
+                    setPrevAppointments(appointmentsData);
+
+                setIsLoading(false);
+            });
+        }
+        const getData = async () => {
+            try {
+                setIsLoading(true);
+
+                const docIdToBusiness = {};
+                const businessesCollection = collection(db, 'Businesses');
+                onSnapshot(businessesCollection, (businessesSnapshot) => {
+                    businessesSnapshot.docs.forEach(doc => docIdToBusiness[doc.id] = doc.data());
+                });
+
+                // Get future appointments
+                getAppointments(docIdToBusiness, '>')
+                // Get previous appointments
+                getAppointments(docIdToBusiness, '<')
+
             } catch (err) {
                 console.log(err);
                 console.log(err.message);
@@ -89,11 +67,28 @@ const CalendarClientScreen = () => {
     }, []);
 
     return (
-        <ScrollView>
+        <ScrollView style={styles.scrollView}>
             <View style={styles.container}>
-                {appointments.map(appointment => <AppointmentCard key={appointment.id} appointment={appointment} />)}
+                {isLoading ? <Spinner /> :
+                    <View style={styles.container}>
+                        <Text style={styles.header}>תורים עתידיים:</Text>
+                        {futureAppointments.map(appointment =>
+                            <AppointmentCard key={appointment.id}
+                                appointment={appointment}
+                                isEditable={true}
+                                navigation={navigation}
+                            />)}
+                        <Text style={styles.header}>תורים קודמים:</Text>
+                        {prevAppointments.map(appointment =>
+                            <AppointmentCard key={appointment.id}
+                                appointment={appointment}
+                                isEditable={false}
+                                navigation={navigation}
+                            />)}
+                    </View>
+                }
             </View>
-        </ScrollView>
+        </ScrollView >
     );
 }
 

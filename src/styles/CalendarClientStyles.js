@@ -1,12 +1,21 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-    container: {
+    scrollView: {
         backgroundColor: '#5B8BDF',
+        height: '100%',
+    },
+    container: {
         alignItems: 'center',
         paddingBottom: 40,
         paddingTop: 20,
         gap: 15,
+    },
+    header:{
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: 'white',
+        textAlign: 'right',
     },
     card: {
         width: '90%',
@@ -49,6 +58,12 @@ export const styles = StyleSheet.create({
     },
     button: {
         backgroundColor: '#3B82F6',
+        width: 120,
+        paddingVertical: 13,
+        borderRadius: 10,
+    },
+    buttonDisabled: {
+        backgroundColor: '#77A9F9',
         width: 120,
         paddingVertical: 13,
         borderRadius: 10,

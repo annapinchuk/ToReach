@@ -37,6 +37,12 @@ export const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: 'white'
     },
+    warningText: {
+        fontSize: 16,
+        marginBottom: 10,
+        fontWeight: 'bold',
+        color: '#1E40AF'
+    },
     picker: {
         height: 40,
         borderColor: '#ccc',
