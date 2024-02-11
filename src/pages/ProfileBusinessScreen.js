@@ -76,9 +76,9 @@ const ProfileBusinessScreen = ({ navigation }) => {
                     setBusinessData(data);
                     setEditedName(data.businessName);
                     setEditedDescription(data.businessDescription);
-                    setEditedPictures(data.pictures);
-                    setEditedTorTypes(data.torTypes);
-                    setEditedLogo(data.logo);
+                    setEditedPictures(data.pictures ?? []);
+                    setEditedTorTypes(data.torTypes ?? []);
+                    setEditedLogo(data.logo ?? '');
                     setEditedCategories(data.Categories);
                     setCurrentValueCategories(data.Categories);
                     setEditedCities(data.Cities);
@@ -168,7 +168,7 @@ const ProfileBusinessScreen = ({ navigation }) => {
                 </View>
                 {/* Logo and Business Name */}
                 <View style={businessPageStyles.logoContainer}>
-                    <Image source={{ uri: businessData.logo }} style={businessPageStyles.logo} />
+                    {editedLogo && <Image source={{ uri: editedLogo }} style={businessPageStyles.logo} />}
                     {/* Button to edit logo */}
                     {editMode ? (
                         <View>
