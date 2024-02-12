@@ -59,7 +59,16 @@ const LoginScreen = ({ navigation }) => {
       })
       .catch((error) => {
         console.log('Error sending password reset email:', error);
+        if (error.code === 'auth/invalid-email') {
+          Alert.alert('כתובת מייל לא תקינה');
+          return;
+        }else if (error.code === 'auth/missing-email') {  
+          Alert.alert('יש להזין כתובת מייל לאיפוס סיסמא');
+          return;
+        }
+        else{
         Alert.alert('משהו השתבש באיפוס סיסמא נסה שוב בעוד כמה רגעים');
+        }
       });
   };
 
