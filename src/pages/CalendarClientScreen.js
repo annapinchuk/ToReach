@@ -87,6 +87,7 @@ const CalendarClientScreen = ({ navigation }) => {
         <View style={styles.scrollView}>
             {isLoading ? <Spinner /> :
                 <ScrollView stickyHeaderIndices={[0, 2]}>
+                    {/* future appointments */}
                     <View>
                         <Text style={styles.header}>תורים עתידיים:</Text>
                     </View>
@@ -99,6 +100,7 @@ const CalendarClientScreen = ({ navigation }) => {
                             <Text style={styles.text}>לא קיימים תורים עתידיים</Text>
                         }
                     </View>
+                    {/* previous appointment */}
                     <View>
                         <Text style={styles.header}>תורים קודמים:</Text>
                     </View>
