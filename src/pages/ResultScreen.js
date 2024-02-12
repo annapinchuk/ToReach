@@ -99,6 +99,7 @@ const ResultScreen = ({ route, navigation }) => {
 
     return (
         <View style={styles.container}>
+        <ScrollView>
             <Image
                 style={styles.logo}
                 source={require('../../Images/logo.jpg')}
@@ -107,16 +108,15 @@ const ResultScreen = ({ route, navigation }) => {
                 isloaded ? (<Spinner></Spinner>):(
             <View style={styles.container}>
             <Text style={styles.iconText}>הנה מה שמצאנו בשבילך</Text>
-            <ScrollView>
                 <View style={styles.container}>
                     {businesses.map(business => (
                         <ResultCard key={business.id} navigation={navigation} business={business} />
                     ))}
                 </View>
-            </ScrollView>
             </View>
             )
         }
+        </ScrollView>
         </View>
     );
 };

@@ -6,7 +6,7 @@ export const styles = StyleSheet.create({
         justifyContent: 'flex-start', // Align items at the top
         backgroundColor: '#5B8BDF',
         alignItems: 'center',
-        paddingTop: 40, // Add padding to give some space at the top
+        paddingVertical: 40, // Add padding to give some space at the top
         flexDirection: 'column',
         gap: 17
         

@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, ScrollView, Pressable, TextInput, LogBox } from 'react-native';
 import TorType from '../components/TorType';
-import { app, auth, db } from '../firebaseConfig';
-import { collection, getDoc, setDoc, doc, getDocs, query, limit } from 'firebase/firestore';
+import firebase from 'firebase/app';
+import { app, auth, db, storage } from '../firebaseConfig';
+import { collection,getDoc, setDoc, doc ,getDocs,query,limit} from 'firebase/firestore';
+import { styles } from '../styles/ProfileClientScreenStyles';
+import { registerStyles} from '../styles/RegisterBusinessScreenStyles.js';
 import TorTypeInput from '../components/TorTypeInput';
 import DropDownPicker from 'react-native-dropdown-picker';
 import PhoneButton from '../components/PhoneButton';
@@ -10,6 +13,12 @@ import { Feather } from '@expo/vector-icons';
 import TimePicker from '../components/TimePicker.js';
 import { getHour } from '../shared/dateMethods.js';
 import { ProfileBusinessScreenStyles } from '../styles/ProfileBusinessScreenStyles.js';
+import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system';
+import { getDownloadURL, ref, uploadBytes } from '@firebase/storage';
+import Toast from 'react-native-toast-message';
+import { businessPageStyles } from '../styles/BusinessPageStyles.js';
+
 const ProfileBusinessScreen = ({ navigation }) => {
     // State to hold business data and edited details
     const [businessData, setBusinessData] = useState(null);
@@ -87,7 +96,6 @@ const ProfileBusinessScreen = ({ navigation }) => {
                     setEditedName(data.businessName);
                     setEditedPhone(data.businessPhoneNumber);
                     setEditedDescription(data.businessDescription);
-                    setEditedPictures(data.pictures ?? []);
                     setEditedTorTypes(data.torTypes ?? []);
                     setEditedLogo(data.logo ?? '');
                     setEditedCategories(data.Categories);
@@ -97,6 +105,20 @@ const ProfileBusinessScreen = ({ navigation }) => {
                     setEditedAddress(data.address);
                     setStartTime(data.startTime ? new Date(data.startTime.seconds * 1000) : defaultStartTime)
                     setEndTime(data.endTime ? new Date(data.endTime.seconds * 1000) : defaultEndTime)
+                    const result = [];
+                    await Promise.all(data.pictures.map(async picture => {
+                        if(picture.url) result.push(picture.url);
+                        else if (typeof picture === 'string'){
+                            try {
+                                const storageRef = ref(storage, picture);
+                                const url = await getDownloadURL(storageRef)
+                                result.push(url);
+                            } catch(err) {
+                                console.log(err);
+                            }
+                        }
+                    }));
+                    setEditedPictures(result);
                 } else {
                     // docSnap.data() will be undefined in this case
                     console.log("No such document!");
@@ -137,10 +159,57 @@ const ProfileBusinessScreen = ({ navigation }) => {
 
         setEditMode(false);
     };
-    const handleAddPicture = () => {
-        // Implement your logic to add more pictures
-        const newPicture = { url: "https://picsum.photos/204" }; // Replace with actual logic
-        setEditedPictures([...editedPictures, newPicture]);
+
+    const handleImageSelection = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [4, 4],
+            quality: 1,
+        });
+        // console.log(result);
+
+        if (result) {
+
+            imageUri = result.assets[0].uri
+            if (!imageUri) return;
+            // setSelectedImage(imageUri);
+            try {
+                const { uri } = await FileSystem.getInfoAsync(imageUri);
+                const blob = await new Promise((resolve, reject) => {
+                    const xhr = new XMLHttpRequest();
+                    xhr.onload = () => {
+                        resolve(xhr.response);
+                    };
+                    xhr.onerror = (e) => {
+                        reject(new TypeError('Network request faild'));
+                    };
+                    xhr.responseType = 'blob';
+                    xhr.open('GET', uri, true);
+                    xhr.send(null);
+                });
+
+
+                
+                // storage
+                const picURI = `BusinessPictures/${auth.currentUser.uid}/${editedPictures.length}`;
+                const storageRef = ref(storage, picURI);
+
+                // 'file' comes from the Blob or File API
+                uploadBytes(storageRef, blob).then((snapshot) => {
+                    setEditedPictures([...editedPictures, picURI]);
+                    Toast.show({
+                        type: 'success',
+                        text1: 'התמונה עלתה בהצלחה'
+                    });
+                });
+
+
+            } catch (error) {
+                console.error(error);
+            }
+
+        }
     };
 
     const handleEditLogo = () => {
@@ -162,6 +231,20 @@ const ProfileBusinessScreen = ({ navigation }) => {
         const updatedTorTypes = editedTorTypes.filter(torType => torType !== torTypeToDelete);
         setEditedTorTypes(updatedTorTypes);
       };
+
+    const getPictureUrl = (picture) => {
+        let result = picture;
+        if (picture.url) return picture.url;
+        if (typeof picture === 'string'){
+            try {
+                const storageRef = ref(storage, picture);
+                getDownloadURL(storageRef).then(res => {result = res; console.log(result);});
+            } catch(err) {
+                console.log(err);
+            }
+        }
+        return result;
+    };
 
     if (!businessData) {
         return <Text>Loading...</Text>;
@@ -350,12 +433,12 @@ const ProfileBusinessScreen = ({ navigation }) => {
                 {/* Business Photos */}
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={ProfileBusinessScreenStyles.photosContainer}>
                     {(editedPictures.map((picture, index) => (
-                        <Image key={index} source={{ uri: picture.url }} style={ProfileBusinessScreenStyles.photo} />
+                        <Image key={index} source={{ uri: picture }} style={businessPageStyles.photo} />
                     )))}
                     {/* Button to add more pictures */}
-                    {editMode ? (
-                        <Pressable style={ProfileBusinessScreenStyles.addPictureButton} onPress={handleAddPicture}>
-                            <Text style={ProfileBusinessScreenStyles.buttonText}>הוסף תמונה</Text>
+                    {editMode? (
+                        <Pressable style={businessPageStyles.addPictureButton} onPress={handleImageSelection}>
+                            <Text style={businessPageStyles.buttonText}>הוסף תמונה</Text>
                         </Pressable>
                     ) : (
                         <View></View>
