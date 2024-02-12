@@ -52,30 +52,33 @@ const BusinessPage = ({ route, navigation }) => {
 
       <ScrollView style={businessPageStyles.container}>
         <View style={businessPageStyles.logoContainer}>
+          {/* logo + name */}
           <Image source={{ uri: businessData.logo }} style={businessPageStyles.logo} />
         </View>
         <Text style={businessPageStyles.businessName}>{business.businessName}</Text>
 
+        {/* phone number + call option */}
         <View style={businessPageStyles.categoryContainer}>
           <Text style={businessPageStyles.label}>טלפון: </Text>
           <PhoneButton phoneNumber={business.businessPhoneNumber} />
           <PhoneButton phoneNumber={<Feather name="phone-call" size={24} color="white" />} />
-          
         </View>
 
+        {/* address */}
         <View style={businessPageStyles.categoryContainer}>
           <Text style={businessPageStyles.label}>כתובת: </Text>
           <Text style={businessPageStyles.category}> {business.address} </Text>
           {/* <NavigationButton destination={business.address} /> */}
         </View>
 
+        {/* categories */}
         <View style={businessPageStyles.categoryContainer}>
           <Text style={businessPageStyles.label}>תחום: </Text>
           <Text style={businessPageStyles.category}>
             {business.Categories.join(', ')}
           </Text>
         </View>
-
+        {/* cities */}
         <View style={businessPageStyles.categoryContainer}>
           <Text style={businessPageStyles.label}>עיר: </Text>
           <Text style={businessPageStyles.category}>
@@ -83,11 +86,7 @@ const BusinessPage = ({ route, navigation }) => {
           </Text>
         </View>
 
-        {/* <View style={businessPageStyles.categoryContainer}>
-          <Text style={businessPageStyles.label}>דירוג העסק: </Text>
-          <Text style={businessPageStyles.rating}>{renderStars(business.ratings[0].rating)}</Text>
-        </View> */}
-
+        {/* pictures */}
         <Text style={businessPageStyles.label}>תמונות של העסק: </Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={businessPageStyles.photosContainer}>
           {businessData.pictures.map((picture, index) => (
@@ -95,6 +94,7 @@ const BusinessPage = ({ route, navigation }) => {
           ))}
         </ScrollView>
 
+        {/* description */}
         {
           business.businessDescription ?
             <View>
@@ -104,6 +104,7 @@ const BusinessPage = ({ route, navigation }) => {
             <View></View>
         }
 
+        {/* Activity time */}
         <Text style={businessPageStyles.label}>שעות פעילות העסק:</Text>
         <View style={businessPageStyles.categoryContainer}>
           <Text style={businessPageStyles.subLabel}>שעת פתיחה:</Text>
@@ -116,6 +117,7 @@ const BusinessPage = ({ route, navigation }) => {
           </View>
         </View>
 
+        {/* tor types */}
         <Text style={businessPageStyles.label}>סוגי תורים</Text>
         <ScrollView contentOffset={{ x: 0, y: 50 }} >
           <View style={businessPageStyles.container}>
@@ -128,6 +130,8 @@ const BusinessPage = ({ route, navigation }) => {
             )}
           </View>
         </ScrollView>
+
+        {/* book appointment */}
         <View style={businessPageStyles.torButtonContainer}>
           {business.torTypes && business.torTypes.length > 0 ?
             <Pressable
@@ -154,6 +158,9 @@ const BusinessPage = ({ route, navigation }) => {
   );
 };
 
+export default BusinessPage;
+
+
 // const renderStars = (rating) => {
 //   const stars = Array.from({ length: 5 }, (_, index) => (
 //     <Text key={index} style={businessPageStyles.star}>{index < rating ? '★' : '☆'}</Text>
@@ -161,4 +168,8 @@ const BusinessPage = ({ route, navigation }) => {
 //   return <>{stars}</>;
 // };
 
-export default BusinessPage;
+{/* <View style={businessPageStyles.categoryContainer}>
+        <Text style={businessPageStyles.label}>דירוג העסק: </Text>
+        <Text style={businessPageStyles.rating}>{renderStars(business.ratings[0].rating)}</Text>
+    </View> */}
+
