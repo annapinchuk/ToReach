@@ -55,6 +55,12 @@ export const ProfileBusinessScreenStyles = StyleSheet.create({
         marginRight: 8,
         textAlign: 'left',
     },
+    subLabel: {
+        fontSize: 18,
+        color: 'white',
+        marginRight: 8,
+        textAlign: 'left',
+      },
     editDescriptionInput: {
         backgroundColor: 'white', // Set the background color as needed
         padding: 10,
@@ -127,6 +133,14 @@ export const ProfileBusinessScreenStyles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         paddingTop: 30
-    }
+    },
+    containerTorim: {
+        backgroundColor: '#5B8BDF',
+        alignItems: 'center',
+        paddingBottom: 40,
+        paddingTop: 20,
+        gap: 15,
+        flex: 1,
+    },
 
 });

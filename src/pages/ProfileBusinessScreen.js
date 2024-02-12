@@ -1,19 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, ScrollView, Pressable, TextInput, LogBox } from 'react-native';
-import { businessPageStyles } from '../styles/BusinessPageStyles';
-import { styles as ResultScreenStyles } from '../styles/ResultScreenStyles.js';
 import TorType from '../components/TorType';
 import { app, auth, db } from '../firebaseConfig';
 import { collection, getDoc, setDoc, doc, getDocs, query, limit } from 'firebase/firestore';
-import { styles } from '../styles/ProfileClientScreenStyles';
-import { registerStyles } from '../styles/RegisterBusinessScreenStyles.js';
 import TorTypeInput from '../components/TorTypeInput';
 import DropDownPicker from 'react-native-dropdown-picker';
 import PhoneButton from '../components/PhoneButton';
 import { Feather } from '@expo/vector-icons';
 import TimePicker from '../components/TimePicker.js';
 import { getHour } from '../shared/dateMethods.js';
-
+import { ProfileBusinessScreenStyles } from '../styles/ProfileBusinessScreenStyles.js';
 const ProfileBusinessScreen = ({ navigation }) => {
     const [businessData, setBusinessData] = useState(null);
     const [editedDescription, setEditedDescription] = useState('');
@@ -160,43 +156,43 @@ const ProfileBusinessScreen = ({ navigation }) => {
 
     return (
         <View style={{ flex: 1, backgroundColor: '#5B8BDF' }}>
-            <ScrollView style={businessPageStyles.container}>
-                <View style={styles.buttonsRow}>
+            <ScrollView style={ProfileBusinessScreenStyles.container}>
+                <View style={ProfileBusinessScreenStyles.buttonsRow}>
                     {/* Display edit or save button based on edit mode */}
                     {editMode ? (
-                        <Pressable style={styles.button} onPress={handleSave}>
-                            <Text style={styles.buttonText}>
+                        <Pressable style={ProfileBusinessScreenStyles.button} onPress={handleSave}>
+                            <Text style={ProfileBusinessScreenStyles.buttonText}>
                                 שמירה
                             </Text>
                         </Pressable>
 
                     ) : (
-                        <Pressable style={styles.button} onPress={() => setEditMode(true)}>
-                            <Text style={styles.buttonText}>
+                        <Pressable style={ProfileBusinessScreenStyles.button} onPress={() => setEditMode(true)}>
+                            <Text style={ProfileBusinessScreenStyles.buttonText}>
                                 עריכה
                             </Text>
                         </Pressable>
                     )}
                     {/* Logout button */}
-                    <Pressable onPress={handleLogout} style={styles.logoutButton}>
+                    <Pressable onPress={handleLogout} style={ProfileBusinessScreenStyles.logoutButton}>
                         {/* <Text style={styles.buttonText}> */}
-                        <Text style={styles.buttonText}>
+                        <Text style={ProfileBusinessScreenStyles.buttonText}>
                             התנתקות
                         </Text>
                     </Pressable>
                 </View>
 
                 {/* Logo and Business Name */}
-                <View style={businessPageStyles.logoContainer}>
-                    {editedLogo && <Image source={{ uri: editedLogo }} style={businessPageStyles.logo} />}
+                <View style={ProfileBusinessScreenStyles.logoContainer}>
+                    {editedLogo && <Image source={{ uri: editedLogo }} style={ProfileBusinessScreenStyles.logo} />}
                     {/* Button to edit logo */}
                     {editMode ? (
                         <View>
-                            <Pressable style={businessPageStyles.editLogoButton} onPress={handleEditLogo}>
-                                <Text style={businessPageStyles.buttonText}>ערוך לוגו</Text>
+                            <Pressable style={ProfileBusinessScreenStyles.editLogoButton} onPress={handleEditLogo}>
+                                <Text style={ProfileBusinessScreenStyles.buttonText}>ערוך לוגו</Text>
                             </Pressable>
                             <TextInput
-                                style={businessPageStyles.businessName}
+                                style={ProfileBusinessScreenStyles.editDescriptionInput}
                                 value={editedName}
                                 onChangeText={(text) => setEditedName(text)}
                             />
@@ -204,51 +200,51 @@ const ProfileBusinessScreen = ({ navigation }) => {
 
 
                     ) : (
-                        <Text style={businessPageStyles.businessName}>{businessData.businessName}</Text>
+                        <Text style={ProfileBusinessScreenStyles.businessName}>{editedName}</Text>
                     )}
                 </View>
                 {/* Phone */}
 
 
                 {editMode ? (
-                    <View style={businessPageStyles.editDescriptionContainer}>
-                        <Text style={businessPageStyles.label}>טלפון: </Text>
+                    <View style={ProfileBusinessScreenStyles.editDescriptionContainer}>
+                        <Text style={ProfileBusinessScreenStyles.label}>טלפון: </Text>
                         <TextInput
-                            style={{ ...businessPageStyles.editDescriptionInput, textAlign: 'right' }}
+                            style={{ ...ProfileBusinessScreenStyles.editDescriptionInput, textAlign: 'right' }}
                             value={editedPhone}
                             onChangeText={(text) => setEditedPhone(text)}
                         />
                     </View>
                 ) : (
-                    <View style={businessPageStyles.categoryContainer}>
-                        <Text style={businessPageStyles.label}>טלפון: </Text>
+                    <View style={ProfileBusinessScreenStyles.categoryContainer}>
+                        <Text style={ProfileBusinessScreenStyles.label}>טלפון: </Text>
                         <PhoneButton phoneNumber={editedPhone} />
                         <Feather name="phone-call" size={24} color="white" />
                     </View>
                 )}
                 {/* Adress*/}
                 {editMode ? (
-                    <View style={businessPageStyles.editDescriptionContainer}>
-                        <Text style={businessPageStyles.label}>כתובת: </Text>
+                    <View style={ProfileBusinessScreenStyles.editDescriptionContainer}>
+                        <Text style={ProfileBusinessScreenStyles.label}>כתובת: </Text>
                         <TextInput
-                            style={{ ...businessPageStyles.editDescriptionInput, textAlign: 'right' }}
+                            style={{ ...ProfileBusinessScreenStyles.editDescriptionInput, textAlign: 'right' }}
                             value={editedAddress}
                             onChangeText={(text) => setEditedAddress(text)}
                         />
                     </View>
                 ) : (
-                    <View style={businessPageStyles.categoryContainer}>
-                        <Text style={businessPageStyles.label}>כתובת: </Text>
-                        <Text style={businessPageStyles.category}> {editedAddress} </Text>
+                    <View style={ProfileBusinessScreenStyles.categoryContainer}>
+                        <Text style={ProfileBusinessScreenStyles.label}>כתובת: </Text>
+                        <Text style={ProfileBusinessScreenStyles.category}> {editedAddress} </Text>
                         {/* <NavigationButton destination={business.address} /> */}
                     </View>
                 )}
 
 
 
-                {editMode ? (<Text style={businessPageStyles.label}>תחום: </Text>) : (<View></View>)}
+                {editMode ? (<Text style={ProfileBusinessScreenStyles.label}>תחום: </Text>) : (<View></View>)}
                 {/* Categories */}
-                <View style={[businessPageStyles.categoryContainer, { zIndex: 4 }]}>
+                <View style={[ProfileBusinessScreenStyles.categoryContainer, { zIndex: 4 }]}>
                     {editMode ? (
 
                         <DropDownPicker
@@ -268,17 +264,17 @@ const ProfileBusinessScreen = ({ navigation }) => {
                             listMode={Platform.OS === 'ios' ? 'FLATLIST' : 'MODAL'}
                             badgeTextStyle={{ color: "white" }}
                             placeholder="תחום עסק "
-                            placeholderStyle={registerStyles.placeHolderStyle}
-                            style={registerStyles.dropdownStyle}
-                            itemStyle={registerStyles.dropdownItemStyle}
-                            dropDownStyle={registerStyles.dropdownListStyle}
+                            placeholderStyle={ProfileBusinessScreenStyles.placeHolderStyle}
+                            style={ProfileBusinessScreenStyles.dropdownStyle}
+                            itemStyle={ProfileBusinessScreenStyles.dropdownItemStyle}
+                            dropDownStyle={ProfileBusinessScreenStyles.dropdownListStyle}
                             searchable={true}
                             searchPlaceholder="חיפוש..."
                         />
                     ) : (
                         <View style={{ flexDirection: 'row' }}>
-                            <Text style={businessPageStyles.label}>תחום: </Text>
-                            <Text style={businessPageStyles.category}>
+                            <Text style={ProfileBusinessScreenStyles.label}>תחום: </Text>
+                            <Text style={ProfileBusinessScreenStyles.category}>
                                 {editedCategories.map((category, index) => (
                                     <Text key={index}>{category}{index !== editedCategories.length - 1 ? ', ' : ''}</Text>
                                 ))}
@@ -289,8 +285,8 @@ const ProfileBusinessScreen = ({ navigation }) => {
                 </View>
 
                 {/* Cities */}
-                {editMode ? (<Text style={businessPageStyles.label}>ערים: </Text>) : (<View></View>)}
-                <View style={[businessPageStyles.categoryContainer, { zIndex: 3 }]}>
+                {editMode ? (<Text style={ProfileBusinessScreenStyles.label}>ערים: </Text>) : (<View></View>)}
+                <View style={[ProfileBusinessScreenStyles.categoryContainer, { zIndex: 3 }]}>
                     {editMode ? (
                         <DropDownPicker
                             items={Cities.map((city) => ({ label: city, value: city }))}
@@ -309,17 +305,17 @@ const ProfileBusinessScreen = ({ navigation }) => {
                             listMode={Platform.OS === 'ios' ? 'FLATLIST' : 'MODAL'}
                             badgeTextStyle={{ color: "white" }}
                             placeholder="ערים"
-                            placeholderStyle={registerStyles.placeHolderStyle}
-                            style={registerStyles.dropdownStyle}
-                            itemStyle={registerStyles.dropdownItemStyle}
-                            dropDownStyle={registerStyles.dropdownListStyle}
+                            placeholderStyle={ProfileBusinessScreenStyles.placeHolderStyle}
+                            style={ProfileBusinessScreenStyles.dropdownStyle}
+                            itemStyle={ProfileBusinessScreenStyles.dropdownItemStyle}
+                            dropDownStyle={ProfileBusinessScreenStyles.dropdownListStyle}
                             searchable={true}
                             searchPlaceholder="חיפוש..."
                         />
                     ) : (
                         <View style={{ flexDirection: 'row' }}>
-                            <Text style={businessPageStyles.label}>ערים: </Text>
-                            <Text style={businessPageStyles.category}>
+                            <Text style={ProfileBusinessScreenStyles.label}>ערים: </Text>
+                            <Text style={ProfileBusinessScreenStyles.category}>
                                 {editedCities.map((category, index) => (
                                     <Text key={index}>{category}{index !== editedCities.length - 1 ? ', ' : ''}</Text>
                                 ))}
@@ -330,23 +326,23 @@ const ProfileBusinessScreen = ({ navigation }) => {
                 </View>
 
                 {/* Category and Rating */}
-                <View style={[businessPageStyles.categoryContainer, { zIndex: 1 }]}>
+                <View style={[ProfileBusinessScreenStyles.categoryContainer, { zIndex: 1 }]}>
                     {/* Assuming there's a function to render stars based on the rating */}
-                    <Text style={businessPageStyles.label}>דירוג העסק: </Text>
+                    <Text style={ProfileBusinessScreenStyles.label}>דירוג העסק: </Text>
                     {businessData.ratings && businessData.ratings.length > 0 && (
-                        <Text style={businessPageStyles.rating}>{renderStars(businessData.ratings[0].rating)}</Text>)}
+                        <Text style={ProfileBusinessScreenStyles.rating}>{renderStars(businessData.ratings[0].rating)}</Text>)}
                 </View>
 
-                <Text style={businessPageStyles.label}>תמונות של העסק: </Text>
+                <Text style={ProfileBusinessScreenStyles.label}>תמונות של העסק: </Text>
                 {/* Business Photos */}
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={businessPageStyles.photosContainer}>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={ProfileBusinessScreenStyles.photosContainer}>
                     {(editedPictures.map((picture, index) => (
-                        <Image key={index} source={{ uri: picture.url }} style={businessPageStyles.photo} />
+                        <Image key={index} source={{ uri: picture.url }} style={ProfileBusinessScreenStyles.photo} />
                     )))}
                     {/* Button to add more pictures */}
                     {editMode ? (
-                        <Pressable style={businessPageStyles.addPictureButton} onPress={handleAddPicture}>
-                            <Text style={businessPageStyles.buttonText}>הוסף תמונה</Text>
+                        <Pressable style={ProfileBusinessScreenStyles.addPictureButton} onPress={handleAddPicture}>
+                            <Text style={ProfileBusinessScreenStyles.buttonText}>הוסף תמונה</Text>
                         </Pressable>
                     ) : (
                         <View></View>
@@ -354,33 +350,53 @@ const ProfileBusinessScreen = ({ navigation }) => {
                 </ScrollView>
 
                 {/* Business Description */}
-                <Text style={businessPageStyles.label}>תיאור העסק: </Text>
+                <Text style={ProfileBusinessScreenStyles.label}>תיאור העסק: </Text>
                 {editMode ? (
-                    <View style={businessPageStyles.editDescriptionContainer}>
+                    <View style={ProfileBusinessScreenStyles.editDescriptionContainer}>
                         <TextInput
-                            style={{ ...businessPageStyles.editDescriptionInput, textAlign: 'right' }}
+                            style={{ ...ProfileBusinessScreenStyles.editDescriptionInput, textAlign: 'right' }}
                             value={editedDescription}
                             onChangeText={(text) => setEditedDescription(text)}
                             multiline
                         />
                     </View>
                 ) : (
-                    <Text style={businessPageStyles.description}>{editedDescription ? editedDescription : ("אין תיאור לעסק זה")}</Text>
+                    <Text style={ProfileBusinessScreenStyles.description}>{editedDescription ? editedDescription : ("אין תיאור לעסק זה")}</Text>
                 )}
 
+                {/* business hours */}
+                <View style={{ flexDirection: 'column', gap: 10 }}>
+                    <Text style={ProfileBusinessScreenStyles.label}>שעות פעילות העסק:</Text>
 
+                    <View style={[ProfileBusinessScreenStyles.categoryContainer, { alignItems: 'center' }]}>
+                        <Text style={ProfileBusinessScreenStyles.subLabel}>שעת פתיחה:</Text>
+                        {
+                            editMode ? (<TimePicker time={startTime} setTime={setStartTime} />) :
+                                (<Text style={ProfileBusinessScreenStyles.category}> {getHour(startTime)} </Text>)
+                        }
+                    </View>
+                    <View>
+                        <View style={[ProfileBusinessScreenStyles.categoryContainer, { alignItems: 'center' }]}>
+                            <Text style={ProfileBusinessScreenStyles.subLabel}>שעת סיום:</Text>
+                            {
+                                editMode ? (<TimePicker time={endTime} setTime={setEndTime} />) :
+                                    (<Text style={ProfileBusinessScreenStyles.category}> {getHour(endTime)} </Text>)
+                            }
+                        </View>
+                    </View>
+                </View>
                 {/* Tor Types */}
                 <ScrollView contentOffset={{ x: 0, y: 10 }}>
-                    <Text style={businessPageStyles.label}> סוגי תורים</Text>
-                    <View style={ResultScreenStyles.container}>
+                    <Text style={ProfileBusinessScreenStyles.label}> סוגי תורים</Text>
+                    <View style={ProfileBusinessScreenStyles.containerTorim}>
                         {editedTorTypes && editedTorTypes.length > 0 ? (
                             editedTorTypes.map(appointment => (
                                 <TorType key={appointment.name} appointment={appointment} />
                             ))
                         ) : (
                             <View>
-                                <Text>שים לב! אין סוג תור.</Text>
-                                <Text> כדי שלקוחות יכלו לקבוע תור עם העסק יש להוסיף לפחות סוג תור אחד</Text>
+                                <Text style={{textAlign:'center'}}>שים לב! אין סוג תור. </Text>
+                                <Text style={{textAlign:'center'}}> כדי שלקוחות יכלו לקבוע תור עם העסק יש להוסיף לפחות סוג תור אחד</Text>
                             </View>
                         )}
                     </View>
@@ -388,27 +404,6 @@ const ProfileBusinessScreen = ({ navigation }) => {
                     {editMode && <TorTypeInput onAddTorType={handleAddTorType} />}
 
                 </ScrollView>
-                {/* business hours */}
-                <View style={{ flexDirection: 'column', gap: 10 }}>
-                    <Text style={businessPageStyles.label}>שעות פעילות העסק:</Text>
-
-                    <View style={[businessPageStyles.categoryContainer, { alignItems: 'center' }]}>
-                        <Text style={businessPageStyles.subLabel}>שעת פתיחה:</Text>
-                        {
-                            editMode ? (<TimePicker time={startTime} setTime={setStartTime} />) :
-                                (<Text style={businessPageStyles.category}> {getHour(startTime)} </Text>)
-                        }
-                    </View>
-                    <View>
-                        <View style={[businessPageStyles.categoryContainer, { alignItems: 'center' }]}>
-                            <Text style={businessPageStyles.subLabel}>שעת סיום:</Text>
-                            {
-                                editMode ? (<TimePicker time={endTime} setTime={setEndTime} />) :
-                                    (<Text style={businessPageStyles.category}> {getHour(endTime)} </Text>)
-                            }
-                        </View>
-                    </View>
-                </View>
             </ScrollView >
         </View >
     );
@@ -416,7 +411,7 @@ const ProfileBusinessScreen = ({ navigation }) => {
 // A function to render stars based on the rating (Assuming a 5-star scale)
 const renderStars = (rating) => {
     const stars = Array.from({ length: 5 }, (_, index) => (
-        <Text key={index} style={businessPageStyles.star}>{index < rating ? '★' : '☆'}</Text>
+        <Text key={index} style={ProfileBusinessScreenStyles.star}>{index < rating ? '★' : '☆'}</Text>
     ));
     return <>{stars}</>;
 };
