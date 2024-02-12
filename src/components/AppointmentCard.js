@@ -7,7 +7,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { getHour } from "../shared/dateMethods";
 import Toast from "react-native-toast-message";
 
-const AppointmentCard = ({ navigation, appointment, isEditable }) => {
+const AppointmentCard = ({ navigation, appointment }) => {
 
     const handleEdit = () => {
         const diff = appointment.endTime.getTime() - appointment.startTime.getTime();
@@ -26,6 +26,8 @@ const AppointmentCard = ({ navigation, appointment, isEditable }) => {
         };
         navigation.navigate("BookAppointmentScreen", { appointment: appointmentToSend, businessID: appointment.businessID })
     }
+    const dateEdit = new Date();
+    dateEdit.setMinutes(dateEdit.getMinutes() + 30);
 
     return (
         <View style={styles.card}>
@@ -54,7 +56,7 @@ const AppointmentCard = ({ navigation, appointment, isEditable }) => {
             </View>
             <View style={styles.cardMiddleRow}>
                 {
-                    isEditable ?
+                    appointment.startTime >= dateEdit ?
                         <Pressable style={styles.button} onPress={handleEdit}>
                             <Text style={styles.buttonText}>עריכה</Text>
                         </Pressable> :

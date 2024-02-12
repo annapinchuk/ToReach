@@ -65,7 +65,6 @@ const BookAppointmentScreen = ({ route, navigation }) => {
             startTime.setHours(9, 0, 0, 0); // Set start time to default (09:00)
         }
         else {
-
             const hourStartTime = getHour(new Date(businessStartTime.seconds * 1000)).split(":");
             startTime.setHours(hourStartTime[0]);
             startTime.setMinutes(hourStartTime[1]);
@@ -81,12 +80,14 @@ const BookAppointmentScreen = ({ route, navigation }) => {
             endTime.setHours(hourEndTime[0]);
             endTime.setMinutes(hourEndTime[1]);
         }
-
+        
+        //  Considering the torType duration
         endTime.setMinutes(endTime.getMinutes() - selectedTorType.duration);
 
+        // Go over all the hours from startTime to endTime with a difference of 5 minutes
         let currentTime = new Date(startTime);
         while (currentTime <= endTime) {
-            console.log(currentTime)
+            // set true if the currentTime hasn't passed, end else otherwise
             times[getHour(new Date(currentTime))] = currentTime >= new Date();
             currentTime.setMinutes(currentTime.getMinutes() + 5);
         }
@@ -95,6 +96,7 @@ const BookAppointmentScreen = ({ route, navigation }) => {
             const startDay = selectedDate.setHours(0, 0, 0);
             const endDay = selectedDate.setHours(23, 59, 59);
 
+            // fetch all the bussines appointments in the selectedDate
             const findTakenTimes = query(
                 collection(db, "Appointments"),
                 where("businessID", "==", businessID),
@@ -103,7 +105,9 @@ const BookAppointmentScreen = ({ route, navigation }) => {
             );
             const querySnapshot = await getDocs(findTakenTimes);
             const appointmentID = appointment?.id;
+            // Pass every appointment
             querySnapshot.forEach((doc) => {
+                // Skip the sent appointment (in edit mode)
                 if (appointmentID === doc.id) return;
                 const appointment = doc.data();
                 const start = appointment.startTime.toDate();
@@ -111,6 +115,7 @@ const BookAppointmentScreen = ({ route, navigation }) => {
 
                 const end = appointment.endTime.toDate();
 
+                // Go over all the hours from start to end appointment time and set as not free
                 let currentTime = new Date(start);
                 while (currentTime <= end) {
                     times[getHour(new Date(currentTime))] = false;
