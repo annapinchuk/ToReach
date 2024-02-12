@@ -11,6 +11,7 @@ import TimePicker from '../components/TimePicker.js';
 import { getHour } from '../shared/dateMethods.js';
 import { ProfileBusinessScreenStyles } from '../styles/ProfileBusinessScreenStyles.js';
 const ProfileBusinessScreen = ({ navigation }) => {
+    // State to hold business data and edited details
     const [businessData, setBusinessData] = useState(null);
     const [editedDescription, setEditedDescription] = useState('');
     const [editedPictures, setEditedPictures] = useState([]);
@@ -21,18 +22,22 @@ const ProfileBusinessScreen = ({ navigation }) => {
     const [editedTorTypes, setEditedTorTypes] = useState([]);
     const [editedCategories, setEditedCategories] = useState([]);
     const [editedCities, setEditedCities] = useState([]);
+    // State for category dropdown
     const [categories, setCategories] = useState([]);
     const [isOpenCategories, setIsOpenCategories] = useState(false);
     const [currentValueCategories, setCurrentValueCategories] = useState([]);
+    // State for cities dropdown
     const [Cities, setCities] = useState([]);
     const [isOpenCities, setIsOpenCities] = useState(false);
     const [currentValueCities, setCurrentValueCities] = useState([]);
+    // State for business hours
     const [startTime, setStartTime] = useState(new Date());
     const [endTime, setEndTime] = useState(new Date());
     // State to track whether the fields are in edit mode
     const [editMode, setEditMode] = useState(false);
+    // Reference to the document in Firestore
     const [docRef, setDocRef] = useState(undefined);
-
+    // Fetch categories from Firestore
     const fetchCategories = async () => {
         try {
             const categoriesCollection = collection(db, 'Categories');
@@ -45,6 +50,7 @@ const ProfileBusinessScreen = ({ navigation }) => {
             console.error('Firebase initialization error:', error);
         }
     };
+    // Fetch cities from Firestore
     const fetchCities = async () => {
         try {
             const citiessCollection = collection(db, 'Cities');
@@ -58,6 +64,7 @@ const ProfileBusinessScreen = ({ navigation }) => {
             console.error('Firebase initialization error:', error);
         }
     };
+    // Fetch initial data when component mounts
     useEffect(() => {
         fetchCategories();
         fetchCities();
@@ -66,7 +73,6 @@ const ProfileBusinessScreen = ({ navigation }) => {
         const clientsCollection = collection(db, "Businesses");
         const docRef = doc(clientsCollection, user.uid)
         setDocRef(docRef)
-
         const getData = async () => {
             const defaultStartTime = new Date();
             defaultStartTime.setHours(9, 0, 0, 0);
@@ -103,7 +109,8 @@ const ProfileBusinessScreen = ({ navigation }) => {
         }
         getData();
     }, []);
-
+    
+    // Save edited data to Firestore
     const handleSave = async () => {
         setEditedCategories(currentValueCategories);
         setEditedCities(currentValueCities);
@@ -332,12 +339,12 @@ const ProfileBusinessScreen = ({ navigation }) => {
                 </View>
 
                 {/* Category and Rating */}
-                <View style={[ProfileBusinessScreenStyles.categoryContainer, { zIndex: 1 }]}>
-                    {/* Assuming there's a function to render stars based on the rating */}
+                {/* <View style={[ProfileBusinessScreenStyles.categoryContainer, { zIndex: 1 }]}>
+                    
                     <Text style={ProfileBusinessScreenStyles.label}>דירוג העסק: </Text>
                     {businessData.ratings && businessData.ratings.length > 0 && (
                         <Text style={ProfileBusinessScreenStyles.rating}>{renderStars(businessData.ratings[0].rating)}</Text>)}
-                </View>
+                </View> */}
 
                 <Text style={ProfileBusinessScreenStyles.label}>תמונות של העסק: </Text>
                 {/* Business Photos */}
@@ -418,11 +425,11 @@ const ProfileBusinessScreen = ({ navigation }) => {
     );
 };
 // A function to render stars based on the rating (Assuming a 5-star scale)
-const renderStars = (rating) => {
-    const stars = Array.from({ length: 5 }, (_, index) => (
-        <Text key={index} style={ProfileBusinessScreenStyles.star}>{index < rating ? '★' : '☆'}</Text>
-    ));
-    return <>{stars}</>;
-};
+// const renderStars = (rating) => {
+//     const stars = Array.from({ length: 5 }, (_, index) => (
+//         <Text key={index} style={ProfileBusinessScreenStyles.star}>{index < rating ? '★' : '☆'}</Text>
+//     ));
+//     return <>{stars}</>;
+// };
 
 export default ProfileBusinessScreen;
