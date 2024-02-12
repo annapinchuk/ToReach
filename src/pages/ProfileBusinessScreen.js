@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Image, ScrollView, Pressable, TextInput,LogBox } from 'react-native';
 import { businessPageStyles } from '../styles/BusinessPageStyles';
 import { styles as ResultScreenStyles } from '../styles/ResultScreenStyles.js';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
 import TorType from '../components/TorType';
-import firebase from 'firebase/app';
 import { app, auth, db } from '../firebaseConfig';
 import { collection,getDoc, setDoc, doc ,getDocs,query,limit} from 'firebase/firestore';
 import { styles } from '../styles/ProfileClientScreenStyles';
@@ -76,7 +74,6 @@ const ProfileBusinessScreen = ({ navigation }) => {
                 if (docSnap.exists()) {
                     console.log("Document data:", docSnap.data());
                     const data = docSnap.data();
-
                     setBusinessData(data);
                     setEditedName(data.businessName);
                     setEditedPhone(data.businessPhoneNumber);
@@ -131,9 +128,7 @@ const ProfileBusinessScreen = ({ navigation }) => {
         setEditedPictures([...editedPictures, newPicture]);
     };
 
-    const handleEditLogo = () => {
-        // Implement your logic to edit the logo
-        console.log("Edit Logo");
+    const handleEditLogo = async ()  => {
     }; 
 
     const handleAddTorType = newTorType => {
@@ -273,7 +268,7 @@ const ProfileBusinessScreen = ({ navigation }) => {
                                     <DropDownPicker
                                     items={Cities.map((city) => ({ label: city, value: city }))}
                                     open={isOpenCities}
-                                    setOpen={() => setIsOpenCities(!isOpenCategories)}
+                                    setOpen={() => setIsOpenCities(!isOpenCities)}
                                     value={currentValueCities}
                                     setValue={(val) => setCurrentValueCities(val)}
                                     dropDownDirection='DOWN'
