@@ -24,6 +24,8 @@ const BookAppointmentScreen = ({ route, navigation }) => {
     // State variables to store business data
     const [torTypes, setTorTypes] = useState([]);
     const [businessName, setBusinessName] = useState('');
+    const [businessStartTime, setBusinessStartTime] = useState(new Date());
+    const [businessEndTime, setBusinessEndTime] = useState(new Date());
 
     // State variables to store free time according date + torType
     const [freeTimes, setFreeTimes] = useState([]);
@@ -37,9 +39,11 @@ const BookAppointmentScreen = ({ route, navigation }) => {
             try {
                 const docSnap = await getDoc(businessDocRef);
                 if (docSnap.exists()) {
-                    const { torTypes, businessName } = docSnap.data();
+                    const { torTypes, businessName, startTime, endTime } = docSnap.data();
                     setTorTypes(torTypes);
                     setBusinessName(businessName);
+                    setBusinessStartTime(startTime);
+                    setBusinessEndTime(endTime);
                 }
             }
             catch (error) {
@@ -55,16 +59,34 @@ const BookAppointmentScreen = ({ route, navigation }) => {
 
         const times = {};
 
-        const startTime = new Date(selectedDate);
-        startTime.setHours(9, 0, 0, 0); // Set start time to 09:00
+        // fetch the start time from the business or dufault time if not exist
+        let startTime = new Date(selectedDate);
+        if (businessStartTime === undefined) {
+            startTime.setHours(9, 0, 0, 0); // Set start time to default (09:00)
+        }
+        else {
 
-        const endTime = new Date(selectedDate);
-        endTime.setHours(18, 0, 0, 0); // Set end time to 18:00 less the duration
+            const hourStartTime = getHour(new Date(businessStartTime.seconds * 1000)).split(":");
+            startTime.setHours(hourStartTime[0]);
+            startTime.setMinutes(hourStartTime[1]);
+        }
+
+        // fetch the end time from the business or dufault time if not exist
+        let endTime = new Date(selectedDate);
+        if (businessStartTime === undefined) {
+            endTime.setHours(18, 0, 0, 0); // Set start time to default (18:00)
+        }
+        else {
+            const hourEndTime = getHour(new Date(businessEndTime.seconds * 1000)).split(":");
+            endTime.setHours(hourEndTime[0]);
+            endTime.setMinutes(hourEndTime[1]);
+        }
+
         endTime.setMinutes(endTime.getMinutes() - selectedTorType.duration);
 
         let currentTime = new Date(startTime);
-
         while (currentTime <= endTime) {
+            console.log(currentTime)
             times[getHour(new Date(currentTime))] = currentTime >= new Date();
             currentTime.setMinutes(currentTime.getMinutes() + 5);
         }

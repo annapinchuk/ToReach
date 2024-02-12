@@ -25,7 +25,7 @@ const DatePickerWithTime = ({ date, setDate, time, setTime }) => {
         setDate(newDate); // also set the new time in 'date' variable
     }
 
-    const renderAndroid = () => <View style={{flexDirection: 'row-reverse', gap: 10}}>
+    const renderAndroid = () => <View style={{ flexDirection: 'row-reverse', gap: 10 }}>
         <Pressable onPress={() => setShow(true)}>
             <View style={{ borderWidth: 3, borderColor: '#2C64C6', paddingHorizontal: 20, borderRadius: 15, paddingVertical: 5, }}>
                 <Text style={styles.searchtext}>{date.toLocaleDateString()}</Text>
@@ -39,10 +39,10 @@ const DatePickerWithTime = ({ date, setDate, time, setTime }) => {
         />}
         <Pressable onPress={() => setShowTime(true)}>
             <View style={{ borderWidth: 3, borderColor: '#2C64C6', paddingHorizontal: 20, borderRadius: 15, paddingVertical: 5, }}>
-                <Text style={styles.searchtext}>{time.toLocaleTimeString()}</Text>
+                <Text style={styles.searchtext}>{time.toLocaleTimeString('he-IL', { minute: '2-digit', hour: '2-digit' })}</Text>
             </View>
         </Pressable>
-        {showTime && <RNDateTimePicker mode="time" value={time} onChange={handleTimeChange} is24Hour={true} locale='he_IL'/>}
+        {showTime && <RNDateTimePicker mode="time" value={time} onChange={handleTimeChange} is24Hour={true} />}
     </View>
 
     const renderIOS = () =>
