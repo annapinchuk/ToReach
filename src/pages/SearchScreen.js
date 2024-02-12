@@ -218,8 +218,21 @@ const SearchScreen = ({ navigation }) => {
 
         <View style={styles.rowContainer}>
           <View>
-            <Text style={styles.searchtext}>מתאריך:</Text>
-            <DatePickerWithTime date={selectedDate1} setDate={setSelectedDate1} time={selectedTime1} setTime={setSelectedTime1} />
+            <Text style={styles.searchtext}>תאריך ושעת התחלה של התור:</Text>
+            
+            
+            {showDatePicker1 && (
+              <DateTimePicker
+                value={selectedDate1}
+                mode="datetime"
+                is24Hour={true}
+                display="default"
+                onChange={(event, date) => {
+                  
+                  if (date) setSelectedDate1(date);
+                }}
+              />
+            )}
           </View>
           <View>
             <Text style={styles.searchtext}>ועד תאריך:</Text>
