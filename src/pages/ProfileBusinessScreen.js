@@ -150,6 +150,12 @@ const ProfileBusinessScreen = ({ navigation }) => {
         navigation.navigate('LoginScreen')
     };
 
+    const handleDeleteTorType = (torTypeToDelete) => {
+        // Implement logic to remove torTypeToDelete from the state
+        const updatedTorTypes = editedTorTypes.filter(torType => torType !== torTypeToDelete);
+        setEditedTorTypes(updatedTorTypes);
+      };
+
     if (!businessData) {
         return <Text>Loading...</Text>;
     }
@@ -391,7 +397,10 @@ const ProfileBusinessScreen = ({ navigation }) => {
                     <View style={ProfileBusinessScreenStyles.containerTorim}>
                         {editedTorTypes && editedTorTypes.length > 0 ? (
                             editedTorTypes.map(appointment => (
-                                <TorType key={appointment.name} appointment={appointment} />
+                                <TorType 
+                                    key={appointment.name} 
+                                    appointment={appointment}
+                                    onDelete={editMode ? ((appointment) => handleDeleteTorType(appointment)) : (undefined)} />
                             ))
                         ) : (
                             <View>
