@@ -6,6 +6,8 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { getDocs, collection, query, getFirestore, addDoc, limit, } from 'firebase/firestore';
 import { app, auth, db } from '../firebaseConfig';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import DatePicker from '../components/DatePicker';
+import DatePickerWithTime from '../components/DatePickerWithTime';
 
 
 
@@ -28,8 +30,8 @@ const SearchScreen = ({ navigation }) => {
 
   const [selectedDate1, setSelectedDate1] = useState(new Date());
   const [selectedDate2, setSelectedDate2] = useState(new Date());
-  const [showDatePicker1, setShowDatePicker1] = useState(true);
-  const [showDatePicker2, setShowDatePicker2] = useState(true);
+  const [selectedTime1, setSelectedTime1] = useState(new Date());
+  const [selectedTime2, setSelectedTime2] = useState(new Date());
 
   const fetchCategories = async () => {
     try {
@@ -213,38 +215,14 @@ const SearchScreen = ({ navigation }) => {
           onSelectItem={handleCityPress}
         />
 
-  <View style={styles.rowContainer}>  
+        <View style={styles.rowContainer}>
           <View>
             <Text style={styles.searchtext}>מתאריך:</Text>
-            
-            
-            {showDatePicker1 && (
-              <DateTimePicker
-                value={selectedDate1}
-                mode="datetime"
-                is24Hour={true}
-                display="default"
-                onChange={(event, date) => {
-                  
-                  if (date) setSelectedDate1(date);
-                }}
-              />
-            )}
+            <DatePickerWithTime date={selectedDate1} setDate={setSelectedDate1} time={selectedTime1} setTime={setSelectedTime1} />
           </View>
           <View>
             <Text style={styles.searchtext}>ועד תאריך:</Text>
-            {showDatePicker2 && (
-              <DateTimePicker
-                value={selectedDate2}
-                mode="datetime"
-                is24Hour={true}
-                display="default"
-                onChange={(event, date) => {
-                  
-                  if (date) setSelectedDate2(date);
-                }}
-              />
-            )}
+            <DatePickerWithTime date={selectedDate2} setDate={setSelectedDate2} time={selectedTime2} setTime={setSelectedTime2} />
           </View>
 
         </View> 
