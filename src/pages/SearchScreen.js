@@ -3,12 +3,8 @@ import { View, TextInput, Text, Modal, FlatList, Image, LogBox, Pressable, Touch
 import { styles } from '../styles/HomeUserScreenStyles';
 import { EvilIcons, FontAwesome } from '@expo/vector-icons';
 import DropDownPicker from 'react-native-dropdown-picker';
-// import DatePicker from '../components/DatePicker';
-// import DatePicker from 'react-native-datepicker';
-
 import { getDocs, collection, query, getFirestore, addDoc, limit, } from 'firebase/firestore';
 import { app, auth, db } from '../firebaseConfig';
-// import DatePicker from 'react-native-datepicker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 
@@ -251,10 +247,9 @@ const SearchScreen = ({ navigation }) => {
             )}
           </View>
 
-        </View>
-
+        </View> 
         <Pressable
-
+  
           style={[styles.button, styles.pressableWithMargin]}
           onPress={() => navigation.navigate('ResultScreen',
             ({
@@ -263,6 +258,7 @@ const SearchScreen = ({ navigation }) => {
               selectedBusiness: currentValueBusiness,
               selectedDate1: selectedDate1.toString(),
               selectedDate2: selectedDate2.toString()
+              
             }))}
         >
           <View style={styles.buttonContent}>
