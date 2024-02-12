@@ -47,12 +47,12 @@ const DatePickerWithTime = ({ date, setDate, time, setTime }) => {
 
     const renderIOS = () =>
         <DateTimePicker
-            value={selectedDate1}
+            value={date}
             mode="datetime"
             is24Hour={true}
             display="default"
             onChange={(event, date) => {
-                if (date) setSelectedDate1(date);
+                if (date) setDate(date);
             }}
         />
 
