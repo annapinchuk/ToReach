@@ -7,6 +7,7 @@ import TorType from '../components/TorType';
 import Toast from 'react-native-toast-message';
 import NavigationButton from '../components/NavigationButton';
 import { Feather } from '@expo/vector-icons';
+import { getHour } from '../shared/dateMethods';
 
 const businessData = {
   name: "Mispara",
@@ -42,9 +43,8 @@ const businessData = {
 const BusinessPage = ({ route, navigation }) => {
 
   const business = route.params.business;
-  const startTime = business.startTime ? business.startTime : "09:00"
-  const endTime = business.startTime ? business.startTime : "18:00"
-  console.log(business.id);
+  const startTime = business.startTime ? getHour(new Date(business.startTime.seconds * 1000)) : "09:00"
+  const endTime = business.startTime ? getHour(new Date(business.endTime.seconds * 1000)) : "18:00"
 
   return (
 

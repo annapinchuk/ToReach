@@ -7,7 +7,7 @@ import { collection, getDoc, setDoc, doc } from '@firebase/firestore';
 
 
 const ProfilePage = ({ navigation }) => {
-    // State to manage user information
+    // States to manage user information
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
@@ -17,17 +17,21 @@ const ProfilePage = ({ navigation }) => {
 
     const [docRef, setDocRef] = useState(undefined);
 
+    // useEffect to fetch user data from Firestore on component mount
     useEffect(() => {
+        // Get the current user and Firestore collection reference
         const user = auth.currentUser;
         const clientsCollection = collection(db, "Clients");
+
+        // Create a document reference using the user's UID
         const docRef = doc(clientsCollection, user.uid)
         setDocRef(docRef)
 
+        // Fetch data from Firestore and update state
         const getData = async () => {
             try {
                 const docSnap = await getDoc(docRef);
                 if (docSnap.exists()) {
-                    console.log("Document data:", docSnap.data());
                     const { name, phoneNumber, email } = docSnap.data();
                     setUsername(name);
                     setPhoneNumber(phoneNumber);
@@ -42,6 +46,7 @@ const ProfilePage = ({ navigation }) => {
             }
 
         }
+        // Call the getData function
         getData();
     }, []);
 
@@ -52,7 +57,6 @@ const ProfilePage = ({ navigation }) => {
             name: username,
             phoneNumber: phoneNumber,
             email: email,
-            // uid: user.uid
         };
 
         setDoc(docRef, data).then(() => {
@@ -62,17 +66,21 @@ const ProfilePage = ({ navigation }) => {
                 console.log(error);
             })
 
+        // Set edit mode to false after saving
         setEditMode(false);
     };
 
+    // Function to handle logout button press
     const handleLogout = () => {
         auth.signOut();
         navigation.navigate('LoginScreen')
     };
 
+    // JSX for rendering the component
     return (
         <View style={styles.container}>
             {/* Display user information */}
+            {/* user name - editable */}
             <Text style={styles.label}>שם:</Text>
             {editMode ? (
                 <TextInput
@@ -84,9 +92,11 @@ const ProfilePage = ({ navigation }) => {
                 <Text style={styles.text}>{username}</Text>
             )}
 
+            {/* email */}
             <Text style={styles.label}>אימייל:</Text>
             <Text style={styles.text}> {email} </Text>
 
+            {/* phone number - editable */}
             <Text style={styles.label}>מספר טלפון:</Text>
             {editMode ? (
                 <TextInput
