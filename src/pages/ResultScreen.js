@@ -98,8 +98,8 @@ const ResultScreen = ({ route, navigation }) => {
     }, []);
 
     return (
-        <ScrollView>
         <View style={styles.container}>
+        <ScrollView>
             <Image
                 style={styles.logo}
                 source={require('../../Images/logo.jpg')}
@@ -116,8 +116,8 @@ const ResultScreen = ({ route, navigation }) => {
             </View>
             )
         }
-        </View>
         </ScrollView>
+        </View>
     );
 };
 

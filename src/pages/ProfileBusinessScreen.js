@@ -17,6 +17,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import { getDownloadURL, ref, uploadBytes } from '@firebase/storage';
 import Toast from 'react-native-toast-message';
+import { businessPageStyles } from '../styles/BusinessPageStyles.js';
 
 const ProfileBusinessScreen = ({ navigation }) => {
     // State to hold business data and edited details
