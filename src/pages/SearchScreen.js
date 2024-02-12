@@ -4,9 +4,11 @@ import { styles } from '../styles/HomeUserScreenStyles';
 import { EvilIcons, FontAwesome } from '@expo/vector-icons';
 import DropDownPicker from 'react-native-dropdown-picker';
 // import DatePicker from '../components/DatePicker';
+// import DatePicker from 'react-native-datepicker';
+
 import { getDocs, collection, query, getFirestore, addDoc, limit, } from 'firebase/firestore';
 import { app, auth, db } from '../firebaseConfig';
-import DatePicker from 'react-native-datepicker';
+// import DatePicker from 'react-native-datepicker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 
