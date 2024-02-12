@@ -4,14 +4,18 @@ import { styles } from '../styles/ResultScreenStyles.js';
 import ResultCard from '../components/ResultCard';
 import { collection,limit, getDocs, query, where, map } from '@firebase/firestore';
 import { db } from '../firebaseConfig';
+import Spinner from '../components/Spinner.js';
+import { useFocusEffect } from '@react-navigation/native';
 
 const ResultScreen = ({ route, navigation }) => {
     const selectedCategories = route.params.selectedCategories;
     const selectedCities = route.params.selectedCities;
     const selectedBusiness = route.params.selectedBusiness;
     const [businesses, setBusinesses] = useState([]);
-    console.log(route.params);
-
+    const [isloaded, setIsLoading] = useState(false);
+    const startdate = new Date(route.params.selectedDate1);
+    const enddate = new Date(route.params.selectedDate2);
+    
     async function fetchBusinesses() {
         // Define your collection reference
         const businessesCollectionRef = collection(db, 'Businesses');
@@ -25,6 +29,7 @@ const ResultScreen = ({ route, navigation }) => {
         const mergedResults = {};
 
         try {
+            setIsLoading(true);
             // Filter by selected categories
             if (selectedCategories && selectedCategories.length > 0 && businessesQuery) {
                 businessesQueryCategory = query(businessesQuery, where('Categories', 'array-contains-any', selectedCategories));
@@ -50,7 +55,7 @@ const ResultScreen = ({ route, navigation }) => {
 
             // Filter by selected business (if not null)
             if (selectedBusiness && businessesQuery && selectedBusiness.length > 0) {
-                console.log(selectedBusiness);
+                
                 businessesQueryName = query(businessesQuery, where('businessName', 'in', selectedBusiness));
                 const querySnapshotName = await getDocs(businessesQueryName);
                 if (first)
@@ -63,6 +68,10 @@ const ResultScreen = ({ route, navigation }) => {
                 }
                 first = false;
             }
+
+            
+
+
             
             if (first){
                 const businessesQuery = query(businessesCollectionRef, limit(20));
@@ -76,6 +85,9 @@ const ResultScreen = ({ route, navigation }) => {
         } catch (error) {
             console.error('Error fetching businesses:', error);
             throw error; // Rethrow the error to handle it where the function is called
+        }
+        finally {
+            setIsLoading(false);
         }
     }
 
@@ -91,6 +103,9 @@ const ResultScreen = ({ route, navigation }) => {
                 style={styles.logo}
                 source={require('../../Images/logo.jpg')}
             />
+            {
+                isloaded ? (<Spinner></Spinner>):(
+            <View style={styles.container}>
             <Text style={styles.iconText}>הנה מה שמצאנו בשבילך</Text>
             <ScrollView>
                 <View style={styles.container}>
@@ -99,6 +114,9 @@ const ResultScreen = ({ route, navigation }) => {
                     ))}
                 </View>
             </ScrollView>
+            </View>
+            )
+        }
         </View>
     );
 };
