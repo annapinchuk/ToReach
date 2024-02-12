@@ -3,9 +3,12 @@ import { View, TextInput, Text, Modal, FlatList, Image, LogBox, Pressable, Touch
 import { styles } from '../styles/HomeUserScreenStyles';
 import { EvilIcons, FontAwesome } from '@expo/vector-icons';
 import DropDownPicker from 'react-native-dropdown-picker';
-import DatePicker from '../components/DatePicker';
+// import DatePicker from '../components/DatePicker';
 import { getDocs, collection, query, getFirestore, addDoc, limit, } from 'firebase/firestore';
 import { app, auth, db } from '../firebaseConfig';
+import DatePicker from 'react-native-datepicker';
+import DateTimePicker from '@react-native-community/datetimepicker';
+
 
 
 const SearchScreen = ({ navigation }) => {
@@ -27,6 +30,8 @@ const SearchScreen = ({ navigation }) => {
 
   const [selectedDate1, setSelectedDate1] = useState(new Date());
   const [selectedDate2, setSelectedDate2] = useState(new Date());
+  const [showDatePicker1, setShowDatePicker1] = useState(true);
+  const [showDatePicker2, setShowDatePicker2] = useState(true);
 
   const fetchCategories = async () => {
     try {
@@ -210,16 +215,40 @@ const SearchScreen = ({ navigation }) => {
           onSelectItem={handleCityPress}
         />
 
-        <View style={styles.rowContainer}>
+  <View style={styles.rowContainer}>  
           <View>
             <Text style={styles.searchtext}>מתאריך:</Text>
-            <DatePicker date={selectedDate1} setDate={setSelectedDate1} />
+            
+            
+            {showDatePicker1 && (
+              <DateTimePicker
+                value={selectedDate1}
+                mode="datetime"
+                is24Hour={true}
+                display="default"
+                onChange={(event, date) => {
+                  
+                  if (date) setSelectedDate1(date);
+                }}
+              />
+            )}
           </View>
-
           <View>
             <Text style={styles.searchtext}>ועד תאריך:</Text>
-            <DatePicker date={selectedDate2} setDate={setSelectedDate2} />
+            {showDatePicker2 && (
+              <DateTimePicker
+                value={selectedDate2}
+                mode="datetime"
+                is24Hour={true}
+                display="default"
+                onChange={(event, date) => {
+                  
+                  if (date) setSelectedDate2(date);
+                }}
+              />
+            )}
           </View>
+
         </View>
 
         <Pressable
