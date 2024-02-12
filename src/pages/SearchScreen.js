@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Text, Modal, FlatList, Image, LogBox, Pressable, TouchableWithoutFeedback, Platform } from 'react-native';
+import { View, TextInput, Text, Modal, FlatList, Image, LogBox, Pressable, TouchableWithoutFeedback, Platform, ScrollView } from 'react-native';
 import { styles } from '../styles/HomeUserScreenStyles';
 import { EvilIcons, FontAwesome } from '@expo/vector-icons';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -119,6 +119,7 @@ const SearchScreen = ({ navigation }) => {
 
 
   return (
+    <ScrollView>
     <TouchableWithoutFeedback onPress={() => { setIsOpenCities(false); setIsOpenCategories(false); setIsOpenBusiness(false) }}>
       <View style={styles.container}>
         <Image style={styles.logo} source={require('../../Images/logo.jpg')} />
@@ -247,6 +248,7 @@ const SearchScreen = ({ navigation }) => {
         </Pressable>
       </View>
     </TouchableWithoutFeedback>
+    </ScrollView>
   );
 };
 
