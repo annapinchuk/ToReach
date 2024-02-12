@@ -4,7 +4,7 @@ export const ProfileBusinessScreenStyles = StyleSheet.create({
     container: {
         flex: 1,
         margin: 16,
-        rowGap: 10
+        rowGap: 10,
     },
     logoContainer: {
         alignItems: 'center',
