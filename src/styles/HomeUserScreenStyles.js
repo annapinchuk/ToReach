@@ -70,11 +70,11 @@ export const styles = StyleSheet.create({
         // Add other styles for the input with margin if needed
       },
       rowContainer: {
-        flexDirection: 'row',
-        width: '90%',
+        // flexDirection: 'row',
+        width: '100%',
         justifyContent: 'space-evenly', // or 'space-around'
         alignItems: 'center',
-        marginVertical: 20, // Adjust as needed
+        marginVertical: 5, // Adjust as needed
       },
       pressableContainer: {
         alignItems: 'center',

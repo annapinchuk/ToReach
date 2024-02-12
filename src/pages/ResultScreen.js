@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Image, ScrollView, LogBox } from 'react-native';
 import { styles } from '../styles/ResultScreenStyles.js';
 import ResultCard from '../components/ResultCard';
-import { collection, getDocs, query, where, map } from '@firebase/firestore';
+import { collection,limit, getDocs, query, where, map } from '@firebase/firestore';
 import { db } from '../firebaseConfig';
 
 const ResultScreen = ({ route, navigation }) => {
@@ -61,21 +61,17 @@ const ResultScreen = ({ route, navigation }) => {
                         if (!nameIds.includes(id)) delete mergedResults[id];
                     })
                 }
+                first = false;
             }
-
+            
+            if (first){
+                const businessesQuery = query(businessesCollectionRef, limit(20));
+                const businessesSnapshot = await getDocs(businessesQuery);
+                businessesSnapshot.forEach(doc => mergedResults[doc.id] = doc.data());
+            }
+            
             const result = Object.keys(mergedResults).map(id => ({ id, ...mergedResults[id] }));
-            // Execute the query
-
-            // const querySnapshot = await getDocs(mergedResultsArray);
-
-            // // Iterate over the query results
-            // const businesses = [];
-            // querySnapshot.forEach(doc => {
-            //     businesses.push({ id: doc.id, ...doc.data() });
-            // });
-            // console.log(businesses);
-
-            // 'businesses' array now contains businesses matching the criteria
+           
             return result;
         } catch (error) {
             console.error('Error fetching businesses:', error);
