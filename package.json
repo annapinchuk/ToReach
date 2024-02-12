@@ -11,7 +11,7 @@
   "dependencies": {
     "@firebase/firestore": "^4.4.1",
     "@react-native-async-storage/async-storage": "1.18.2",
-    "@react-native-community/datetimepicker": "^7.6.2",
+    "@react-native-community/datetimepicker": "^7.2.0",
     "@react-native-picker/picker": "^2.4.10",
     "@react-navigation/bottom-tabs": "^6.5.11",
     "@react-navigation/native": "^6.1.9",
