@@ -1,5 +1,5 @@
 // BusinessPage.js
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Image, ScrollView, Pressable } from 'react-native';
 import { businessPageStyles } from '../styles/BusinessPageStyles';
 import PhoneButton from '../components/PhoneButton';
@@ -8,6 +8,8 @@ import Toast from 'react-native-toast-message';
 import NavigationButton from '../components/NavigationButton';
 import { Feather } from '@expo/vector-icons';
 import { getHour } from '../shared/dateMethods';
+import { getDownloadURL, ref } from '@firebase/storage';
+import { storage } from '../firebaseConfig';
 
 const businessData = {
   name: "Mispara",
@@ -42,6 +44,31 @@ const businessData = {
 
 const BusinessPage = ({ route, navigation }) => {
 
+  const [pictures, setPictures] = useState([]);
+
+  useEffect(() => {
+    const fetchPictures = async () => {
+      const pics = [];
+      if(!route.params.business || !route.params.business.pictures) return;
+      await Promise.all(route.params.business.pictures.map(async picture => {
+        if (picture.url) result.push(picture.url);
+        else if (typeof picture === 'string') {
+          try {
+            const storageRef = ref(storage, picture);
+            const url = await getDownloadURL(storageRef)
+            pics.push(url);
+          } catch (err) {
+            console.log(err);
+          }
+        }
+      }));
+      console.log(pics);
+      setPictures(pics);
+    };
+
+    fetchPictures();
+  }, []);
+
   const business = route.params.business;
   const startTime = business.startTime ? getHour(new Date(business.startTime.seconds * 1000)) : "09:00"
   const endTime = business.startTime ? getHour(new Date(business.endTime.seconds * 1000)) : "18:00"
@@ -62,6 +89,7 @@ const BusinessPage = ({ route, navigation }) => {
           <Text style={businessPageStyles.label}>טלפון: </Text>
           <PhoneButton phoneNumber={business.businessPhoneNumber} />
           <PhoneButton phoneNumber={<Feather name="phone-call" size={24} color="white" />} />
+
         </View>
 
         {/* address */}
@@ -89,8 +117,8 @@ const BusinessPage = ({ route, navigation }) => {
         {/* pictures */}
         <Text style={businessPageStyles.label}>תמונות של העסק: </Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={businessPageStyles.photosContainer}>
-          {businessData.pictures.map((picture, index) => (
-            <Image key={index} source={{ uri: picture.url }} style={businessPageStyles.photo} />
+          {pictures.map((picture, index) => (
+            <Image key={index} source={{ uri: picture }} style={businessPageStyles.photo} />
           ))}
         </ScrollView>
 
