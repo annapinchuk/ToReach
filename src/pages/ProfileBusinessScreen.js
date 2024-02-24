@@ -15,6 +15,7 @@ import * as FileSystem from 'expo-file-system';
 import { getDownloadURL, ref, uploadBytes } from '@firebase/storage';
 import Toast from 'react-native-toast-message';
 import { businessPageStyles } from '../styles/BusinessPageStyles.js';
+import RemoveButton from '../components/RemoveButton.js';
 
 const ProfileBusinessScreen = ({ navigation }) => {
     // State to hold business data and edited details
@@ -221,10 +222,15 @@ const ProfileBusinessScreen = ({ navigation }) => {
         }
     };
 
-    const handleEditLogo = () => {
-        // Implement your logic to edit the logo
-        console.log("Edit Logo");
-    };
+    const removePicture = (picture) => {
+        const index = picturesToShow.indexOf(picture);
+        const edited = [...editedPictures];
+        const toShow = [...picturesToShow];
+        edited.splice(index, 1);
+        toShow.splice(index, 1);
+        setEditedPictures(edited);
+        setPicturesToShow(toShow);
+    }
 
     const handleAddTorType = newTorType => {
         setEditedTorTypes([...editedTorTypes, newTorType]);
@@ -428,7 +434,11 @@ const ProfileBusinessScreen = ({ navigation }) => {
                 {/* Business Photos */}
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={ProfileBusinessScreenStyles.photosContainer}>
                     {(picturesToShow.map((picture, index) => (
-                        <Image key={index} source={{ uri: picture }} style={businessPageStyles.photo} />
+                        <View key={picture} style={{ position: 'relative' }}>
+                            <Image source={{ uri: picture }} style={businessPageStyles.photo} />
+                            {editMode && <RemoveButton action={() => removePicture(picture)} message='למחוק את התמונה?' />}
+                        </View>
+
                     )))}
                     {/* Button to add more pictures */}
                     {editMode ? (
