@@ -45,11 +45,12 @@ const businessData = {
 const BusinessPage = ({ route, navigation }) => {
 
   const [pictures, setPictures] = useState([]);
+  const [logo, setLogo] = useState('');
 
   useEffect(() => {
     const fetchPictures = async () => {
       const pics = [];
-      if(!route.params.business || !route.params.business.pictures) return;
+      if (!route.params.business || !route.params.business.pictures) return;
       await Promise.all(route.params.business.pictures.map(async picture => {
         if (picture.url) result.push(picture.url);
         else if (typeof picture === 'string') {
@@ -62,8 +63,12 @@ const BusinessPage = ({ route, navigation }) => {
           }
         }
       }));
-      console.log(pics);
       setPictures(pics);
+      const logoUrl = route.params.business.logo
+      if (!logoUrl) return;
+      const storageRef = ref(storage, logoUrl);
+      const logoUrlToShow = await getDownloadURL(storageRef);
+      setLogo(logoUrlToShow);
     };
 
     fetchPictures();
@@ -80,7 +85,7 @@ const BusinessPage = ({ route, navigation }) => {
       <ScrollView style={businessPageStyles.container}>
         <View style={businessPageStyles.logoContainer}>
           {/* logo + name */}
-          <Image source={{ uri: businessData.logo }} style={businessPageStyles.logo} />
+          {logo && <Image source={{ uri: logo }} style={businessPageStyles.logo} />}
         </View>
         <Text style={businessPageStyles.businessName}>{business.businessName}</Text>
 

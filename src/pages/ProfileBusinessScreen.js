@@ -23,6 +23,7 @@ const ProfileBusinessScreen = ({ navigation }) => {
     const [editedPictures, setEditedPictures] = useState([]);
     const [picturesToShow, setPicturesToShow] = useState([]);
     const [editedLogo, setEditedLogo] = useState('');
+    const [logoToShow, setLogoToShow] = useState('');
     const [editedName, setEditedName] = useState('');
     const [editedPhone, setEditedPhone] = useState('');
     const [editedAddress, setEditedAddress] = useState('');
@@ -159,7 +160,7 @@ const ProfileBusinessScreen = ({ navigation }) => {
         setEditMode(false);
     };
 
-    const handleImageSelection = async () => {
+    const handleImageSelection = async (isProfile) => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.All,
             allowsEditing: true,
@@ -191,16 +192,24 @@ const ProfileBusinessScreen = ({ navigation }) => {
 
 
                 // storage
-                const picURI = `BusinessPictures/${auth.currentUser.uid}/${editedPictures.length}`;
+                const picURI = `${isProfile ? 'BusinessProfilePictures' : 'BusinessPictures'}/${auth.currentUser.uid}/${editedPictures.length}`;
                 const storageRef = ref(storage, picURI);
 
                 // 'file' comes from the Blob or File API
                 uploadBytes(storageRef, blob).then((snapshot) => {
-                    setEditedPictures([...editedPictures, picURI]);
-                    getDownloadURL(storageRef).then(url => setPicturesToShow([...picturesToShow, url]));
-                    Toast.show({
-                        type: 'success',
-                        text1: 'התמונה עלתה בהצלחה'
+                    getDownloadURL(storageRef).then(url => {
+                        if (isProfile) {
+                            setEditedLogo(picURI);
+                            setLogoToShow(url);
+                        }
+                        else {
+                            setEditedPictures([...editedPictures, picURI]);
+                            setPicturesToShow([...picturesToShow, url]);
+                        }
+                        Toast.show({
+                            type: 'success',
+                            text1: 'התמונה עלתה בהצלחה'
+                        });
                     });
                 });
 
@@ -266,11 +275,11 @@ const ProfileBusinessScreen = ({ navigation }) => {
 
                 {/* Logo and Business Name */}
                 <View style={ProfileBusinessScreenStyles.logoContainer}>
-                    {editedLogo && <Image source={{ uri: editedLogo }} style={ProfileBusinessScreenStyles.logo} />}
+                    {logoToShow && <Image source={{ uri: logoToShow }} style={ProfileBusinessScreenStyles.logo} />}
                     {/* Button to edit logo */}
                     {editMode ? (
                         <View>
-                            <Pressable style={ProfileBusinessScreenStyles.editLogoButton} onPress={handleEditLogo}>
+                            <Pressable style={ProfileBusinessScreenStyles.editLogoButton} onPress={() => handleImageSelection(true)}>
                                 <Text style={ProfileBusinessScreenStyles.buttonText}>ערוך לוגו</Text>
                             </Pressable>
                             <TextInput
@@ -423,7 +432,7 @@ const ProfileBusinessScreen = ({ navigation }) => {
                     )))}
                     {/* Button to add more pictures */}
                     {editMode ? (
-                        <Pressable style={businessPageStyles.addPictureButton} onPress={handleImageSelection}>
+                        <Pressable style={businessPageStyles.addPictureButton} onPress={() => handleImageSelection(false)}>
                             <Text style={businessPageStyles.buttonText}>הוסף תמונה</Text>
                         </Pressable>
                     ) : (
