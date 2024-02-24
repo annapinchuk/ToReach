@@ -65,10 +65,17 @@ const BusinessPage = ({ route, navigation }) => {
       }));
       setPictures(pics);
       const logoUrl = route.params.business.logo
-      if (!logoUrl) return;
-      const storageRef = ref(storage, logoUrl);
-      const logoUrlToShow = await getDownloadURL(storageRef);
-      setLogo(logoUrlToShow);
+      if (!logoUrl || logoUrl.includes('picsum')) {
+        setLogo(logoUrl);
+        return;
+      }
+      try {
+        const storageRef = ref(storage, logoUrl);
+        const logoUrlToShow = await getDownloadURL(storageRef);
+        setLogo(logoUrlToShow);
+      } catch (err) {
+        console.log(err);
+      }
     };
 
     fetchPictures();
