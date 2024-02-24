@@ -15,7 +15,7 @@ const RemoveButton = ({ action, message }) => {
     }
 
     return (
-        <Pressable onPress={handlePress} style={{ position: 'absolute', top: 4, right: 4, backgroundColor: 'rgba(255,255,255,0.5)', paddingHorizontal: 10, paddingVertical: 7, borderRadius: 15 }}>
+        <Pressable onPress={handlePress} style={{ position: 'absolute', top: 8, right: 8, backgroundColor: 'rgba(255,255,255,0.5)', paddingHorizontal: 10, paddingVertical: 7, borderRadius: 15 }}>
             <FontAwesome name="trash-o" size={20} color="red" />
         </Pressable>
     );
