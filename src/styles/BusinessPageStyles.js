@@ -34,6 +34,7 @@ export const businessPageStyles = StyleSheet.create({
   },
   categoryContainer: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     // marginTop: 8,
     // marginBottom: 8,
     alignSelf: 'flex-start'
