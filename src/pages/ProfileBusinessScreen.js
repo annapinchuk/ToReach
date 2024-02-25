@@ -252,6 +252,7 @@ const ProfileBusinessScreen = ({ navigation }) => {
     }
 
     return (
+        
         <View style={{ flex: 1, backgroundColor: '#5B8BDF' }}>
             <ScrollView style={ProfileBusinessScreenStyles.container}>
                 <View style={ProfileBusinessScreenStyles.buttonsRow}>

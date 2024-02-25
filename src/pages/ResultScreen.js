@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Image, ScrollView, LogBox } from 'react-native';
 import { styles } from '../styles/ResultScreenStyles.js';
 import ResultCard from '../components/ResultCard';
-import { collection,limit, getDocs, query, where, map } from '@firebase/firestore';
+import { collection, limit, getDocs, query, where, map } from '@firebase/firestore';
 import { db } from '../firebaseConfig';
 import Spinner from '../components/Spinner.js';
-import { useFocusEffect } from '@react-navigation/native';
+import { getHour } from '../shared/dateMethods.js';
 
 const ResultScreen = ({ route, navigation }) => {
     const selectedCategories = route.params.selectedCategories;
@@ -13,9 +13,75 @@ const ResultScreen = ({ route, navigation }) => {
     const selectedBusiness = route.params.selectedBusiness;
     const [businesses, setBusinesses] = useState([]);
     const [isloaded, setIsLoading] = useState(false);
-    const startdate = new Date(route.params.selectedDate1);
-    const enddate = new Date(route.params.selectedDate2);
-    
+
+    // Check free time according date + torType   
+    const checkFreeTimes = async (selectedDate, business, smallestDuration, highestDuration) => {
+
+        const userStartTime = new Date(selectedDate);
+        const userEndTime = new Date(selectedDate);
+        userStartTime.setHours(new Date(route.params.selectedDate1).getHours(), new Date(route.params.selectedDate1).getMinutes() - new Date(route.params.selectedDate1).getMinutes() % 5);
+        userEndTime.setHours(new Date(route.params.selectedDate2).getHours(), new Date(route.params.selectedDate2).getMinutes());
+        const businessStartTime = new Date(selectedDate);
+        const businessEndTime = new Date(selectedDate);
+        if (business.startTime) businessStartTime.setHours(business.startTime.toDate().getHours(), business.startTime.toDate().getMinutes());
+        else businessStartTime.setHours(9, 0, 0, 0);
+        if (business.endTime) businessEndTime.setHours(business.endTime.toDate().getHours(), business.endTime.toDate().getMinutes());
+        else businessEndTime.setHours(18, 0, 0, 0);
+
+        const startTime = businessStartTime < userStartTime ? userStartTime : businessStartTime;
+        const endTime = businessEndTime > userEndTime ? userEndTime : businessEndTime;
+        startTime.setMinutes(startTime.getMinutes() - highestDuration);
+
+        let currentTime = new Date(startTime);
+
+        const times = {};
+
+        while (currentTime <= endTime) {
+            times[getHour(currentTime)] = currentTime >= new Date();
+            currentTime.setMinutes(currentTime.getMinutes() + 5);
+        }
+
+        let foundTrue = false;
+        Object.keys(times).forEach(time => {
+            if (times[time]) foundTrue = true;
+        });
+        if (!foundTrue) return false;
+
+        try {
+            const findTakenTimes = query(
+                collection(db, "Appointments"),
+                where("businessID", "==", business.id),
+                where("startTime", ">=", new Date(startTime)),
+                where("startTime", "<=", new Date(endTime))
+            );
+
+            const querySnapshot = await getDocs(findTakenTimes);
+            querySnapshot.forEach((doc) => {
+                const appointment = doc.data();
+                const start = appointment.startTime.toDate();
+                start.setMinutes(start.getMinutes() - smallestDuration);
+
+                const end = appointment.endTime.toDate();
+
+                let currentTime = new Date(start);
+                while (currentTime <= end) {
+                    times[getHour(new Date(currentTime))] = false;
+                    currentTime.setMinutes(currentTime.getMinutes() + 5);
+                }
+            });
+
+            foundTrue = false;
+            Object.keys(times).forEach(time => {
+                if (times[time]) foundTrue = true;
+            });
+            return foundTrue;
+        }
+        catch (error) {
+            console.log(error);
+        }
+
+    };
+
     async function fetchBusinesses() {
         // Define your collection reference
         const businessesCollectionRef = collection(db, 'Businesses');
@@ -55,7 +121,7 @@ const ResultScreen = ({ route, navigation }) => {
 
             // Filter by selected business (if not null)
             if (selectedBusiness && businessesQuery && selectedBusiness.length > 0) {
-                
+
                 businessesQueryName = query(businessesQuery, where('businessName', 'in', selectedBusiness));
                 const querySnapshotName = await getDocs(businessesQueryName);
                 if (first)
@@ -69,19 +135,28 @@ const ResultScreen = ({ route, navigation }) => {
                 first = false;
             }
 
-            
-
-
-            
-            if (first){
+            if (first) {
                 const businessesQuery = query(businessesCollectionRef, limit(20));
                 const businessesSnapshot = await getDocs(businessesQuery);
                 businessesSnapshot.forEach(doc => mergedResults[doc.id] = doc.data());
             }
-            
-            const result = Object.keys(mergedResults).map(id => ({ id, ...mergedResults[id] }));
-           
-            return result;
+
+            if (route.params.selectedDate1 === route.params.selectedDate2) {
+                return Object.keys(mergedResults).map(id => ({ id, ...mergedResults[id] }));
+            }
+
+            const startDate = new Date(route.params.selectedDate1);
+            const endDate = new Date(route.params.selectedDate2);
+            const dates = [];
+            while (startDate <= endDate) {
+                dates.push(new Date(startDate));
+                startDate.setDate(startDate.getDate() + 1);
+            }
+
+            const results = await checkAppointments(dates, mergedResults);
+            return Object.keys(results).map(id => ({ id, ...results[id] }));
+
+
         } catch (error) {
             console.error('Error fetching businesses:', error);
             throw error; // Rethrow the error to handle it where the function is called
@@ -94,29 +169,50 @@ const ResultScreen = ({ route, navigation }) => {
     useEffect(() => {
         // Call the function to fetch businesses
         fetchBusinesses().then(res => setBusinesses(res))
-        //   const businesses = fetchBusinesses();
     }, []);
+
+    const checkAppointments = async (dates, mergedResults) => {
+        const results = {};
+
+        await Promise.all(dates.map(async date => {
+            await Promise.all(Object.keys(mergedResults).map(async id => {
+                if (id in results) return null;
+                const businessHasTorTypes = mergedResults[id].torTypes && mergedResults[id].torTypes.length > 0;
+                if (!businessHasTorTypes) {
+                    delete mergedResults[id];
+                    return;
+                }
+                const durations = mergedResults[id].torTypes.map(torType => parseInt(torType.duration));
+                const smallestDuration = Math.min(...durations);
+                const highestDuration = Math.max(...durations);
+                const res = await checkFreeTimes(date, { id, ...mergedResults[id] }, smallestDuration, highestDuration);
+                if (res) results[id] = mergedResults[id];
+            }));
+        }));
+
+        return results;
+    };
 
     return (
         <View style={styles.container}>
-        <ScrollView>
             <Image
                 style={styles.logo}
                 source={require('../../Images/logo.jpg')}
             />
             {
-                isloaded ? (<Spinner></Spinner>):(
-            <View style={styles.container}>
-            <Text style={styles.iconText}>הנה מה שמצאנו בשבילך</Text>
-                <View style={styles.container}>
-                    {businesses.map(business => (
-                        <ResultCard key={business.id} navigation={navigation} business={business} />
-                    ))}
-                </View>
-            </View>
-            )
-        }
-        </ScrollView>
+                isloaded ? (<Spinner></Spinner>) : (
+                    <View style={styles.container}>
+                        <Text style={styles.iconText}>הנה מה שמצאנו בשבילך</Text>
+                        <ScrollView>
+                            <View style={styles.container}>
+                                {businesses.map(business => (
+                                    <ResultCard key={business.id} navigation={navigation} business={business} />
+                                ))}
+                            </View>
+                        </ScrollView>
+                    </View>
+                )
+            }
         </View>
     );
 };
