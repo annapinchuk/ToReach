@@ -5,8 +5,6 @@ import ResultCard from '../components/ResultCard';
 import { collection, limit, getDocs, query, where, map } from '@firebase/firestore';
 import { db } from '../firebaseConfig';
 import Spinner from '../components/Spinner.js';
-import { useFocusEffect } from '@react-navigation/native';
-import torType from '../components/TorType.js';
 import { getHour } from '../shared/dateMethods.js';
 
 const ResultScreen = ({ route, navigation }) => {
@@ -17,7 +15,7 @@ const ResultScreen = ({ route, navigation }) => {
     const [isloaded, setIsLoading] = useState(false);
 
     // Check free time according date + torType   
-    const checkFreeTimes = async (selectedDate, business, duration) => {
+    const checkFreeTimes = async (selectedDate, business, smallestDuration, highestDuration) => {
 
         const userStartTime = new Date(selectedDate);
         const userEndTime = new Date(selectedDate);
@@ -32,8 +30,7 @@ const ResultScreen = ({ route, navigation }) => {
 
         const startTime = businessStartTime < userStartTime ? userStartTime : businessStartTime;
         const endTime = businessEndTime > userEndTime ? userEndTime : businessEndTime;
-        console.log('start: ', startTime.toLocaleDateString(), startTime.toLocaleTimeString());
-        console.log('end: ', endTime.toLocaleDateString(), endTime.toLocaleTimeString());
+        startTime.setMinutes(startTime.getMinutes() - highestDuration);
 
         let currentTime = new Date(startTime);
 
@@ -62,7 +59,7 @@ const ResultScreen = ({ route, navigation }) => {
             querySnapshot.forEach((doc) => {
                 const appointment = doc.data();
                 const start = appointment.startTime.toDate();
-                start.setMinutes(start.getMinutes() - duration);
+                start.setMinutes(start.getMinutes() - smallestDuration);
 
                 const end = appointment.endTime.toDate();
 
@@ -73,7 +70,6 @@ const ResultScreen = ({ route, navigation }) => {
                 }
             });
 
-            console.log(times);
             foundTrue = false;
             Object.keys(times).forEach(time => {
                 if (times[time]) foundTrue = true;
@@ -158,7 +154,6 @@ const ResultScreen = ({ route, navigation }) => {
             }
 
             const results = await checkAppointments(dates, mergedResults);
-            console.log('results', results);
             return Object.keys(results).map(id => ({ id, ...results[id] }));
 
 
@@ -174,14 +169,13 @@ const ResultScreen = ({ route, navigation }) => {
     useEffect(() => {
         // Call the function to fetch businesses
         fetchBusinesses().then(res => setBusinesses(res))
-        //   const businesses = fetchBusinesses();
     }, []);
 
     const checkAppointments = async (dates, mergedResults) => {
         const results = {};
 
         await Promise.all(dates.map(async date => {
-            await Object.keys(mergedResults).map(async id => {
+            await Promise.all(Object.keys(mergedResults).map(async id => {
                 if (id in results) return null;
                 const businessHasTorTypes = mergedResults[id].torTypes && mergedResults[id].torTypes.length > 0;
                 if (!businessHasTorTypes) {
@@ -190,11 +184,10 @@ const ResultScreen = ({ route, navigation }) => {
                 }
                 const durations = mergedResults[id].torTypes.map(torType => parseInt(torType.duration));
                 const smallestDuration = Math.min(...durations);
-                const res = await checkFreeTimes(date, { id, ...mergedResults[id] }, smallestDuration);
-                console.log(res);
+                const highestDuration = Math.max(...durations);
+                const res = await checkFreeTimes(date, { id, ...mergedResults[id] }, smallestDuration, highestDuration);
                 if (res) results[id] = mergedResults[id];
-                console.log(results);
-            });
+            }));
         }));
 
         return results;

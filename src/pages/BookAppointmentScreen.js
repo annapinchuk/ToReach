@@ -59,7 +59,7 @@ const BookAppointmentScreen = ({ route, navigation }) => {
 
         const times = {};
 
-        // fetch the start time from the business or dufault time if not exist
+        // fetch the start time from the business or default time if not exist
         let startTime = new Date(selectedDate);
         if (businessStartTime === undefined) {
             startTime.setHours(9, 0, 0, 0); // Set start time to default (09:00)
@@ -70,7 +70,7 @@ const BookAppointmentScreen = ({ route, navigation }) => {
             startTime.setMinutes(hourStartTime[1]);
         }
 
-        // fetch the end time from the business or dufault time if not exist
+        // fetch the end time from the business or default time if not exist
         let endTime = new Date(selectedDate);
         if (businessStartTime === undefined) {
             endTime.setHours(18, 0, 0, 0); // Set end time to default (18:00)

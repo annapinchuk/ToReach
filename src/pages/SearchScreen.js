@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Text, Modal, FlatList, Image, LogBox, Pressable, TouchableWithoutFeedback, Platform, ScrollView } from 'react-native';
+import { View, Text, Image, LogBox, Pressable, TouchableWithoutFeedback, Platform, ScrollView } from 'react-native';
 import { styles } from '../styles/HomeUserScreenStyles';
 import { FontAwesome } from '@expo/vector-icons';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -216,21 +216,8 @@ const SearchScreen = ({ navigation }) => {
 
         <View style={styles.rowContainer}>
           <View>
-            <Text style={styles.searchtext}>תאריך ושעת התחלה של התור:</Text>
-            
-            
-            {showDatePicker1 && (
-              <DateTimePicker
-                value={selectedDate1}
-                mode="datetime"
-                is24Hour={true}
-                display="default"
-                onChange={(event, date) => {
-                  
-                  if (date) setSelectedDate1(date);
-                }}
-              />
-            )}
+            <Text style={styles.searchtext}>מתאריך:</Text>
+            <DatePickerWithTime date={selectedDate1} setDate={setSelectedDate1} time={selectedTime1} setTime={setSelectedTime1} />
           </View>
           <View>
             <Text style={styles.searchtext}>ועד תאריך:</Text>
