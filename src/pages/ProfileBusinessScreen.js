@@ -437,7 +437,7 @@ const ProfileBusinessScreen = ({ navigation }) => {
                     {(picturesToShow.map((picture, index) => (
                         <View key={picture} style={{ position: 'relative' }}>
                             <Image source={{ uri: picture }} style={businessPageStyles.photo} />
-                            {editMode && <RemoveButton action={() => removePicture(picture)} message='למחוק את התמונה?' />}
+                            {editMode && <RemoveButton action={() => removePicture(picture)} message='האם למחוק את התמונה?' />}
                         </View>
 
                     )))}

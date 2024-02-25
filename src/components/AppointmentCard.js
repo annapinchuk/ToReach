@@ -54,7 +54,7 @@ const AppointmentCard = ({ navigation, appointment }) => {
         <View style={styles.card}>
             {
                 appointment.startTime >= dateEdit &&
-                <RemoveButton action={deleteAppointment} message='למחוק את התור?' />
+                <RemoveButton action={deleteAppointment} message=' האם למחוק את התור?' />
             }
             <Pressable onPress={() => navigation.navigate('BusinessPage', { business: { ...appointment.business, id: appointment.businessID } })}>
                 <View style={styles.cardTopRow}>
