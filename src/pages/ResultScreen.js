@@ -202,7 +202,10 @@ const ResultScreen = ({ route, navigation }) => {
             {
                 isloaded ? (<Spinner></Spinner>) : (
                     <View style={styles.container}>
-                        <Text style={styles.iconText}>הנה מה שמצאנו בשבילך</Text>
+                        {businesses.length > 0 ?
+                            <Text style={styles.iconText}>הנה מה שמצאנו בשבילך</Text> :
+                            <Text style={styles.iconText}>לא נמצאו תוצאות עבור חיפוש זה</Text>
+                        }
                         <ScrollView>
                             <View style={styles.container}>
                                 {businesses.map(business => (

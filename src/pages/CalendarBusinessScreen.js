@@ -5,6 +5,7 @@ import { styles } from '../styles/CalendarBusinessStyles';
 import { auth, db } from '../firebaseConfig';
 import { collection, doc, getDocs, getDoc, query, where, orderBy, deleteDoc, onSnapshot } from '@firebase/firestore';
 import Toast from 'react-native-toast-message';
+import { getHour } from '../shared/dateMethods';
 
 const CalendarBusinessScreen = () => {
     // State variables
@@ -66,8 +67,8 @@ const CalendarBusinessScreen = () => {
         const startTime = new Date(item.startTime);
         const endTime = new Date(item.endTime);
 
-        const formattedStartTime = startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const formattedEndTime = endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const formattedStartTime = getHour(startTime);
+        const formattedEndTime = getHour(endTime);
         const durationInMinutes = (endTime - startTime) / (1000 * 60);
 
         return (

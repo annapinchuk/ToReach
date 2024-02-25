@@ -82,7 +82,7 @@ const BookAppointmentScreen = ({ route, navigation }) => {
         }
         
         //  Considering the torType duration
-        endTime.setMinutes(endTime.getMinutes() - selectedTorType.duration);
+        endTime.setMinutes(endTime.getMinutes() - Number(selectedTorType.duration));
 
         // Go over all the hours from startTime to endTime with a difference of 5 minutes
         let currentTime = new Date(startTime);
@@ -111,7 +111,7 @@ const BookAppointmentScreen = ({ route, navigation }) => {
                 if (appointmentID === doc.id) return;
                 const appointment = doc.data();
                 const start = appointment.startTime.toDate();
-                start.setMinutes(start.getMinutes() - selectedTorType.duration);
+                start.setMinutes(start.getMinutes() - Number(selectedTorType.duration));
 
                 const end = appointment.endTime.toDate();
 
@@ -155,7 +155,7 @@ const BookAppointmentScreen = ({ route, navigation }) => {
         endTime = new Date(startTime)
 
         // Calculate end time
-        endTime.setMinutes(endTime.getMinutes() + selectedTorType.duration);
+        endTime.setMinutes(endTime.getMinutes() + Number(selectedTorType.duration));
 
         return endTime;
     };
@@ -174,7 +174,6 @@ const BookAppointmentScreen = ({ route, navigation }) => {
 
             // Save new appointment
             const startTime = calculateStartTime(selectedDate, selectedTime)
-            // const endTime = calculateEndTime(startTime, selectedTorType.duration)
             const endTime = calculateEndTime(startTime)
             const data = {
                 businessID: businessID,

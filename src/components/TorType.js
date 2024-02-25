@@ -12,7 +12,7 @@ const torType = ({ appointment, onDelete }) => {
     return (
         <View style={styles.card}>
             {
-                onDelete && <RemoveButton action={onDelete} message='למחוק את סוג תור זה?' />
+                onDelete && <RemoveButton action={onDelete} message=' האם למחוק את סוג תור זה?' />
             }
             <View style={styles.cardMiddleRow}>
 
