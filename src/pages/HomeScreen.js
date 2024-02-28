@@ -2,8 +2,10 @@ import React from 'react';
 import { View, Text, Image, Pressable } from 'react-native';
 import { styles } from '../styles/HomeScreenStyles';
 
+
 const HomeScreen = ({ navigation }) => {
   return (
+ 
     <View style={styles.container}>
       <Image
         style={styles.logo}
@@ -19,6 +21,7 @@ const HomeScreen = ({ navigation }) => {
         <Text style={styles.buttonText}>הרשמה ללקוח</Text>
       </Pressable>
     </View>
+   
   );
 };
 

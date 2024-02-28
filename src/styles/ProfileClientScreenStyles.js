@@ -5,26 +5,43 @@ export const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#5B8BDF',
-        padding: 16,
-    },
+        // alignItems: 'center',
+         paddingHorizontal:30,
+    
+      },
     label: {
-        fontSize: 16,
+        fontSize: 20,
         fontWeight: 'bold',
-        marginTop: 8,
+        marginTop: 15,
         color: 'white',
         textAlign: 'left',
+        marginBottom: 15,
+    },
+    card: {
+        width: '100%',
+        height:'8%',
+        backgroundColor: 'rgba(255, 255, 255 , 0.4)',
+        borderRadius: 10,
+        paddingVertical: 10,
+        paddingHorizontal: 10,
+        flexDirection: 'column',
+        gap: 10,
+        flexDirection: 'row', // Display items in the same row
+        marginBottom: 16, // Add margin between cards
+        alignItems: 'center', // Center items vertically within the card
+      
     },
     text: {
         color: 'white',
         fontSize: 16,
-        marginTop: 8,
+        // marginTop: 8,
         textAlign: 'left',
     },
     input: {
         fontSize: 16,
-        marginTop: 8,
+        marginTop: 1,
         borderWidth: 1,
-        padding: 8,
+        padding: 4,
         color: 'white',
         borderColor: 'white',
         textAlign: 'right',

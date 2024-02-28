@@ -35,7 +35,8 @@ export const styles = StyleSheet.create({
         fontSize: 16,
         marginBottom: 10,
         fontWeight: 'bold',
-        color: 'white'
+        color: 'white',
+        textAlign:'left',
     },
     warningText: {
         fontSize: 16,

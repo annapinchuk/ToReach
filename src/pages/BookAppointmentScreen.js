@@ -26,6 +26,7 @@ const BookAppointmentScreen = ({ route, navigation }) => {
     const [businessName, setBusinessName] = useState('');
     const [businessStartTime, setBusinessStartTime] = useState(new Date());
     const [businessEndTime, setBusinessEndTime] = useState(new Date());
+    const [logo, setLogo] = useState('');
 
     // State variables to store free time according date + torType
     const [freeTimes, setFreeTimes] = useState([]);
@@ -39,7 +40,8 @@ const BookAppointmentScreen = ({ route, navigation }) => {
             try {
                 const docSnap = await getDoc(businessDocRef);
                 if (docSnap.exists()) {
-                    const { torTypes, businessName, startTime, endTime } = docSnap.data();
+                    const { torTypes, businessName, startTime, endTime ,logo } = docSnap.data();
+                    setLogo(logo);
                     setTorTypes(torTypes);
                     setBusinessName(businessName);
                     setBusinessStartTime(startTime);
@@ -204,6 +206,7 @@ const BookAppointmentScreen = ({ route, navigation }) => {
             console.log(error);
         }
     };
+    
 
     return (
         <View style={styles.container}>
@@ -211,7 +214,7 @@ const BookAppointmentScreen = ({ route, navigation }) => {
                 {/* Top section with business image and name */}
                 <View style={styles.header}>
                     <Image
-                        source={{ uri: "https://picsum.photos/202" }}
+                        source={{ uri: logo }}
                         style={styles.businessImage}
                     />
                     <Text style={styles.businessName}>{businessName}</Text>

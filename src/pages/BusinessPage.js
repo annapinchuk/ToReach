@@ -11,36 +11,7 @@ import { getHour } from '../shared/dateMethods';
 import { getDownloadURL, ref } from '@firebase/storage';
 import { storage } from '../firebaseConfig';
 
-const businessData = {
-  name: "Mispara",
-  phone: "0526715067",
-  description: "המספרה של דניאל היא מספרת גברים הממוקמת בשדרות יצחק רבין 8, באר שבע. ניתן למצוא במספרה של דניאל מגוון שירותי גילוח וספריית מוצרים לטיפוח השיער.",
-  logo: "https://picsum.photos/200",
-  categories: [{ category: "שיער" }, { category: "טיפוח" }],
-  pictures: [
-    { url: "https://picsum.photos/201" },
-    { url: "https://picsum.photos/202" },
-    { url: "https://picsum.photos/203" },
-  ],
-  ratings: [
-    {
-      client_id: "/Clients/asnofnasio",
-      rating: 4,
-    },
-  ],
-  torTypes: [
-    {
-      duration: 90,
-      name: " לק ידיים",
-      price: 150,
-    },
-    {
-      duration: 90,
-      name: "לק",
-      price: 150,
-    },
-  ]
-};
+
 
 const BusinessPage = ({ route, navigation }) => {
 
@@ -138,7 +109,8 @@ const BusinessPage = ({ route, navigation }) => {
         {
           business.businessDescription ?
             <View>
-              <Text style={businessPageStyles.label}>תיאור העסק: </Text>
+              <Text style={[businessPageStyles.label, { paddingTop: 8 }]}>תיאור העסק: </Text>
+
               <Text style={businessPageStyles.description}>{business.businessDescription}</Text>
             </View> :
             <View></View>
@@ -158,9 +130,9 @@ const BusinessPage = ({ route, navigation }) => {
         </View>
 
         {/* tor types */}
-        <Text style={businessPageStyles.label}>סוגי תורים</Text>
+        <Text style={businessPageStyles.label}>סוגי תורים:</Text>
         <ScrollView contentOffset={{ x: 0, y: 50 }} >
-          <View style={businessPageStyles.container}>
+          <View style={businessPageStyles.container2}>
             {business.torTypes && business.torTypes.length > 0 ? (
               business.torTypes.map(appointment => (
                 <TorType key={appointment.name} appointment={appointment} />

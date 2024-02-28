@@ -9,6 +9,22 @@ export const styles = StyleSheet.create({
         gap: 15,
         flex: 1,
     },
+    photosContainer: {
+        marginVertical: 16,
+      },
+      container2: {
+        flexDirection: 'row',
+        
+        alignItems: 'center', // Center items vertically
+       
+        
+    },
+      photo: {
+        width: 150,
+        height: 150,
+        marginRight: 8,
+        borderRadius: 8,
+      },
     card: {
         width: '100%',
         backgroundColor: 'rgba(255, 255, 255 , 0.4)',
@@ -40,9 +56,18 @@ export const styles = StyleSheet.create({
         width: 50,
         borderRadius: 15,
     },
+    textContainer2: {
+        flex: 1, // Take up remaining space
+        alignItems: 'center', // Center items horizontally
+        justifyContent: 'center',
+        marginLeft:10
+      },
     title: {
-        fontWeight: "800",
+        fontWeight: "700",
+        fontSize: 14,
         alignSelf: 'flex-start',
+        textAlign :'center',
+        justifyContent: 'center',
     },
     subTitle: {
         opacity: 0.6,
