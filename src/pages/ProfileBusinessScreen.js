@@ -19,6 +19,7 @@ import RemoveButton from '../components/RemoveButton.js';
 
 const ProfileBusinessScreen = ({ navigation }) => {
     // State to hold business data and edited details
+    const [rating, setRating] = useState(0);
     const [businessData, setBusinessData] = useState(null);
     const [editedDescription, setEditedDescription] = useState('');
     const [editedPictures, setEditedPictures] = useState([]);
@@ -46,6 +47,8 @@ const ProfileBusinessScreen = ({ navigation }) => {
     const [editMode, setEditMode] = useState(false);
     // Reference to the document in Firestore
     const [docRef, setDocRef] = useState(undefined);
+
+
     // Fetch categories from Firestore
     const fetchCategories = async () => {
         try {
@@ -104,6 +107,16 @@ const ProfileBusinessScreen = ({ navigation }) => {
                     setEditedCities(data.Cities);
                     setCurrentValueCities(data.Cities);
                     setEditedAddress(data.address);
+                    const ratingsRef = collection(db, `Businesses/${docSnap.id}/ratings`);
+                    const snapshot = await getDocs(ratingsRef);
+                    let totalRating = 0;
+                    snapshot.forEach((doc) => {
+                        
+                      totalRating += doc.data().rating;
+                      console.log(totalRating);
+                    });
+                    const averageRating = snapshot.size > 0 ? totalRating / snapshot.size : 0;
+                    setRating(averageRating);
                     setStartTime(data.startTime ? new Date(data.startTime.seconds * 1000) : defaultStartTime)
                     setEndTime(data.endTime ? new Date(data.endTime.seconds * 1000) : defaultEndTime)
                     const result = [];
@@ -320,6 +333,13 @@ const ProfileBusinessScreen = ({ navigation }) => {
                         <Feather name="phone-call" size={24} color="white" />
                     </View>
                 )}
+                {/*ratings */}
+                <View style={businessPageStyles.categoryContainer}>
+                    <Text style={businessPageStyles.label}>דירוג: </Text>
+                    <Text style={businessPageStyles.category}>
+                    <Text style={businessPageStyles.star}>★</Text> {rating.toFixed(1)}
+                </Text>
+                </View> 
                 {/* Adress*/}
                 {editMode ? (
                     <View style={ProfileBusinessScreenStyles.editDescriptionContainer}>

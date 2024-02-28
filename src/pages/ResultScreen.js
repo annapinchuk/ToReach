@@ -195,7 +195,7 @@ const ResultScreen = ({ route, navigation }) => {
     };
 
     return (
-        <LinearGradient colors={[,'#4169e1','#2f80ed','#6495ed','#87ceeb']} style={{flex: 1}}>
+        
         <View style={styles.container}>
             <Image
                 style={styles.logo}
@@ -219,7 +219,6 @@ const ResultScreen = ({ route, navigation }) => {
                 )
             }
         </View>
-        </LinearGradient>
     );
 };
 
