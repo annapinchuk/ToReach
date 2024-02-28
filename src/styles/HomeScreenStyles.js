@@ -5,11 +5,15 @@ export const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'flex-start', // Align items at the top
         backgroundColor: '#5B8BDF',
+        
         alignItems: 'center',
         paddingTop: 40, // Add padding to give some space at the top
         flexDirection: 'column',
         gap: 20
     },
+    photosContainer: {
+        marginVertical: 16,
+      },
     logo: {
         width: 200, // Adjust the width as needed
         height: 200, // Adjust the height as needed

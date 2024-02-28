@@ -8,13 +8,13 @@ import { auth, db } from '../firebaseConfig';
 import Toast from 'react-native-toast-message';
 import { collection, doc, getDoc } from '@firebase/firestore';
 import Spinner from '../components/Spinner';
+import { LinearGradient } from 'expo-linear-gradient';
 
 // LoginScreen component
 const LoginScreen = ({ navigation }) => {
   // State variables
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
    const messageToUser = (messageType, message) => {
@@ -33,7 +33,7 @@ const LoginScreen = ({ navigation }) => {
       } else if (isClient === false) {
         navigation.navigate('RegisterBusinessScreen');
       }
-      setShowModal(false);
+      // setShowModal(false);
     }
     else {
       if (isClient === true){
@@ -125,6 +125,8 @@ const LoginScreen = ({ navigation }) => {
 
   // JSX rendering
   return (
+ 
+    
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -171,12 +173,12 @@ const LoginScreen = ({ navigation }) => {
       {/* New User Link */}
       <View style={styles.View}>
         <Text style={styles.Text}>חדש ב - toreach? </Text>
-        <Pressable onPress={() => setShowModal(true)}>
+        <Pressable onPress={() => navigation.navigate('NavScreen')}>
           <Text style={styles.LinkText}>הירשם עכשיו</Text>
         </Pressable>
       </View>
 
-      {/* Modal for registration type selection */}
+      {/* Modal for registration type selection
       <Modal visible={showModal} animationType="slide">
         <View style={styles.modalContainer}>
           <Image style={styles.logo} source={require('../../Images/logow.jpeg')} />
@@ -190,10 +192,11 @@ const LoginScreen = ({ navigation }) => {
             <Text style={styles.modalButtonText}>חזור</Text>
           </Pressable>
         </View>
-      </Modal>
+      </Modal> */}
     </View>
     </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
+  
   );
 };
 

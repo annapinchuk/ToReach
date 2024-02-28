@@ -4,11 +4,19 @@ export const businessPageStyles = StyleSheet.create({
   viewContainer: {
     flex: 1,
     backgroundColor: '#5B8BDF',
+  
   },
   container: {
     flex: 1,
     margin: 16,
-    rowGap: 10
+    rowGap: 10,
+  
+  },
+  container2: {
+    flex: 1,
+    margin: 16,
+    rowGap: 10,
+    alignItems: 'center',
   },
   logoContainer: {
     alignItems: 'center',
@@ -26,6 +34,7 @@ export const businessPageStyles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
     textAlign: 'center',
+    marginBottom: 15,
   },
   categoryRatingContainer: {
     marginTop: 8,
@@ -51,9 +60,12 @@ export const businessPageStyles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: 'white',
-    textDecorationLine: 'underline',
+    // textDecorationLine: 'underline',
     marginRight: 8,
     textAlign: 'left',
+    marginBottom: 10,
+    // marginTop: 2,
+    
   },
   subLabel: {
     fontSize: 18,
@@ -74,9 +86,7 @@ export const businessPageStyles = StyleSheet.create({
     color: 'white',
     textAlign: 'right',
   },
-  photosContainer: {
-    marginVertical: 16,
-  },
+ 
   photo: {
     width: 150,
     height: 150,

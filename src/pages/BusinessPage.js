@@ -14,7 +14,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { collection, getDoc, setDoc, doc, getDocs, query, limit, updateDoc } from 'firebase/firestore';
 import { db,auth  } from '../firebaseConfig'; 
 
-
 const BusinessPage = ({ route, navigation }) => {
 
   const [pictures, setPictures] = useState([]);
@@ -187,7 +186,8 @@ const BusinessPage = ({ route, navigation }) => {
         {
           business.businessDescription ?
             <View>
-              <Text style={businessPageStyles.label}>תיאור העסק: </Text>
+              <Text style={[businessPageStyles.label, { paddingTop: 8 }]}>תיאור העסק: </Text>
+
               <Text style={businessPageStyles.description}>{business.businessDescription}</Text>
             </View> :
             <View></View>
@@ -207,9 +207,9 @@ const BusinessPage = ({ route, navigation }) => {
         </View>
 
         {/* tor types */}
-        <Text style={businessPageStyles.label}>סוגי תורים</Text>
+        <Text style={businessPageStyles.label}>סוגי תורים:</Text>
         <ScrollView contentOffset={{ x: 0, y: 50 }} >
-          <View style={businessPageStyles.container}>
+          <View style={businessPageStyles.container2}>
             {business.torTypes && business.torTypes.length > 0 ? (
               business.torTypes.map(appointment => (
                 <TorType key={appointment.name} appointment={appointment} />
