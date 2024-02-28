@@ -155,4 +155,25 @@ export const businessPageStyles = StyleSheet.create({
     marginBottom: 8,
     fontSize: 16,
   },
+  starsContainer: {
+    flexDirection: 'row', // This ensures the stars are displayed horizontally
+    alignItems: 'center', // Optional, for vertical alignment
+    justifyContent: 'center', // Optional, for horizontal alignment
+    // Add any additional styling here as needed
+  },
+  button: {
+    backgroundColor: '#6495ed', // Change button background color here
+    paddingVertical: 5,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    borderWidth: 1, // Add border width
+    borderColor: '#fff', // Change border color here
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 5
+  },
+  text: {
+    color: '#ffffff', // Change text color here
+    fontSize: 16,
+  },
 });

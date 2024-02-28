@@ -6,6 +6,7 @@ import { collection, limit, getDocs, query, where, map } from '@firebase/firesto
 import { db } from '../firebaseConfig';
 import Spinner from '../components/Spinner.js';
 import { getHour } from '../shared/dateMethods.js';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const ResultScreen = ({ route, navigation }) => {
     const selectedCategories = route.params.selectedCategories;
@@ -194,6 +195,7 @@ const ResultScreen = ({ route, navigation }) => {
     };
 
     return (
+        
         <View style={styles.container}>
             <Image
                 style={styles.logo}
