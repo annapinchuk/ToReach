@@ -468,7 +468,8 @@ const ProfileBusinessScreen = ({ navigation }) => {
 
                 {/* business hours */}
                 <View style={{ flexDirection: 'column', gap: 10 }}>
-                    <Text style={ProfileBusinessScreenStyles.label}>שעות פעילות העסק:</Text>
+                <Text style={[ProfileBusinessScreenStyles.label, { marginTop: 10 }]}>שעות פעילות העסק:</Text>
+
 
                     <View style={[ProfileBusinessScreenStyles.categoryContainer, { alignItems: 'center' }]}>
                         <Text style={ProfileBusinessScreenStyles.subLabel}>שעת פתיחה:</Text>
