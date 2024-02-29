@@ -1,23 +1,22 @@
-import { Pressable, Text, View,TouchableOpacity } from "react-native";
+import { Pressable, Text, View, TouchableOpacity } from "react-native";
 import { styles } from "../styles/CalendarClientStyles";
 import { FontAwesome } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import RemoveButton from "./RemoveButton";
 
 
 
 
-const torType = ({ appointment,onDelete }) => {
+const torType = ({ appointment, onDelete }) => {
     return (
         <View style={styles.card}>
+            {
+                onDelete && <RemoveButton action={onDelete} message=' האם למחוק את סוג תור זה?' />
+            }
             <View style={styles.cardMiddleRow}>
-                
+
                 <Text style={styles.title}>{` ${appointment.name}`}</Text>
-                {onDelete && (
-                <TouchableOpacity onPress={() => onDelete(appointment)}>
-                <FontAwesome name="trash-o" size={20} color="red" style={{ marginLeft: 10}} />
-                </TouchableOpacity>
-            )}
             </View>
             <View style={styles.cardMiddleRow}>
                 <View style={styles.iconAndTextContainer}>

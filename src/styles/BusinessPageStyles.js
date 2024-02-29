@@ -4,11 +4,19 @@ export const businessPageStyles = StyleSheet.create({
   viewContainer: {
     flex: 1,
     backgroundColor: '#5B8BDF',
+  
   },
   container: {
     flex: 1,
     margin: 16,
-    rowGap: 10
+    rowGap: 10,
+  
+  },
+  container2: {
+    flex: 1,
+    margin: 16,
+    rowGap: 10,
+    alignItems: 'center',
   },
   logoContainer: {
     alignItems: 'center',
@@ -26,6 +34,7 @@ export const businessPageStyles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
     textAlign: 'center',
+    marginBottom: 15,
   },
   categoryRatingContainer: {
     marginTop: 8,
@@ -34,6 +43,7 @@ export const businessPageStyles = StyleSheet.create({
   },
   categoryContainer: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     // marginTop: 8,
     // marginBottom: 8,
     alignSelf: 'flex-start'
@@ -50,9 +60,12 @@ export const businessPageStyles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: 'white',
-    textDecorationLine: 'underline',
+    // textDecorationLine: 'underline',
     marginRight: 8,
     textAlign: 'left',
+    marginBottom: 10,
+    // marginTop: 2,
+    
   },
   subLabel: {
     fontSize: 18,
@@ -73,9 +86,7 @@ export const businessPageStyles = StyleSheet.create({
     color: 'white',
     textAlign: 'right',
   },
-  photosContainer: {
-    marginVertical: 16,
-  },
+ 
   photo: {
     width: 150,
     height: 150,
@@ -142,6 +153,27 @@ export const businessPageStyles = StyleSheet.create({
   // Individual styles for name, price, and duration (adjust as needed)
   torTypeInputField: {
     marginBottom: 8,
+    fontSize: 16,
+  },
+  starsContainer: {
+    flexDirection: 'row', // This ensures the stars are displayed horizontally
+    alignItems: 'center', // Optional, for vertical alignment
+    justifyContent: 'center', // Optional, for horizontal alignment
+    // Add any additional styling here as needed
+  },
+  button: {
+    backgroundColor: '#6495ed', // Change button background color here
+    paddingVertical: 5,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    borderWidth: 1, // Add border width
+    borderColor: '#fff', // Change border color here
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 5
+  },
+  text: {
+    color: '#ffffff', // Change text color here
     fontSize: 16,
   },
 });

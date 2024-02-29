@@ -51,7 +51,7 @@ export const ProfileBusinessScreenStyles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         color: 'white',
-        textDecorationLine: 'underline',
+        // textDecorationLine: 'underline',
         marginRight: 8,
         textAlign: 'left',
     },

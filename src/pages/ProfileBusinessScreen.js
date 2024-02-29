@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, ScrollView, Pressable, TextInput, LogBox } from 'react-native';
 import TorType from '../components/TorType';
-import firebase from 'firebase/app';
-import { app, auth, db, storage } from '../firebaseConfig';
-import { collection,getDoc, setDoc, doc ,getDocs,query,limit} from 'firebase/firestore';
-import { styles } from '../styles/ProfileClientScreenStyles';
-import { registerStyles} from '../styles/RegisterBusinessScreenStyles.js';
+import { auth, db, storage } from '../firebaseConfig';
+import { collection, getDoc, setDoc, doc, getDocs, query, limit } from 'firebase/firestore';
 import TorTypeInput from '../components/TorTypeInput';
 import DropDownPicker from 'react-native-dropdown-picker';
 import PhoneButton from '../components/PhoneButton';
@@ -18,13 +15,17 @@ import * as FileSystem from 'expo-file-system';
 import { getDownloadURL, ref, uploadBytes } from '@firebase/storage';
 import Toast from 'react-native-toast-message';
 import { businessPageStyles } from '../styles/BusinessPageStyles.js';
+import RemoveButton from '../components/RemoveButton.js';
 
 const ProfileBusinessScreen = ({ navigation }) => {
     // State to hold business data and edited details
+    const [rating, setRating] = useState(0);
     const [businessData, setBusinessData] = useState(null);
     const [editedDescription, setEditedDescription] = useState('');
     const [editedPictures, setEditedPictures] = useState([]);
+    const [picturesToShow, setPicturesToShow] = useState([]);
     const [editedLogo, setEditedLogo] = useState('');
+    const [logoToShow, setLogoToShow] = useState('');
     const [editedName, setEditedName] = useState('');
     const [editedPhone, setEditedPhone] = useState('');
     const [editedAddress, setEditedAddress] = useState('');
@@ -46,6 +47,8 @@ const ProfileBusinessScreen = ({ navigation }) => {
     const [editMode, setEditMode] = useState(false);
     // Reference to the document in Firestore
     const [docRef, setDocRef] = useState(undefined);
+
+
     // Fetch categories from Firestore
     const fetchCategories = async () => {
         try {
@@ -97,28 +100,39 @@ const ProfileBusinessScreen = ({ navigation }) => {
                     setEditedPhone(data.businessPhoneNumber);
                     setEditedDescription(data.businessDescription);
                     setEditedTorTypes(data.torTypes ?? []);
+                    setEditedPictures(data.pictures ?? []);
                     setEditedLogo(data.logo ?? '');
                     setEditedCategories(data.Categories);
                     setCurrentValueCategories(data.Categories);
                     setEditedCities(data.Cities);
                     setCurrentValueCities(data.Cities);
                     setEditedAddress(data.address);
+                    const ratingsRef = collection(db, `Businesses/${docSnap.id}/ratings`);
+                    const snapshot = await getDocs(ratingsRef);
+                    let totalRating = 0;
+                    snapshot.forEach((doc) => {
+                        
+                      totalRating += doc.data().rating;
+                      console.log(totalRating);
+                    });
+                    const averageRating = snapshot.size > 0 ? totalRating / snapshot.size : 0;
+                    setRating(averageRating);
                     setStartTime(data.startTime ? new Date(data.startTime.seconds * 1000) : defaultStartTime)
                     setEndTime(data.endTime ? new Date(data.endTime.seconds * 1000) : defaultEndTime)
                     const result = [];
                     await Promise.all(data.pictures.map(async picture => {
-                        if(picture.url) result.push(picture.url);
-                        else if (typeof picture === 'string'){
+                        if (picture.url) result.push(picture.url);
+                        else if (typeof picture === 'string') {
                             try {
                                 const storageRef = ref(storage, picture);
-                                const url = await getDownloadURL(storageRef)
+                                const url = await getDownloadURL(storageRef);
                                 result.push(url);
-                            } catch(err) {
+                            } catch (err) {
                                 console.log(err);
                             }
                         }
                     }));
-                    setEditedPictures(result);
+                    setPicturesToShow(result);
                 } else {
                     // docSnap.data() will be undefined in this case
                     console.log("No such document!");
@@ -131,7 +145,7 @@ const ProfileBusinessScreen = ({ navigation }) => {
         }
         getData();
     }, []);
-    
+
     // Save edited data to Firestore
     const handleSave = async () => {
         setEditedCategories(currentValueCategories);
@@ -160,7 +174,7 @@ const ProfileBusinessScreen = ({ navigation }) => {
         setEditMode(false);
     };
 
-    const handleImageSelection = async () => {
+    const handleImageSelection = async (isProfile) => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.All,
             allowsEditing: true,
@@ -190,17 +204,26 @@ const ProfileBusinessScreen = ({ navigation }) => {
                 });
 
 
-                
+
                 // storage
-                const picURI = `BusinessPictures/${auth.currentUser.uid}/${editedPictures.length}`;
+                const picURI = `${isProfile ? 'BusinessProfilePictures' : 'BusinessPictures'}/${auth.currentUser.uid}/${editedPictures.length}`;
                 const storageRef = ref(storage, picURI);
 
                 // 'file' comes from the Blob or File API
                 uploadBytes(storageRef, blob).then((snapshot) => {
-                    setEditedPictures([...editedPictures, picURI]);
-                    Toast.show({
-                        type: 'success',
-                        text1: 'התמונה עלתה בהצלחה'
+                    getDownloadURL(storageRef).then(url => {
+                        if (isProfile) {
+                            setEditedLogo(picURI);
+                            setLogoToShow(url);
+                        }
+                        else {
+                            setEditedPictures([...editedPictures, picURI]);
+                            setPicturesToShow([...picturesToShow, url]);
+                        }
+                        Toast.show({
+                            type: 'success',
+                            text1: 'התמונה עלתה בהצלחה'
+                        });
                     });
                 });
 
@@ -212,10 +235,15 @@ const ProfileBusinessScreen = ({ navigation }) => {
         }
     };
 
-    const handleEditLogo = () => {
-        // Implement your logic to edit the logo
-        console.log("Edit Logo");
-    };
+    const removePicture = (picture) => {
+        const index = picturesToShow.indexOf(picture);
+        const edited = [...editedPictures];
+        const toShow = [...picturesToShow];
+        edited.splice(index, 1);
+        toShow.splice(index, 1);
+        setEditedPictures(edited);
+        setPicturesToShow(toShow);
+    }
 
     const handleAddTorType = newTorType => {
         setEditedTorTypes([...editedTorTypes, newTorType]);
@@ -230,20 +258,6 @@ const ProfileBusinessScreen = ({ navigation }) => {
         // Implement logic to remove torTypeToDelete from the state
         const updatedTorTypes = editedTorTypes.filter(torType => torType !== torTypeToDelete);
         setEditedTorTypes(updatedTorTypes);
-      };
-
-    const getPictureUrl = (picture) => {
-        let result = picture;
-        if (picture.url) return picture.url;
-        if (typeof picture === 'string'){
-            try {
-                const storageRef = ref(storage, picture);
-                getDownloadURL(storageRef).then(res => {result = res; console.log(result);});
-            } catch(err) {
-                console.log(err);
-            }
-        }
-        return result;
     };
 
     if (!businessData) {
@@ -251,6 +265,7 @@ const ProfileBusinessScreen = ({ navigation }) => {
     }
 
     return (
+        
         <View style={{ flex: 1, backgroundColor: '#5B8BDF' }}>
             <ScrollView style={ProfileBusinessScreenStyles.container}>
                 <View style={ProfileBusinessScreenStyles.buttonsRow}>
@@ -280,11 +295,11 @@ const ProfileBusinessScreen = ({ navigation }) => {
 
                 {/* Logo and Business Name */}
                 <View style={ProfileBusinessScreenStyles.logoContainer}>
-                    {editedLogo && <Image source={{ uri: editedLogo }} style={ProfileBusinessScreenStyles.logo} />}
+                    {logoToShow && <Image source={{ uri: logoToShow }} style={ProfileBusinessScreenStyles.logo} />}
                     {/* Button to edit logo */}
                     {editMode ? (
                         <View>
-                            <Pressable style={ProfileBusinessScreenStyles.editLogoButton} onPress={handleEditLogo}>
+                            <Pressable style={ProfileBusinessScreenStyles.editLogoButton} onPress={() => handleImageSelection(true)}>
                                 <Text style={ProfileBusinessScreenStyles.buttonText}>ערוך לוגו</Text>
                             </Pressable>
                             <TextInput
@@ -318,6 +333,13 @@ const ProfileBusinessScreen = ({ navigation }) => {
                         <Feather name="phone-call" size={24} color="white" />
                     </View>
                 )}
+                {/*ratings */}
+                <View style={businessPageStyles.categoryContainer}>
+                    <Text style={businessPageStyles.label}>דירוג: </Text>
+                    <Text style={businessPageStyles.category}>
+                    <Text style={businessPageStyles.star}>★</Text> {rating.toFixed(1)}
+                </Text>
+                </View> 
                 {/* Adress*/}
                 {editMode ? (
                     <View style={ProfileBusinessScreenStyles.editDescriptionContainer}>
@@ -432,12 +454,16 @@ const ProfileBusinessScreen = ({ navigation }) => {
                 <Text style={ProfileBusinessScreenStyles.label}>תמונות של העסק: </Text>
                 {/* Business Photos */}
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={ProfileBusinessScreenStyles.photosContainer}>
-                    {(editedPictures.map((picture, index) => (
-                        <Image key={index} source={{ uri: picture }} style={businessPageStyles.photo} />
+                    {(picturesToShow.map((picture, index) => (
+                        <View key={picture} style={{ position: 'relative' }}>
+                            <Image source={{ uri: picture }} style={businessPageStyles.photo} />
+                            {editMode && <RemoveButton action={() => removePicture(picture)} message='האם למחוק את התמונה?' />}
+                        </View>
+
                     )))}
                     {/* Button to add more pictures */}
-                    {editMode? (
-                        <Pressable style={businessPageStyles.addPictureButton} onPress={handleImageSelection}>
+                    {editMode ? (
+                        <Pressable style={businessPageStyles.addPictureButton} onPress={() => handleImageSelection(false)}>
                             <Text style={businessPageStyles.buttonText}>הוסף תמונה</Text>
                         </Pressable>
                     ) : (
@@ -462,7 +488,8 @@ const ProfileBusinessScreen = ({ navigation }) => {
 
                 {/* business hours */}
                 <View style={{ flexDirection: 'column', gap: 10 }}>
-                    <Text style={ProfileBusinessScreenStyles.label}>שעות פעילות העסק:</Text>
+                <Text style={[ProfileBusinessScreenStyles.label, { marginTop: 10 }]}>שעות פעילות העסק:</Text>
+
 
                     <View style={[ProfileBusinessScreenStyles.categoryContainer, { alignItems: 'center' }]}>
                         <Text style={ProfileBusinessScreenStyles.subLabel}>שעת פתיחה:</Text>
@@ -487,15 +514,15 @@ const ProfileBusinessScreen = ({ navigation }) => {
                     <View style={ProfileBusinessScreenStyles.containerTorim}>
                         {editedTorTypes && editedTorTypes.length > 0 ? (
                             editedTorTypes.map(appointment => (
-                                <TorType 
-                                    key={appointment.name} 
+                                <TorType
+                                    key={appointment.name}
                                     appointment={appointment}
                                     onDelete={editMode ? ((appointment) => handleDeleteTorType(appointment)) : (undefined)} />
                             ))
                         ) : (
                             <View>
-                                <Text style={{textAlign:'center'}}>שים לב! אין סוג תור. </Text>
-                                <Text style={{textAlign:'center'}}> כדי שלקוחות יכלו לקבוע תור עם העסק יש להוסיף לפחות סוג תור אחד</Text>
+                                <Text style={{ textAlign: 'center' }}>שים לב! אין סוג תור. </Text>
+                                <Text style={{ textAlign: 'center' }}> כדי שלקוחות יכלו לקבוע תור עם העסק יש להוסיף לפחות סוג תור אחד</Text>
                             </View>
                         )}
                     </View>

@@ -32,6 +32,7 @@ export const styles = StyleSheet.create({
         flexDirection: 'column',
         gap: 10,
     },
+   
     cardTopRow: {
         flexDirection: 'row',
         gap: 15,

@@ -1,4 +1,4 @@
-import { Image, Pressable, Text, View } from "react-native";
+import { Image, Pressable, Text, TouchableOpacity, View } from "react-native";
 import { styles } from "../styles/CalendarClientStyles";
 import NavigationButton from "./NavigationButton";
 import { FontAwesome } from '@expo/vector-icons';
@@ -6,6 +6,9 @@ import { AntDesign } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { getHour } from "../shared/dateMethods";
 import Toast from "react-native-toast-message";
+import { db } from "../firebaseConfig";
+import { deleteDoc, doc } from "@firebase/firestore";
+import RemoveButton from "./RemoveButton";
 
 const AppointmentCard = ({ navigation, appointment }) => {
 
@@ -29,8 +32,30 @@ const AppointmentCard = ({ navigation, appointment }) => {
     const dateEdit = new Date();
     dateEdit.setMinutes(dateEdit.getMinutes() + 30);
 
+    const deleteAppointment = async () => {
+        try {
+            await deleteDoc(doc(db, "Appointments", appointment.id));
+            Toast.show({
+                type: 'success',
+                text1: 'התור נמחק בהצלחה'
+            });
+
+        }
+        catch (err) {
+            console.log("delete appointment: ", err);
+            Toast.show({
+                type: 'error',
+                text1: 'התרחשה שגיאה במחיקת התור'
+            });
+        }
+    }
+
     return (
         <View style={styles.card}>
+            {
+                appointment.startTime >= dateEdit &&
+                <RemoveButton action={deleteAppointment} message=' האם למחוק את התור?' />
+            }
             <Pressable onPress={() => navigation.navigate('BusinessPage', { business: { ...appointment.business, id: appointment.businessID } })}>
                 <View style={styles.cardTopRow}>
                     <Image source={{ uri: 'https://picsum.photos/200' }} style={styles.businessLogo} />

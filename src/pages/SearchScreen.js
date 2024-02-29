@@ -1,30 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Text, Modal, FlatList, Image, LogBox, Pressable, TouchableWithoutFeedback, Platform, ScrollView } from 'react-native';
+import { View, Text, Image, LogBox, Pressable, TouchableWithoutFeedback, Platform, ScrollView } from 'react-native';
 import { styles } from '../styles/HomeUserScreenStyles';
-import { EvilIcons, FontAwesome } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { getDocs, collection, query, getFirestore, addDoc, limit, } from 'firebase/firestore';
-import { app, auth, db } from '../firebaseConfig';
+import { getDocs, collection, getFirestore, limit, } from 'firebase/firestore';
+import { app } from '../firebaseConfig';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import DatePicker from '../components/DatePicker';
 import DatePickerWithTime from '../components/DatePickerWithTime';
 
 
 
 const SearchScreen = ({ navigation }) => {
-  const [business, setBusiness] = useState([]);// כל העסקים
+  const [business, setBusiness] = useState([]);// all Business
   const [isOpenBusiness, setIsOpenBusiness] = useState(false);
   const [currentValueBusiness, setCurrentValueBusiness] = useState([]);
-  const [selectedBusiness, setSelectedBusiness] = useState([]);
-
+  const [selectedBusiness, setSelectedBusiness] = useState([]); //choosen Business
 
   const [categories, setCategories] = useState([]);
   const [isOpenCategories, setIsOpenCategories] = useState(false);
   const [currentValueCategories, setCurrentValueCategories] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
 
+  const [Cities, setCities] = useState([]); // all Cities
   const [selectedCities, setSelectedCities] = useState([]);
-  const [Cities, setCities] = useState([]); //כל הערים
   const [isOpenCities, setIsOpenCities] = useState(false);
   const [currentValueCities, setCurrentValueCities] = useState([]);
 

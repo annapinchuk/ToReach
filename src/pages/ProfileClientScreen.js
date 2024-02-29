@@ -4,8 +4,9 @@ import { View, Text, TextInput, Pressable } from 'react-native';
 import { styles } from '../styles/ProfileClientScreenStyles';
 import { auth, db } from '../firebaseConfig';
 import { collection, getDoc, setDoc, doc } from '@firebase/firestore';
-
-
+import { Fontisto } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 const ProfilePage = ({ navigation }) => {
     // States to manage user information
     const [username, setUsername] = useState('');
@@ -81,23 +82,39 @@ const ProfilePage = ({ navigation }) => {
         <View style={styles.container}>
             {/* Display user information */}
             {/* user name - editable */}
+           
             <Text style={styles.label}>שם:</Text>
-            {editMode ? (
-                <TextInput
-                    style={styles.input}
-                    value={username}
-                    onChangeText={(text) => setUsername(text)}
-                />
-            ) : (
-                <Text style={styles.text}>{username}</Text>
-            )}
+            
+                <View style={styles.card}>
+                <View style={styles.icon}>
+            <Ionicons name="person-outline" size={24} color="white" />
+            </View>
+                    {editMode ? (
+                        <TextInput
+                            style={styles.input}
+                            value={username}
+                            onChangeText={(text) => setUsername(text)}
+                        />
+                    ) : (
+                        <Text style={styles.text}>{username}</Text>
+                    )}
+                </View>
 
             {/* email */}
             <Text style={styles.label}>אימייל:</Text>
-            <Text style={styles.text}> {email} </Text>
-
+            <View style={styles.card}>
+                <View style={styles.icon}>
+                    <Fontisto name="email" size={24} color="white" />
+                </View>
+            
+                <Text style={styles.text}> {email}  </Text>
+            </View>
             {/* phone number - editable */}
             <Text style={styles.label}>מספר טלפון:</Text>
+            <View style={styles.card}>
+            <View style={styles.icon}>
+            <Feather name="phone-call" size={24} color="white" />
+            </View>
             {editMode ? (
                 <TextInput
                     style={styles.input}
@@ -109,6 +126,7 @@ const ProfilePage = ({ navigation }) => {
             ) : (
                 <Text style={styles.text}>{phoneNumber}</Text>
             )}
+            </View>
 
             <View style={styles.buttonsRow}>
                 {/* Display edit or save button based on edit mode */}

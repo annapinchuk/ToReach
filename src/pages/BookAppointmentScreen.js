@@ -4,11 +4,12 @@ import { View, Text, Image, Pressable, ScrollView } from 'react-native';
 import DatePicker from '../components/DatePicker';
 import { styles } from '../styles/BookAppointmentScreenStyles';
 import { addDoc, collection, doc, getDoc, getDocs, query, setDoc, where } from '@firebase/firestore';
-import { auth, db } from '../firebaseConfig';
+import { auth, db, storage } from '../firebaseConfig';
 import Toast from 'react-native-toast-message';
 import { getHour } from '../shared/dateMethods';
 import { businessPageStyles } from '../styles/BusinessPageStyles';
 import Spinner from '../components/Spinner';
+import { getDownloadURL, ref } from '@firebase/storage';
 
 const BookAppointmentScreen = ({ route, navigation }) => {
 
@@ -26,6 +27,7 @@ const BookAppointmentScreen = ({ route, navigation }) => {
     const [businessName, setBusinessName] = useState('');
     const [businessStartTime, setBusinessStartTime] = useState(new Date());
     const [businessEndTime, setBusinessEndTime] = useState(new Date());
+    const [logo, setLogo] = useState('');
 
     // State variables to store free time according date + torType
     const [freeTimes, setFreeTimes] = useState([]);
@@ -33,13 +35,29 @@ const BookAppointmentScreen = ({ route, navigation }) => {
     // Get business data
     useEffect(() => {
         const businessCollection = collection(db, "Businesses");
-        const businessDocRef = doc(businessCollection, businessID)
+        const businessDocRef = doc(businessCollection, businessID);
+
+        const fetchLogo = async logoUrl => {
+            if (!logoUrl || logoUrl.includes('picsum')) {
+              setLogo(logoUrl);
+              return;
+            }
+            try {
+              const storageRef = ref(storage, logoUrl);
+              const logoUrlToShow = await getDownloadURL(storageRef);
+              setLogo(logoUrlToShow);
+            } catch (err) {
+              console.log(err);
+            }
+          }
+
         // Load user information from Firestore
         const getData = async () => {
             try {
                 const docSnap = await getDoc(businessDocRef);
                 if (docSnap.exists()) {
-                    const { torTypes, businessName, startTime, endTime } = docSnap.data();
+                    const { torTypes, businessName, startTime, endTime ,logo } = docSnap.data();
+                    fetchLogo(logo);
                     setTorTypes(torTypes);
                     setBusinessName(businessName);
                     setBusinessStartTime(startTime);
@@ -59,7 +77,7 @@ const BookAppointmentScreen = ({ route, navigation }) => {
 
         const times = {};
 
-        // fetch the start time from the business or dufault time if not exist
+        // fetch the start time from the business or default time if not exist
         let startTime = new Date(selectedDate);
         if (businessStartTime === undefined) {
             startTime.setHours(9, 0, 0, 0); // Set start time to default (09:00)
@@ -70,7 +88,7 @@ const BookAppointmentScreen = ({ route, navigation }) => {
             startTime.setMinutes(hourStartTime[1]);
         }
 
-        // fetch the end time from the business or dufault time if not exist
+        // fetch the end time from the business or default time if not exist
         let endTime = new Date(selectedDate);
         if (businessStartTime === undefined) {
             endTime.setHours(18, 0, 0, 0); // Set end time to default (18:00)
@@ -82,7 +100,7 @@ const BookAppointmentScreen = ({ route, navigation }) => {
         }
         
         //  Considering the torType duration
-        endTime.setMinutes(endTime.getMinutes() - selectedTorType.duration);
+        endTime.setMinutes(endTime.getMinutes() - Number(selectedTorType.duration));
 
         // Go over all the hours from startTime to endTime with a difference of 5 minutes
         let currentTime = new Date(startTime);
@@ -111,7 +129,7 @@ const BookAppointmentScreen = ({ route, navigation }) => {
                 if (appointmentID === doc.id) return;
                 const appointment = doc.data();
                 const start = appointment.startTime.toDate();
-                start.setMinutes(start.getMinutes() - selectedTorType.duration);
+                start.setMinutes(start.getMinutes() - Number(selectedTorType.duration));
 
                 const end = appointment.endTime.toDate();
 
@@ -155,7 +173,7 @@ const BookAppointmentScreen = ({ route, navigation }) => {
         endTime = new Date(startTime)
 
         // Calculate end time
-        endTime.setMinutes(endTime.getMinutes() + selectedTorType.duration);
+        endTime.setMinutes(endTime.getMinutes() + Number(selectedTorType.duration));
 
         return endTime;
     };
@@ -174,7 +192,6 @@ const BookAppointmentScreen = ({ route, navigation }) => {
 
             // Save new appointment
             const startTime = calculateStartTime(selectedDate, selectedTime)
-            // const endTime = calculateEndTime(startTime, selectedTorType.duration)
             const endTime = calculateEndTime(startTime)
             const data = {
                 businessID: businessID,
@@ -205,16 +222,17 @@ const BookAppointmentScreen = ({ route, navigation }) => {
             console.log(error);
         }
     };
+    
 
     return (
         <View style={styles.container}>
             <ScrollView style={businessPageStyles.container}>
                 {/* Top section with business image and name */}
                 <View style={styles.header}>
-                    <Image
-                        source={{ uri: "https://picsum.photos/202" }}
+                    {logo && <Image
+                        source={{ uri: logo }}
                         style={styles.businessImage}
-                    />
+                    />}
                     <Text style={styles.businessName}>{businessName}</Text>
                 </View>
 

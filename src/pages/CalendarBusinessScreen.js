@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Alert } from 'react-native';
 import { Agenda } from 'react-native-calendars';
 import { styles } from '../styles/CalendarBusinessStyles';
-import { app, auth, db } from '../firebaseConfig';
-import { collection, doc, getDocs, getDoc, query, where, orderBy } from '@firebase/firestore';
+import { auth, db } from '../firebaseConfig';
+import { collection, doc, getDocs, getDoc, query, where, orderBy, deleteDoc, onSnapshot } from '@firebase/firestore';
+import Toast from 'react-native-toast-message';
+import { getHour } from '../shared/dateMethods';
 
 const CalendarBusinessScreen = () => {
     // State variables
@@ -23,46 +25,50 @@ const CalendarBusinessScreen = () => {
                     where('businessID', '==', uid),
                     orderBy('startTime', 'asc')
                 );
-                
-                // Get appointments from Firestore
-                const appointmentsSnapshot = await getDocs(appointmentsQuery);
-                // Map appointments data
-                const appointmentsData = appointmentsSnapshot.docs.map((doc) => ({
-                    ...doc.data(),
-                    id: doc.id,
-                    clientID: doc.data().clientID,
-                    name: doc.data().name,
-                    startTime: doc.data().startTime.toDate(),
-                    endTime: doc.data().endTime.toDate(),
-                }));
 
-                // Format appointments by date
-                const formattedAppointments = {};
-                appointmentsData.forEach((appointment) => {
-                    const dateString = appointment.startTime.toISOString().split('T')[0];
-                    if (!formattedAppointments[dateString]) {
-                        formattedAppointments[dateString] = [];
-                    }
-                    // Add appointment to the corresponding date
-                    formattedAppointments[dateString].push(appointment);
+                // Get appointments from Firestore
+                const unsubscribe = onSnapshot(appointmentsQuery, (appointmentsSnapshot) => {
+                    // Map appointments data
+                    const appointmentsData = appointmentsSnapshot.docs.map((doc) => ({
+                        ...doc.data(),
+                        id: doc.id,
+                        clientID: doc.data().clientID,
+                        name: doc.data().name,
+                        startTime: doc.data().startTime.toDate(),
+                        endTime: doc.data().endTime.toDate(),
+                    }));
+
+                    // Format appointments by date
+                    const formattedAppointments = {};
+                    appointmentsData.forEach((appointment) => {
+                        const dateString = appointment.startTime.toISOString().split('T')[0];
+                        if (!formattedAppointments[dateString]) {
+                            formattedAppointments[dateString] = [];
+                        }
+                        // Add appointment to the corresponding date
+                        formattedAppointments[dateString].push(appointment);
+                    });
+                    // Set appointments state
+                    setAppointments(formattedAppointments);
                 });
-                // Set appointments state
-                setAppointments(formattedAppointments);
+                return unsubscribe;
             } catch (error) {
                 console.error('Error fetching appointments:', error);
             }
         };
 
-        fetchData(); // Fetch appointments from Firestore
-    }, []); 
+        const unsubscribe = fetchData(); // Fetch appointments from Firestore
+
+        return () => unsubscribe;
+    }, []);
 
     // Render appointment item 
     const renderItem = (item) => {
         const startTime = new Date(item.startTime);
         const endTime = new Date(item.endTime);
 
-        const formattedStartTime = startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const formattedEndTime = endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const formattedStartTime = getHour(startTime);
+        const formattedEndTime = getHour(endTime);
         const durationInMinutes = (endTime - startTime) / (1000 * 60);
 
         return (
@@ -74,7 +80,7 @@ const CalendarBusinessScreen = () => {
                     <Text style={styles.itemTime}>{formattedStartTime}</Text>
                 </View>
                 <View style={styles.itemContent}>
-                    <Text style={styles.itemTitle}>{item.title}</Text>  
+                    <Text style={styles.itemTitle}>{item.title}</Text>
                     <Text style={styles.itemTime}>{`${formattedStartTime} - ${formattedEndTime}`}</Text>
                 </View>
                 <View style={[styles.separator, { marginTop: durationInMinutes > 60 ? 20 : 0 }]} />
@@ -104,9 +110,29 @@ const CalendarBusinessScreen = () => {
                     const clientPhone = clientsSnapshot.data().phoneNumber || 'Not given'
                     const appointmentName = appointment.name || 'Not defined'
 
+                    // Define the buttons array
+                    let buttons = [
+                        { text: 'אישור', onPress: () => { } },
+                    ];
+
+                    const dateEdit = new Date();
+                    dateEdit.setMinutes(dateEdit.getMinutes() + 30);
+
+                    // Check if the condition is met
+                    if (appointment.startTime >= dateEdit) {
+                        // Add the "מחק  תור" button if the condition is met
+                        buttons.unshift({
+                            text: 'מחק  תור',
+                            onPress: () => deleteAppointment(appointment.id),
+                            style: 'cancel',
+                        });
+                    }
+
                     Alert.alert(
                         'תיאור תור',
-                        `סוג תור: ${appointmentName}\nשם לקוח: ${clientName}\nמספר טלפון: ${clientPhone}`
+                        `סוג תור: ${appointmentName}\nשם לקוח: ${clientName}\nמספר טלפון: ${clientPhone}`,
+                        buttons,
+                        { cancelable: true }
                     );
                 } else {
                     Alert.alert('תיאור תור', `סוג תור: ${appointmentName}\nלא נמצאו נתונים ללקוח`);
@@ -134,6 +160,25 @@ const CalendarBusinessScreen = () => {
     const onDayPress = (day) => {
         setSelectedDay(day.dateString);
     };
+
+    const deleteAppointment = async (appointmentID) => {
+        try {
+            await deleteDoc(doc(db, "Appointments", appointmentID));
+            console.log("delete appointment: ", appointmentID);
+            Toast.show({
+                type: 'success',
+                text1: 'התור נמחק בהצלחה'
+            });
+
+        }
+        catch (err) {
+            console.log("delete appointment: ", err);
+            Toast.show({
+                type: 'error',
+                text1: 'התרחשה שגיאה במחיקת התור'
+            });
+        }
+    }
 
     // Return the calendar screen
     return (
