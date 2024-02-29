@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { View, Button, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
 import { PieChart } from 'react-native-chart-kit';
-import MonthPicker from 'react-native-month-year-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { StatusBar } from "expo-status-bar";
 import { app, auth, db } from '../firebaseConfig';
@@ -192,13 +191,13 @@ const StatisticsScreen = () => {
       />
     
       <TouchableOpacity
-        style={[styles.toggleButton, { backgroundColor: showMonthlyChart ? '#4CAF50' : '#2196F3' }]}
+        style={[styles.toggleButton, { backgroundColor: '#2196F3'}]}
         onPress={() => {
           setShowMonthlyChart(!showMonthlyChart);
         }}
       >
         <Text style={styles.toggleButtonText}>
-          {'Apply Changes'}
+          {'החלת שינויים'}
         </Text>
       </TouchableOpacity>
     </View>
