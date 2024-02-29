@@ -4,11 +4,12 @@ import { View, Text, Image, Pressable, ScrollView } from 'react-native';
 import DatePicker from '../components/DatePicker';
 import { styles } from '../styles/BookAppointmentScreenStyles';
 import { addDoc, collection, doc, getDoc, getDocs, query, setDoc, where } from '@firebase/firestore';
-import { auth, db } from '../firebaseConfig';
+import { auth, db, storage } from '../firebaseConfig';
 import Toast from 'react-native-toast-message';
 import { getHour } from '../shared/dateMethods';
 import { businessPageStyles } from '../styles/BusinessPageStyles';
 import Spinner from '../components/Spinner';
+import { getDownloadURL, ref } from '@firebase/storage';
 
 const BookAppointmentScreen = ({ route, navigation }) => {
 
@@ -34,14 +35,29 @@ const BookAppointmentScreen = ({ route, navigation }) => {
     // Get business data
     useEffect(() => {
         const businessCollection = collection(db, "Businesses");
-        const businessDocRef = doc(businessCollection, businessID)
+        const businessDocRef = doc(businessCollection, businessID);
+
+        const fetchLogo = async logoUrl => {
+            if (!logoUrl || logoUrl.includes('picsum')) {
+              setLogo(logoUrl);
+              return;
+            }
+            try {
+              const storageRef = ref(storage, logoUrl);
+              const logoUrlToShow = await getDownloadURL(storageRef);
+              setLogo(logoUrlToShow);
+            } catch (err) {
+              console.log(err);
+            }
+          }
+
         // Load user information from Firestore
         const getData = async () => {
             try {
                 const docSnap = await getDoc(businessDocRef);
                 if (docSnap.exists()) {
                     const { torTypes, businessName, startTime, endTime ,logo } = docSnap.data();
-                    setLogo(logo);
+                    fetchLogo(logo);
                     setTorTypes(torTypes);
                     setBusinessName(businessName);
                     setBusinessStartTime(startTime);
@@ -213,10 +229,10 @@ const BookAppointmentScreen = ({ route, navigation }) => {
             <ScrollView style={businessPageStyles.container}>
                 {/* Top section with business image and name */}
                 <View style={styles.header}>
-                    <Image
+                    {logo && <Image
                         source={{ uri: logo }}
                         style={styles.businessImage}
-                    />
+                    />}
                     <Text style={styles.businessName}>{businessName}</Text>
                 </View>
 
