@@ -184,17 +184,6 @@ const StatisticsScreen = () => {
 
       <DatePicker date={date} setDate={setDate} />
 
-    
-      <TouchableOpacity
-        style={[styles.toggleButton, { backgroundColor: showMonthlyChart ? '#4CAF50' : '#2196F3' }]}
-        onPress={() => {
-          setShowMonthlyChart(!showMonthlyChart);
-        }}
-      >
-        <Text style={styles.toggleButtonText}>
-          {'אישור'}
-        </Text>
-      </TouchableOpacity>
     </View>
 
 
