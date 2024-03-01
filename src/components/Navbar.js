@@ -33,7 +33,7 @@ const businessPages = {
 const clientPages = {
     'חיפוש': HomeUserScreen,
     'יומן': CalendarClientScreen,
-    'סטטיסטיקות': StatisticsClientScreen,
+    // 'סטטיסטיקות': StatisticsClientScreen,
     'פרופיל': ProfileClientScreen,
     
 };
