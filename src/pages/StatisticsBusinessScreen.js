@@ -204,7 +204,7 @@ const StatisticsScreen = () => {
         }}
       >
         <Text style={styles.toggleButtonText}>
-          {'Apply Changes'}
+          {'החל שינויים'}
         </Text>
       </TouchableOpacity>
     </View>
