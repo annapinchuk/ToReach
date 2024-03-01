@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Button, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
 import { PieChart } from 'react-native-chart-kit';
 // import MonthPicker from 'react-native-month-year-picker';
-// import DateTimePicker from '@react-native-community/datetimepicker';
 import { StatusBar } from "expo-status-bar";
-import { app, auth, db } from '../firebaseConfig';
+import { auth, db } from '../firebaseConfig';
 import { collection, doc, getDocs, getDoc, query, where, orderBy } from '@firebase/firestore';
 import DatePicker from '../components/DatePicker';
 
@@ -27,15 +26,12 @@ const chartConfig = {
   backgroundGradientTo: '#f8f8f8',
   color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
   labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-};
+  };
 
 const StatisticsScreen = () => {
 
   // ================================== Orel ==========================
   const [date, setDate] = useState(new Date())
-  const [open, setOpen] = useState(false)
-  const [show, setShow] = useState(false);
-  const [mode, setMode] = useState('date');
 
 
   const currentYear = new Date().getFullYear();
@@ -50,9 +46,9 @@ const StatisticsScreen = () => {
     adjustGraph(currentDate);
   };
 
-  const showDatePicker = () => {
-    setShow(true);
-  };
+  useEffect(() => {
+    adjustGraph(date);
+  }, [date]);
 
   const getRandomColor = () => {
     const letters = '0123456789ABCDEF';
@@ -186,15 +182,7 @@ const StatisticsScreen = () => {
 
     <View style={styles.rowContainer}>
 
-      {/* <DateTimePicker
-        value={date}
-        mode={"date"}
-        is24Hour={true}
-        onChange={onChange}
-      /> */}
-
-
-      <DatePicker date={date} setDate={onChange} />
+      <DatePicker date={date} setDate={setDate} />
 
     
       <TouchableOpacity
@@ -204,7 +192,7 @@ const StatisticsScreen = () => {
         }}
       >
         <Text style={styles.toggleButtonText}>
-          {'Apply Changes'}
+          {'אישור'}
         </Text>
       </TouchableOpacity>
     </View>
@@ -224,7 +212,8 @@ const StatisticsScreen = () => {
           name: item.name,
           income: item.income,
           // color: showMonthlyChart ? MONTHLY_COLORS[index] : YEARLY_COLORS[index],
-          color: getRandomColor()
+          color: getRandomColor(),
+          legendFontColor: 'white',
         }))}
         width={350}
         height={200}
@@ -245,7 +234,8 @@ const StatisticsScreen = () => {
           name: item.name,
           income: item.income,
           // color: showMonthlyChart ? MONTHLY_COLORS[index] : YEARLY_COLORS[index],
-          color: getRandomColor()
+          color: getRandomColor(),
+          legendFontColor: 'white',
         }))}
         width={350}
         height={200}
@@ -263,13 +253,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#5B8BDF',
   },
   rowContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: '',
     marginBottom: 16,
+    gap: 10,
   },
   title: {
     fontSize: 24,
@@ -304,12 +295,12 @@ const styles = StyleSheet.create({
   },
   expenseCategory: {
     fontSize: 16,
-    color: '#333',
+    color: 'white',
   },
   expenseAmount: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333',
+    color: 'white',
   },
 });
 
