@@ -6,11 +6,32 @@ import { AntDesign } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { getHour } from "../shared/dateMethods";
 import Toast from "react-native-toast-message";
-import { db } from "../firebaseConfig";
+import { db, storage } from "../firebaseConfig";
 import { deleteDoc, doc } from "@firebase/firestore";
 import RemoveButton from "./RemoveButton";
+import { useEffect, useState } from "react";
+import { getDownloadURL, ref } from '@firebase/storage';
 
 const AppointmentCard = ({ navigation, appointment }) => {
+    
+    const [logo, setLogo] = useState('');
+
+    useEffect(() => {
+        const fetchLogo = async logoUrl => {
+            if (!logoUrl || logoUrl.includes('picsum')) {
+              setLogo(logoUrl);
+              return;
+            }
+            try {
+              const storageRef = ref(storage, logoUrl);
+              const logoUrlToShow = await getDownloadURL(storageRef);
+              setLogo(logoUrlToShow);
+            } catch (err) {
+              console.log(err);
+            }
+          }
+        fetchLogo(appointment.business.logo);
+    }, []);
 
     const handleEdit = () => {
         const diff = appointment.endTime.getTime() - appointment.startTime.getTime();
@@ -58,7 +79,7 @@ const AppointmentCard = ({ navigation, appointment }) => {
             }
             <Pressable onPress={() => navigation.navigate('BusinessPage', { business: { ...appointment.business, id: appointment.businessID } })}>
                 <View style={styles.cardTopRow}>
-                    <Image source={{ uri: 'https://picsum.photos/200' }} style={styles.businessLogo} />
+                    {logo && <Image source={{ uri: logo }} style={styles.businessLogo} />}
                     <View>
                         <Text style={styles.title}>{appointment.business.businessName}</Text>
                         <Text style={styles.subTitle}>{appointment.name}</Text>
