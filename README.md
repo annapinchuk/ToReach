@@ -13,10 +13,17 @@
 - [System Architecture](#system-architecture)
   - [Architectural Design](#-architectural-design)
 - [Key Features](#-key-features)
-  - [Appointment Management](#appointment-management)
-  - [Real time Updates](#real-time-updates)
-  - [User Profiles](#user-profiles)
-  - [Date Navigation](#date-navigation)
+  - [Cross Platform Compatibility](#cross-platform-compatibility)
+  - [Business Authorization ](#business-authorization )
+  - [Customer Authorization](#customer-authorization)
+  - [Business Search and Filter](#business-search-and-filter)
+  - [Appointment Booking](#appointment-booking)
+  - [Business Calendar](#business-calendar)
+  - [Business Rating by Customers](#business-rating-by-customers)
+  - [Data Security](#data-security)
+  - [Sidebar Navigation (Navbar)](#sidebar-navigation-navbar)
+  - [Sales Statistics](#sales-statistics)
+
 - [Human Interface Design](#human-interface-design)
 - [License](#-license)
 
@@ -48,22 +55,35 @@ ToReach's backend is powered by Firestore, a flexible, scalable database from Fi
 
 ## 🌟 Key Features
 
-### Appointment Management
+### Cross Platform Compatibility
+- *Universal Access:* Built with React Native for compatibility across both iOS and Android platforms, providing a consistent experience for all users.
 
-View, add, update, and delete appointments in a few clicks. ToReach makes appointment management a breeze for both businesses and clients.
+### Business Authorization 
+- *Secure Access for Business Owners:* Provide a secure sign-up and login mechanism for business owners to manage their profiles and appointments.
 
-### Real time Updates
+### Customer Authorization
+- *Seamless Customer Access:* Facilitate customer sign-up and login, ensuring easy access to appointment booking and business exploration.
 
-Changes to appointments are updated in real-time, thanks to Firestore integration, ensuring that all parties are always informed of the current schedule.
+### Business Search and Filter
+- *Discover Businesses Easily:* Implement searching and filtering capabilities for customers to find businesses according to their needs and preferences.
 
-### User Profiles
+### Appointment Booking 
+- *Simplified Booking Process:* Allow customers to book appointments with ease, featuring a user-friendly interface for selecting services and times.
 
-Businesses and clients can create and manage their profiles, adding a personal touch to the scheduling experience.
+### Business Calendar
+- *Manage Appointments Efficiently:* Calendar functionality for business owners to view, manage, and organize appointments effectively.
 
-### Date Navigation
+### Business Rating by Customers
+- *Feedback and Improvement:* A rating system for businesses based on customer feedback, promoting quality service and continuous improvement.
 
-A user-friendly calendar interface allows for easy navigation through dates, making it simple to view upcoming and past appointments.
+### Data Security
+- *Protection of Information:* Ensure the secure storage and handling of information provided by both customers and businesses.
 
+### Sidebar Navigation (Navbar)
+- *Effortless Navigation:* Provide a sidebar navigation system for, enhancing the user experience by offering easy access to various sections of the app.
+
+### Sales Statistics
+- *Insightful Business Analytics:* Offer statistical insights into sales and customer engagement for business owners, aiding in strategic decision-making.
 
   ---
 
